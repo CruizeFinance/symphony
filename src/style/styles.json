@@ -1,0 +1,20 @@
+{
+  "typography": {
+    "fonts": {
+      "extraBold": "GilroyExtraBold",
+      "bold": "GilroyBold",
+      "semiBold": "GilroySemiBold",
+      "medium": "GilroyMedium",
+      "regular": "GilroyRegular"
+    }
+  },
+  "palette": {
+    "colors": {
+      "black": "#000000",
+      "white": "#FFFFFF",
+      "logoBlue": "#396AF4",
+      "tagBlue": "#246EF0",
+      "linkBlue": "#0059F7"
+    }
+  }
+}
