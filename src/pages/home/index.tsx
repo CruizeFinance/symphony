@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Sprite, Typography } from '../../components'
 
@@ -13,9 +14,11 @@ const InfoArea = styled(Container)`
 `
 
 const Home = () => {
+  const navigate = useNavigate()
+
   return (
     <Container>
-      <Sprite id="homepage-logo" width={312} height={261} />
+      <Sprite id="homepage-computer-image" width={312} height={261} />
       <InfoArea>
         <Typography tag="h1" fontFamily="bold">
           Protect and earn from your assets
@@ -27,7 +30,7 @@ const Home = () => {
         >
           Save your assets from market volatility
         </Typography>
-        <Button borderRadius={10}>
+        <Button borderRadius={10} onClick={() => navigate('/protect')}>
           Protect your crypto
           <Sprite id="top-right-arrow" width={20} height={20} />
         </Button>

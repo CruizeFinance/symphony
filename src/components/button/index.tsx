@@ -16,8 +16,18 @@ const ButtonContainer = styled.button<StyleProps>`
   display: flex;
   align-items: center;
   gap: 10px;
-  border: none;
+  border: 1px solid ${STYLES.palette.colors.black};
   cursor: pointer;
+
+  &:hover {
+    background: ${STYLES.palette.colors.black};
+    border: 1px solid ${STYLES.palette.colors.white};
+    color: ${STYLES.palette.colors.white};
+
+    svg {
+      fill: ${STYLES.palette.colors.white};
+    }
+  }
 `
 
 interface ButtonProps extends StyleProps {

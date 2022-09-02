@@ -14,7 +14,9 @@
       "white": "#FFFFFF",
       "logoBlue": "#396AF4",
       "tagBlue": "#246EF0",
-      "linkBlue": "#0059F7"
+      "linkBlue": "#0059F7",
+      "modalBackdrop": "#00000080",
+      "modalBackground": "#232529"
     }
   }
 }
