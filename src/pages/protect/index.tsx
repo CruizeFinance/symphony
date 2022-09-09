@@ -3,12 +3,6 @@ import styled from 'styled-components'
 import ProtectCard from './ProtectCard'
 import GraphArea from './GraphArea'
 
-const ProtectPage = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 20px;
-`
 const Container = styled.div`
   display: flex;
   align-items: flex-start;

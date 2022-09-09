@@ -4,9 +4,11 @@ import React from 'react'
 import Routes from '../routes'
 import Footer from './Footer'
 import { useLocation } from 'react-router-dom'
+import STYLES from '../style/styles.json'
 
 const Container = styled.div`
   height: 100%;
+  font-family: ${STYLES.typography.fonts.regular};
 `
 const Content = styled.div`
   height: 100%;
