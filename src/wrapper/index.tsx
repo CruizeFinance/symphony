@@ -9,11 +9,9 @@ const Container = styled.div`
   height: 100%;
 `
 const Content = styled.div`
-  height: calc(100% - 120px);
-
-  > div {
-    height: 100%;
-  }
+  height: 100%;
+  overflow: auto;
+  padding: 120px 0 0;
 `
 
 const Wrapper = () => {
@@ -25,8 +23,8 @@ const Wrapper = () => {
       <Header location={pathnameArray[pathnameArray.length - 1]} />
       <Content>
         <Routes />
+        <Footer />
       </Content>
-      <Footer />
     </Container>
   )
 }

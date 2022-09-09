@@ -9,6 +9,8 @@ const Container = styled.div`
   padding: 30px 60px;
   border-top: 1px solid ${STYLES.palette.colors.white};
   background: ${STYLES.palette.colors.black};
+  position: sticky;
+  top: 100%;
 `
 
 const Section = styled.div`

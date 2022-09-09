@@ -10,7 +10,8 @@ import {
 
 const AppContainer = styled.div`
   height: 100%;
-  width: 100%;
+  max-width: 1600px;
+  margin: auto;
   background: ${STYLES.palette.colors.black};
 `
 

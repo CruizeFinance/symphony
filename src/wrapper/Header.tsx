@@ -2,9 +2,10 @@ import { ConnectKitButton } from 'connectkit'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Button, Sprite, Typography } from '../components'
-import Modal from '../components/modal'
+import { Modal } from '../components'
 import STYLES from '../style/styles.json'
 import { useAccount } from 'wagmi'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   position: fixed;
@@ -13,7 +14,9 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   width: -webkit-fill-available;
-  background-filter: blur(5px);
+  max-width: 1600px;
+  backdrop-filter: blur(5px);
+  z-index: 9999;
 `
 const LogoArea = styled.div`
   display: flex;
@@ -24,7 +27,7 @@ const Logo = styled.label`
   font-family: ${STYLES.typography.fonts.extraBold};
   color: ${STYLES.palette.colors.logoBlue};
   font-size: 32px;
-  cursor: default;
+  cursor: pointer;
 `
 const Page = styled.label`
   font-family: ${STYLES.typography.fonts.semiBold};
@@ -32,11 +35,6 @@ const Page = styled.label`
   font-size: 20px;
   cursor: default;
   text-transform: capitalize;
-`
-const FakeDiv = styled(Container)`
-  position: static;
-  height: 120px;
-  padding: 0px;
 `
 const ModalContent = styled(LogoArea)`
   justify-content: center;
@@ -50,7 +48,8 @@ interface HeaderProps {
 
 const Header = ({ location }: HeaderProps) => {
   const [openConnectedModal, setOpenConnectedModal] = useState<boolean>(false)
-  const { isConnected } = useAccount();
+  const { isConnected } = useAccount()
+  const navigate = useNavigate()
 
   const hideModal = () => {
     const timeout = setTimeout(() => {
@@ -70,7 +69,7 @@ const Header = ({ location }: HeaderProps) => {
     <>
       <Container>
         <LogoArea>
-          <Logo>Cruize</Logo>
+          <Logo onClick={() => navigate('/')}>Cruize</Logo>
           {location ? <Page>{location}</Page> : null}
         </LogoArea>
 
@@ -91,7 +90,6 @@ const Header = ({ location }: HeaderProps) => {
           }}
         </ConnectKitButton.Custom>
       </Container>
-      <FakeDiv />
       <Modal open={openConnectedModal}>
         <ModalContent>
           <Sprite id="wallet-connected-icon" width={120} height={120} />

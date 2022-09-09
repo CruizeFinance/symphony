@@ -10,13 +10,21 @@
   },
   "palette": {
     "colors": {
+      "green": "#30C952",
+      "unfilledTabFont": "#6B7280",
       "black": "#000000",
       "white": "#FFFFFF",
       "logoBlue": "#396AF4",
-      "tagBlue": "#246EF0",
+      "tagBlue": "#246ef06e",
+      "maxButtonFont": "#246ef0",
       "linkBlue": "#0059F7",
       "modalBackdrop": "#00000080",
-      "modalBackground": "#232529"
+      "modalBackground": "#232529",
+      "cardBackground": "#141416",
+      "inputLabel": "#454545",
+      "inputBackground": "#0F0F10",
+      "assetBackground": "#191721",
+      "dividerStroke": "#333537"
     }
   }
 }
