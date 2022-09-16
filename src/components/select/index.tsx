@@ -1,28 +1,28 @@
 import { useState } from 'react'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import Sprite from '../sprite'
-import Typography from '../typography'
+import { Sprite, Typography } from '..'
+import { vw } from '../../utils'
 
 const AssetDetails = styled.div`
   background: ${STYLES.palette.colors.assetBackground};
-  padding: 4px 8px;
-  border-radius: 100px;
+  padding: ${vw(4)} ${vw(8)};
+  border-radius: ${vw(100)};
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: ${vw(10)};
   cursor: pointer;
   position: relative;
 `
 const Options = styled.div`
-  max-width: 300px;
+  max-width: ${vw(300)};
   background: ${STYLES.palette.colors.modalBackground};
   position: absolute;
-  max-height: 250px;
+  max-height: ${vw(250)};
   overflow-y: scroll;
   z-index: 9;
-  border-radius: 8px;
-  top: 40px;
+  border-radius: ${vw(8)};
+  top: ${vw(40)};
   left: 0;
 `
 const Option = styled.div`
@@ -30,10 +30,10 @@ const Option = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding: 4px 8px;
+  padding: ${vw(4)} ${vw(8)};
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: ${vw(10)};
   filter: brightness(60%);
 
   &:hover {
@@ -53,7 +53,12 @@ interface SelectOptions {
   optionsStyle?: React.CSSProperties
 }
 
-const Select = ({ options, onChange, pickerStyle, optionsStyle }: SelectOptions) => {
+const Select = ({
+  options,
+  onChange,
+  pickerStyle,
+  optionsStyle,
+}: SelectOptions) => {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedOption, setSelectedOption] = useState<Option>({
     icon: options[0].icon,
@@ -66,11 +71,17 @@ const Select = ({ options, onChange, pickerStyle, optionsStyle }: SelectOptions)
   }
 
   return (
-    <AssetDetails onClick={() => setShowOptions(!showOptions)} style={{ ...pickerStyle }}>
+    <AssetDetails
+      onClick={() => setShowOptions(!showOptions)}
+      style={{ ...pickerStyle }}
+    >
       {selectedOption?.icon ? (
         <Sprite id={selectedOption.icon} width={25} height={25} />
       ) : null}
-      <Typography fontFamily="semiBold" style={{ fontSize: '24px' }}>
+      <Typography
+        fontFamily="semiBold"
+        style={{ fontSize: vw(pickerStyle?.fontSize || 24) }}
+      >
         {selectedOption.label}
       </Typography>
       <Sprite
@@ -91,7 +102,10 @@ const Select = ({ options, onChange, pickerStyle, optionsStyle }: SelectOptions)
               {option.icon ? (
                 <Sprite id={option.icon} height={20} width={20} />
               ) : null}
-              <Typography fontFamily="regular" style={{ fontSize: '20px' }}>
+              <Typography
+                fontFamily="regular"
+                style={{ fontSize: vw(optionsStyle?.fontSize || 20) }}
+              >
                 {option.label}
               </Typography>
             </Option>

@@ -14,20 +14,13 @@ const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   width: -webkit-fill-available;
-  max-width: 1600px;
   backdrop-filter: blur(5px);
   z-index: 9999;
 `
 const LogoArea = styled.div`
   display: flex;
   align-items: center;
-  gap: 40px;
-`
-const Logo = styled.label`
-  font-family: ${STYLES.typography.fonts.extraBold};
-  color: ${STYLES.palette.colors.logoBlue};
-  font-size: 32px;
-  cursor: pointer;
+  gap: 36px;
 `
 const Page = styled.label`
   font-family: ${STYLES.typography.fonts.semiBold};
@@ -69,7 +62,15 @@ const Header = ({ location }: HeaderProps) => {
     <>
       <Container>
         <LogoArea>
-          <Logo onClick={() => navigate('/')}>Cruize</Logo>
+          <Typography
+            fontFamily="extraBold"
+            tag="h1"
+            color={STYLES.palette.colors.logoBlue}
+            onClick={() => navigate('/')}
+            style={{ cursor: 'pointer' }}
+          >
+            Cruize
+          </Typography>
           {location ? <Page>{location}</Page> : null}
         </LogoArea>
 

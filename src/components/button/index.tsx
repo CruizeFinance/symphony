@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import Sprite from '../sprite'
+import { vw } from '../../utils'
+import { Sprite } from '..'
 
 interface StyleProps {
   borderRadius?: number
@@ -8,21 +9,21 @@ interface StyleProps {
 
 const ButtonContainer = styled.button<StyleProps>`
   border-radius: ${(props) =>
-    props.borderRadius ? `${props.borderRadius}px` : '100px'};
-  padding: 16px 32px;
+    props.borderRadius ? `${vw(props.borderRadius)}` : vw(100)};
+  padding: ${vw(16)} ${vw(32)};
   font-family: ${STYLES.typography.fonts.semiBold};
-  font-size: 16px;
+  font-size: ${vw(16)};
   color: ${STYLES.palette.colors.black};
   background: ${STYLES.palette.colors.white};
   display: flex;
   align-items: center;
-  gap: 10px;
-  border: 1px solid ${STYLES.palette.colors.black};
+  gap: ${vw(10)};
+  border: ${vw(1)} solid ${STYLES.palette.colors.black};
   cursor: pointer;
 
   &:hover {
     background: ${STYLES.palette.colors.black};
-    border: 1px solid ${STYLES.palette.colors.white};
+    border: ${vw(1)} solid ${STYLES.palette.colors.white};
     color: ${STYLES.palette.colors.white};
 
     svg {
@@ -34,13 +35,13 @@ const ButtonContainer = styled.button<StyleProps>`
 const ProtectButton = styled(ButtonContainer)`
   background: ${STYLES.palette.colors.logoBlue};
   color: ${STYLES.palette.colors.white};
-  border: 1px solid ${STYLES.palette.colors.logoBlue};
+  border: ${vw(1)} solid ${STYLES.palette.colors.logoBlue};
   padding: 0px;
   width: 100%;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: ${vw(8)};
   position: relative;
-  min-height: 48px;
+  min-height: ${vw(48)};
 
   &:hover {
     background: ${STYLES.palette.colors.logoBlue};
@@ -55,7 +56,13 @@ interface ButtonProps extends StyleProps {
   buttonType?: 'protect-small' | 'protect'
 }
 
-const Button = ({ children, onClick, borderRadius, style,  buttonType }: ButtonProps) => {
+const Button = ({
+  children,
+  onClick,
+  borderRadius,
+  style,
+  buttonType,
+}: ButtonProps) => {
   switch (buttonType) {
     case 'protect':
       return (
@@ -65,7 +72,12 @@ const Button = ({ children, onClick, borderRadius, style,  buttonType }: ButtonP
           style={{ ...style }}
         >
           {children}
-          <Sprite id='protect-button-svg' height={48} width={61} style={{ position: 'absolute', right: '10px' }} />
+          <Sprite
+            id="protect-button-svg"
+            height={48}
+            width={61}
+            style={{ position: 'absolute', right: vw(10) }}
+          />
         </ProtectButton>
       )
     default:
@@ -79,7 +91,6 @@ const Button = ({ children, onClick, borderRadius, style,  buttonType }: ButtonP
         </ButtonContainer>
       )
   }
-  
 }
 
 export default Button

@@ -9,11 +9,16 @@ import STYLES from '../style/styles.json'
 const Container = styled.div`
   height: 100%;
   font-family: ${STYLES.typography.fonts.regular};
+  overflow: auto;
 `
 const Content = styled.div`
-  height: 100%;
-  overflow: auto;
-  padding: 120px 0 0;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+const FakeDiv = styled.div`
+  height: 120px;
 `
 
 const Wrapper = () => {
@@ -23,10 +28,11 @@ const Wrapper = () => {
   return (
     <Container>
       <Header location={pathnameArray[pathnameArray.length - 1]} />
+      <FakeDiv />
       <Content>
         <Routes />
-        <Footer />
       </Content>
+      <Footer />
     </Container>
   )
 }

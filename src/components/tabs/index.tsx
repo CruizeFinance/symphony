@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import Typography from '../typography'
+import { Typography } from '..'
+import { vw } from '../../utils'
 
 interface StyleProps {
   selected?: boolean
@@ -11,34 +12,34 @@ const OutlinedContainer = styled.div`
   display: inline-flex;
 `
 const OutlinedTab = styled.div<StyleProps>`
-  padding: 16px 48px;
-  border-bottom: 4px solid ${STYLES.palette.colors.white};
+  padding: ${vw(16)} ${vw(48)};
+  border-bottom: ${vw(4)} solid ${STYLES.palette.colors.white};
   filter: brightness(${(props) => (props.selected ? '100%' : '40%')});
   cursor: pointer;
 
   label {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: ${vw(10)};
   }
 `
 const ContainedContainer = styled(OutlinedContainer)`
-  border-radius: 16px;
+  border-radius: ${vw(16)};
   background: ${STYLES.palette.colors.modalBackground};
 `
 const ContainedTab = styled(OutlinedTab)`
   border: ${(props) =>
-    props.selected ? `1px solid ${STYLES.palette.colors.white}` : 'none'};
-  border-radius: 16px;
-  padding: 16px 32px;
+    props.selected ? `${vw(1)} solid ${STYLES.palette.colors.white}` : 'none'};
+  border-radius: ${vw(16)};
+  padding: ${vw(16)} ${vw(32)};
   filter: brightness(${(props) => (props.selected ? '60%' : '30%')});
 `
 const FilledTab = styled.div<StyleProps>`
-  border-radius: 6px;
-  margin: 0px 4px;
-  padding: 4px;
+  border-radius: ${vw(6)};
+  margin: ${vw(0)} ${vw(4)};
+  padding: ${vw(4)};
   border: ${(props) =>
-    props.selected ? `1px solid ${STYLES.palette.colors.white}` : 'none'};
+    props.selected ? `${vw(1)} solid ${STYLES.palette.colors.white}` : 'none'};
   background: ${(props) =>
     props.selected
       ? STYLES.palette.colors.white
@@ -65,11 +66,18 @@ interface TabsProps extends StyleProps {
   onClick: (tab: React.ReactNode) => void
   type?: 'outlined' | 'filled' | 'contained'
   fontFamily?: 'extraBold' | 'bold' | 'semiBold' | 'medium' | 'regular'
-  containerStyle?: React.CSSProperties;
-  tabStyle?: React.CSSProperties;
+  containerStyle?: React.CSSProperties
+  tabStyle?: React.CSSProperties
 }
 
-const Tabs = ({ onClick, type, tabs, fontFamily, containerStyle, tabStyle }: TabsProps) => {
+const Tabs = ({
+  onClick,
+  type,
+  tabs,
+  fontFamily,
+  containerStyle,
+  tabStyle,
+}: TabsProps) => {
   const [selectedTab, setSelectedTab] = useState<string>(tabs[0].label || '')
 
   const onTabClicked = (tab: string) => {
@@ -91,7 +99,7 @@ const Tabs = ({ onClick, type, tabs, fontFamily, containerStyle, tabStyle }: Tab
               <Typography
                 tag="label"
                 fontFamily={fontFamily || 'semiBold'}
-                style={{ fontSize: '16px' }}
+                style={{ fontSize: vw(tabStyle?.fontSize || 16) }}
               >
                 {tab.label}
                 {tab.icon}
@@ -113,7 +121,7 @@ const Tabs = ({ onClick, type, tabs, fontFamily, containerStyle, tabStyle }: Tab
               <Typography
                 tag="label"
                 fontFamily={fontFamily || 'semiBold'}
-                style={{ fontSize: '16px' }}
+                style={{ fontSize: vw(tabStyle?.fontSize || 16) }}
               >
                 {tab.label}
                 {tab.icon}
@@ -130,12 +138,12 @@ const Tabs = ({ onClick, type, tabs, fontFamily, containerStyle, tabStyle }: Tab
               key={`${tab} - ${index}`}
               selected={selectedTab === tab.label}
               onClick={() => onTabClicked(tab.label)}
-              style={{ ...tabStyle }}
+              style={{ fontSize: vw(tabStyle?.fontSize || 16) }}
             >
               <Typography
                 tag="label"
                 fontFamily={fontFamily || 'bold'}
-                style={{ fontSize: '22px' }}
+                style={{ fontSize: vw(22) }}
               >
                 {tab.label}
                 {tab.icon}

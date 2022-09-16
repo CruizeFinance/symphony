@@ -1,22 +1,22 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import Select from '../select'
-import Typography from '../typography'
+import { vw } from '../../utils'
+import {Select, Typography} from '..'
 
 const InputArea = styled.div`
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
-  gap: 10px;
+  gap: ${vw(8)};
   width: 100%;
 `
 const InputContainer = styled.div`
   background: ${STYLES.palette.colors.inputBackground};
-  border: 1px solid ${STYLES.palette.colors.inputLabel};
-  border-radius: 8px;
-  padding: 12px 16px 8px;
+  border: ${vw(1)} solid ${STYLES.palette.colors.inputLabel};
+  border-radius: ${vw(8)};
+  padding: ${vw(12)} ${vw(16)} ${vw(8)};
   width: 100%;
-  display: flex;
+  display: -webkit-box;
   align-items: center;
   justify-content: space-between;
 `
@@ -24,13 +24,12 @@ const InputSection = styled.div`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
-  gap: 10px;
 `
 const InputField = styled.input`
   width: -webkit-fill-available;
   border: none;
   background: inherit;
-  font-size: 16px;
+  font-size: ${vw(20)};
   color: ${STYLES.palette.colors.white};
 
   &:focus-visible {
@@ -38,14 +37,14 @@ const InputField = styled.input`
   }
 `
 const MaxButton = styled.button`
-  margin-left: 4px;
+  margin-left: ${vw(4)};
   border: none;
-  padding: 1px 4px;
+  padding: ${vw(1)} ${vw(4)};
   background: ${STYLES.palette.colors.tagBlue};
   filter: brightness(43%);
   cursor: pointer;
   color: ${STYLES.palette.colors.maxButtonFont};
-  border-radius: 4px;
+  border-radius: ${vw(4)};
 `
 const AssetSection = styled(InputSection)`
   align-items: flex-end;
@@ -83,7 +82,7 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
           tag="p"
           fontFamily="bold"
           style={{
-            fontSize: '16px',
+            fontSize: vw(16),
             color: STYLES.palette.colors.inputLabel,
           }}
         >
@@ -97,7 +96,7 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
             tag="p"
             fontFamily="medium"
             style={{
-              fontSize: '12px',
+              fontSize: vw(12),
               color: STYLES.palette.colors.inputLabel,
             }}
           >
@@ -115,7 +114,7 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
             tag="p"
             fontFamily="medium"
             style={{
-              fontSize: '12px',
+              fontSize: vw(12),
               color: STYLES.palette.colors.inputLabel,
             }}
           >

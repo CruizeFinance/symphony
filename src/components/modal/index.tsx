@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
+import { vw } from '../../utils'
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -15,11 +16,11 @@ const ModalContainer = styled.div`
 `
 
 const ModalContent = styled.div`
-  padding: 24px;
-  min-width: 300px;
+  padding: ${vw(24)};
+  min-width: ${vw(300)};
   max-width: 100%;
   background-color: ${STYLES.palette.colors.modalBackground};
-  border-radius: 8px;
+  border-radius: ${vw(8)};
 `
 
 interface ModalProps {

@@ -1,16 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Sprite, Typography } from '../../components'
+import { vw } from '../../utils'
 
 const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: 40px;
+  gap: ${vw(40)};
 `
 const InfoArea = styled(Container)`
-  gap: 10px;
+gap: ${vw(10)};
 `
 
 const Home = () => {
