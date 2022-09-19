@@ -28,6 +28,7 @@ interface ModalProps {
   open: boolean
   hide?: () => void
   children: React.ReactNode
+  modalStyle?: React.CSSProperties
   modalContentStyle?: React.CSSProperties
 }
 

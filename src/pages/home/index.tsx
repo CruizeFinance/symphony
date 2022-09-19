@@ -10,14 +10,14 @@ const Container = styled.div`
   flex-direction: column;
   gap: ${vw(40)};
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     padding: ${vw(20)} ${vw(16)};
   }
 `
 const InfoArea = styled(Container)`
   gap: ${vw(10)};
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     text-align: center;
   }
 `

@@ -24,7 +24,7 @@ const AssetSection = styled.div`
   justify-content: space-between;
   width: 100%;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     flex-direction: column;
     align-items: flex-start;
     gap: ${vw(30)};
@@ -44,8 +44,8 @@ const ProtectRewardsInfo = styled.div`
   justify-content: center;
   gap: ${vw(20)};
 
-  @media only screen and (max-width: 500px) {
-    >svg {
+  @media only screen and (max-width: 1024px) {
+    > svg {
       display: none;
     }
   }
@@ -124,14 +124,14 @@ const GraphArea = () => {
             onChange={(val) => console.log(val)}
             pickerStyle={{
               background: 'inherit',
-              fontSize: '32px',
               padding: '0px',
             }}
             labelStyle={{
+              fontSize: '32px',
               width: '15ch',
               overflow: 'hidden',
               whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis'
+              textOverflow: 'ellipsis',
             }}
           />
           <Typography tag="h1" style={{ filter: 'brightness(40%)' }}>
@@ -161,7 +161,15 @@ const GraphArea = () => {
           type="contained"
         />
       </AssetSection>
-      <ResponsiveContainer minHeight={window.innerWidth <= 500 ? 300 : 400}>
+      <ResponsiveContainer
+        minHeight={
+          window.innerWidth <= 800
+            ? 300
+            : window.innerWidth === 1024
+            ? 350
+            : 400
+        }
+      >
         <AreaChart data={data} style={{ position: 'relative', right: '10px' }}>
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">

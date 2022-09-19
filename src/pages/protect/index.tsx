@@ -12,13 +12,13 @@ const Container = styled.div`
   color: ${STYLES.palette.colors.white};
   padding: ${vw(30)} ${vw(60)};
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     padding: ${vw(20)} ${vw(16)};
   }
 `
 const ProtectArea = styled.div`
   display: block;
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     display: none;
   }
 `

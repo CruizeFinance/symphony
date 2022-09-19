@@ -24,6 +24,10 @@ const ProtectArea = styled.div`
   max-width: ${vw(450)};
   position: sticky;
   top: ${vw(120)};
+
+  @media only screen and (max-width: 1024px) {
+    padding: ${vw(20)} ${vw(16)};
+  }
 `
 const DetailArea = styled.div`
   display: flex;

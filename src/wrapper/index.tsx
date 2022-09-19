@@ -21,7 +21,7 @@ const Content = styled.div`
 const FakeDiv = styled.div`
   height: ${vw(120)};
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     height: ${vw(80)};
   }
 `

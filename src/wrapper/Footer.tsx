@@ -13,7 +13,7 @@ const Container = styled.div`
   position: sticky;
   top: 100%;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     padding: ${vw(48)} ${vw(16)} ${vw(16)};
   }
 `
@@ -23,7 +23,7 @@ const Links = styled.div`
   align-items: center;
   justify-content: space-between;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     align-items: flex-start;
     justify-content: flex-start;
     gap: 48px;
@@ -39,7 +39,7 @@ const Section = styled.div`
     display: none;
   }
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     flex-direction: column;
     align-items: flex-start;
     gap: ${vw(12)};
@@ -65,7 +65,7 @@ const Section = styled.div`
 const MobileArea = styled.div`
   display: none;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     display: flex;
     margin: ${vw(48)} 0 0;
     flex-direction: column;
@@ -76,7 +76,7 @@ const MobileArea = styled.div`
 const ProtectArea = styled.div`
   display: none;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     display: contents;
   }
 `
@@ -94,7 +94,7 @@ const ProtectPad = styled.div`
 const FakeFooter = styled.div`
   display: none;
 
-  @media only screen and (max-width: 500px) {
+  @media only screen and (max-width: 1024px) {
     display: block;
     height: ${vw(80)};
     width: 100%;

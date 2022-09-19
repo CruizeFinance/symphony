@@ -24,7 +24,8 @@
       "inputLabel": "#454545",
       "inputBackground": "#0F0F10",
       "assetBackground": "#191721",
-      "dividerStroke": "#333537"
+      "dividerStroke": "#333537",
+      "notificationBackground": "#131416"
     }
   }
 }

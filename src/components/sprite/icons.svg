@@ -647,5 +647,55 @@
     </defs>
     </symbol>
 
+    <symbol viewBox="0 0 16 16" fill="none" id="protect-icon">
+    <path
+      d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z"
+      stroke="#30C952"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M5.88086 8.38123L7.99961 10.5L10.1184 8.38123"
+      stroke="#30C952"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M8 5.5V10.5"
+      stroke="#30C952"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    </symbol>
+
+    <symbol viewBox="0 0 16 16" fill="none" id="withdraw-icon">
+    <path
+      d="M8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2Z"
+      stroke="#FF0000"
+      stroke-opacity="0.34"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M10.1191 7.61877L8.00039 5.50002L5.88164 7.61877"
+      stroke="#FF0000"
+      stroke-opacity="0.34"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M8 10.5L8 5.5"
+      stroke="#FF0000"
+      stroke-opacity="0.34"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    </symbol>
+
+    <symbol viewBox="0 0 12 12" fill="none" id="redirect-icon">
+    <path d="M10.125 4.6875V1.875H7.3125" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M6.75 5.25L10.125 1.875" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8.625 6.75V9.75C8.625 9.84946 8.58549 9.94484 8.51517 10.0152C8.44484 10.0855 8.34946 10.125 8.25 10.125H2.25C2.15054 10.125 2.05516 10.0855 1.98484 10.0152C1.91451 9.94484 1.875 9.84946 1.875 9.75V3.75C1.875 3.65054 1.91451 3.55516 1.98484 3.48484C2.05516 3.41451 2.15054 3.375 2.25 3.375H5.25" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
 
 </svg>

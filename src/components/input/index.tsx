@@ -24,6 +24,7 @@ const InputSection = styled.div`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  width: 50%;
 `
 const InputField = styled.input`
   width: -webkit-fill-available;
