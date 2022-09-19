@@ -89,6 +89,7 @@ interface TypographyProps extends StyleProps {
   href?: string
   openInNewTab?: boolean
   onClick?: () => void
+  id?: string
 }
 
 const Typography = ({
@@ -100,6 +101,7 @@ const Typography = ({
   color,
   openInNewTab,
   onClick,
+  id
 }: TypographyProps) => {
   switch (tag) {
     case 'h1':
@@ -109,6 +111,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </H1>
@@ -120,6 +123,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </H2>
@@ -131,6 +135,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </H3>
@@ -142,6 +147,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </H4>
@@ -153,6 +159,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </H5>
@@ -164,6 +171,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </H6>
@@ -175,6 +183,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </Label>
@@ -189,6 +198,7 @@ const Typography = ({
           {...(openInNewTab ? { target: '_blank' } : undefined)}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </A>
@@ -200,6 +210,7 @@ const Typography = ({
           style={{ ...style }}
           color={color}
           onClick={onClick}
+          id={id}
         >
           {children}
         </P>

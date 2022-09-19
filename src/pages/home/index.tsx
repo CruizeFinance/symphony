@@ -9,9 +9,17 @@ const Container = styled.div`
   justify-content: center;
   flex-direction: column;
   gap: ${vw(40)};
+
+  @media only screen and (max-width: 500px) {
+    padding: ${vw(20)} ${vw(16)};
+  }
 `
 const InfoArea = styled(Container)`
-gap: ${vw(10)};
+  gap: ${vw(10)};
+
+  @media only screen and (max-width: 500px) {
+    text-align: center;
+  }
 `
 
 const Home = () => {

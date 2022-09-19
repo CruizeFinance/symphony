@@ -23,6 +23,12 @@ const AssetSection = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
+
+  @media only screen and (max-width: 500px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${vw(30)};
+  }
 `
 const DropdownArea = styled(GraphContainer)`
   align-items: flex-start;
@@ -37,6 +43,12 @@ const ProtectRewardsInfo = styled.div`
   align-items: center;
   justify-content: center;
   gap: ${vw(20)};
+
+  @media only screen and (max-width: 500px) {
+    >svg {
+      display: none;
+    }
+  }
 `
 const ProtectRewardsContent = styled.div`
   display: flex;
@@ -115,13 +127,19 @@ const GraphArea = () => {
               fontSize: '32px',
               padding: '0px',
             }}
+            labelStyle={{
+              width: '15ch',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis'
+            }}
           />
           <Typography tag="h1" style={{ filter: 'brightness(40%)' }}>
             $1,566.00&nbsp;
             <Typography
               tag="label"
               color={STYLES.palette.colors.green}
-              style={{ fontSize: '16px', filter: 'brightness(100%)' }}
+              style={{ filter: 'brightness(100%)' }}
             >
               +23%&nbsp;
               <Typography tag="label">(24h)</Typography>
@@ -143,8 +161,8 @@ const GraphArea = () => {
           type="contained"
         />
       </AssetSection>
-      <ResponsiveContainer minHeight={400}>
-        <AreaChart data={data}>
+      <ResponsiveContainer minHeight={window.innerWidth <= 500 ? 300 : 400}>
+        <AreaChart data={data} style={{ position: 'relative', right: '10px' }}>
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />

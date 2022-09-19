@@ -1,38 +1,62 @@
 import { ConnectKitButton } from 'connectkit'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Sprite, Typography } from '../components'
+import { Button, Select, Sprite, Typography } from '../components'
 import { Modal } from '../components'
 import STYLES from '../style/styles.json'
 import { useAccount } from 'wagmi'
 import { useNavigate } from 'react-router-dom'
+import { vw } from '../utils'
 
 const Container = styled.div`
   position: fixed;
-  padding: 30px 60px;
+  padding: ${vw(30)} ${vw(60)};
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: -webkit-fill-available;
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(${vw(8)});
   z-index: 9999;
+
+  @media only screen and (max-width: 500px) {
+    padding: ${vw(16)};
+  }
 `
 const LogoArea = styled.div`
   display: flex;
   align-items: center;
-  gap: 36px;
+  gap: ${vw(36)};
+`
+const DesktopArea = styled(LogoArea)`
+  gap: ${vw(10)};
+
+  @media only screen and (max-width: 500px) {
+    display: none;
+  }
 `
 const Page = styled.label`
   font-family: ${STYLES.typography.fonts.semiBold};
   color: ${STYLES.palette.colors.white};
-  font-size: 20px;
+  font-size: ${vw(20)};
   cursor: default;
   text-transform: capitalize;
+
+  @media only screen and (max-width: 500px) {
+    display: none;
+  }
 `
 const ModalContent = styled(LogoArea)`
   justify-content: center;
   flex-direction: column;
-  gap: 10px;
+  gap: ${vw(10)};
+`
+
+const Hamburger = styled.div`
+  display: none;
+
+  @media only screen and (max-width: 500px) {
+    display: block;
+  }
 `
 
 interface HeaderProps {
@@ -73,23 +97,37 @@ const Header = ({ location }: HeaderProps) => {
           </Typography>
           {location ? <Page>{location}</Page> : null}
         </LogoArea>
-
-        <ConnectKitButton.Custom>
-          {({ isConnected, show, truncatedAddress, ensName }) => {
-            return (
-              <Button onClick={show}>
-                {isConnected ? (
-                  ensName ?? truncatedAddress
-                ) : (
-                  <>
-                    <Sprite id="connect-wallet-black" width={20} height={20} />
-                    Connect
-                  </>
-                )}
-              </Button>
-            )
-          }}
-        </ConnectKitButton.Custom>
+        <DesktopArea>
+          <Sprite id="notifications-icon" width={42} height={42} />
+          <Select
+            onChange={(val) => console.log(val)}
+            options={[{ label: 'Ethereum', icon: 'eth-asset-icon' }]}
+            labelStyle={{ fontSize: 16 }}
+          />
+          <ConnectKitButton.Custom>
+            {({ isConnected, show, truncatedAddress, ensName }) => {
+              return (
+                <Button onClick={show}>
+                  {isConnected ? (
+                    ensName ?? truncatedAddress
+                  ) : (
+                    <>
+                      <Sprite
+                        id="connect-wallet-black"
+                        width={20}
+                        height={20}
+                      />
+                      Connect
+                    </>
+                  )}
+                </Button>
+              )
+            }}
+          </ConnectKitButton.Custom>
+        </DesktopArea>
+        <Hamburger onClick={() => console.log('test')}>
+          <Sprite id="hamburger-icon" height={24} width={24} />
+        </Hamburger>
       </Container>
       <Modal open={openConnectedModal}>
         <ModalContent>
@@ -97,7 +135,7 @@ const Header = ({ location }: HeaderProps) => {
           <Typography
             tag="label"
             fontFamily="medium"
-            style={{ fontSize: '18px' }}
+            style={{ fontSize: vw(18) }}
           >
             Connected
           </Typography>

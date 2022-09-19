@@ -9,6 +9,7 @@ const ModalContainer = styled.div`
   right: 0;
   bottom: 0;
   background-color: ${STYLES.palette.colors.modalBackdrop};
+  backdrop-filter: blur(${vw(8)});
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,14 +28,15 @@ interface ModalProps {
   open: boolean
   hide?: () => void
   children: React.ReactNode
+  modalContentStyle?: React.CSSProperties
 }
 
-const Modal = ({ open, hide, children }: ModalProps) => {
+const Modal = ({ open, hide, children, modalContentStyle }: ModalProps) => {
   if (!open) return null
 
   return (
     <ModalContainer onClick={hide}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
+      <ModalContent onClick={(e) => e.stopPropagation()} style={{ ...modalContentStyle }}>
         {children}
       </ModalContent>
     </ModalContainer>

@@ -11,14 +11,26 @@ const Container = styled.div`
   gap: ${vw(64)};
   color: ${STYLES.palette.colors.white};
   padding: ${vw(30)} ${vw(60)};
+
+  @media only screen and (max-width: 500px) {
+    padding: ${vw(20)} ${vw(16)};
+  }
+`
+const ProtectArea = styled.div`
+  display: block;
+  @media only screen and (max-width: 500px) {
+    display: none;
+  }
 `
 
 const Protect = () => {
   return (
-      <Container>
-        <GraphArea />
+    <Container>
+      <GraphArea />
+      <ProtectArea>
         <ProtectCard />
-      </Container>
+      </ProtectArea>
+    </Container>
   )
 }
 

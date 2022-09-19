@@ -51,6 +51,7 @@ interface SelectOptions {
   onChange: (val: string) => void
   pickerStyle?: React.CSSProperties
   optionsStyle?: React.CSSProperties
+  labelStyle?: React.CSSProperties
 }
 
 const Select = ({
@@ -58,6 +59,7 @@ const Select = ({
   onChange,
   pickerStyle,
   optionsStyle,
+  labelStyle
 }: SelectOptions) => {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedOption, setSelectedOption] = useState<Option>({
@@ -80,7 +82,7 @@ const Select = ({
       ) : null}
       <Typography
         fontFamily="semiBold"
-        style={{ fontSize: vw(pickerStyle?.fontSize || 24) }}
+        style={{ ...labelStyle, fontSize: vw(labelStyle?.fontSize || 24) }}
       >
         {selectedOption.label}
       </Typography>

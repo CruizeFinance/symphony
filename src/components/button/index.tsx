@@ -80,6 +80,16 @@ const Button = ({
           />
         </ProtectButton>
       )
+    case 'protect-small':
+      return (
+        <ProtectButton
+          onClick={onClick}
+          borderRadius={borderRadius}
+          style={{ ...style }}
+        >
+          {children}
+        </ProtectButton>
+      )
     default:
       return (
         <ButtonContainer

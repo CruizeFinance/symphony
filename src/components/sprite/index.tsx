@@ -6,16 +6,18 @@ interface SpriteProps {
     width: number,
     id: string,
     style?: React.CSSProperties,
-    className?: string
+    className?: string,
+    onClick?: () => void
 }
 
-const Sprite = ({ height, width, style, className, id }: SpriteProps) => {
+const Sprite = ({ height, width, style, className, id, onClick }: SpriteProps) => {
     return <svg
       height={vw(height)}
       width={vw(width)}
       viewBox={`0 0 ${width} ${height}`}
       style={{ ...style }}
       className={className || ""}
+      onClick={onClick}
     >
       <use href={`${sprite}#${id}`} />
     </svg>

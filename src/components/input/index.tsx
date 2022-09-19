@@ -109,6 +109,12 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
             onChange={(val) => {
               console.log(val)
             }}
+            labelStyle={{
+              width: '4ch',
+              overflow: 'hidden',
+              whiteSpace: 'nowrap',
+              textOverflow: 'ellipsis'
+            }}
           />
           <Typography
             tag="p"
