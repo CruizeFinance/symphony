@@ -1,20 +1,20 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { vw } from '../../utils'
-import {Select, Typography} from '..'
+import { rem } from '../../utils'
+import { Select, Typography } from '..'
 
 const InputArea = styled.div`
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
-  gap: ${vw(8)};
+  gap: ${rem(8)};
   width: 100%;
 `
 const InputContainer = styled.div`
   background: ${STYLES.palette.colors.inputBackground};
-  border: ${vw(1)} solid ${STYLES.palette.colors.inputLabel};
-  border-radius: ${vw(8)};
-  padding: ${vw(12)} ${vw(16)} ${vw(8)};
+  border: ${rem(1)} solid ${STYLES.palette.colors.inputLabel};
+  border-radius: ${rem(8)};
+  padding: ${rem(12)} ${rem(16)} ${rem(8)};
   width: 100%;
   display: -webkit-box;
   align-items: center;
@@ -30,7 +30,7 @@ const InputField = styled.input`
   width: -webkit-fill-available;
   border: none;
   background: inherit;
-  font-size: ${vw(20)};
+  font-size: ${rem(20)};
   color: ${STYLES.palette.colors.white};
 
   &:focus-visible {
@@ -38,17 +38,18 @@ const InputField = styled.input`
   }
 `
 const MaxButton = styled.button`
-  margin-left: ${vw(4)};
+  margin-left: ${rem(4)};
   border: none;
-  padding: ${vw(1)} ${vw(4)};
+  padding: ${rem(1)} ${rem(4)};
   background: ${STYLES.palette.colors.tagBlue};
   filter: brightness(43%);
   cursor: pointer;
   color: ${STYLES.palette.colors.maxButtonFont};
-  border-radius: ${vw(4)};
+  border-radius: ${rem(4)};
 `
 const AssetSection = styled(InputSection)`
   align-items: flex-end;
+  gap: ${rem(8)};
 `
 
 interface InputFieldProps
@@ -58,9 +59,10 @@ interface InputFieldProps
   > {
   variant?: 'default' | 'asset'
   label?: string
+  error?: string
 }
 
-const Input = ({ variant, label, ...props }: InputFieldProps) => {
+const Input = ({ variant, label, error, ...props }: InputFieldProps) => {
   const options = [
     {
       label: 'ETH',
@@ -83,7 +85,7 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
           tag="p"
           fontFamily="bold"
           style={{
-            fontSize: vw(16),
+            fontSize: rem(16),
             color: STYLES.palette.colors.inputLabel,
           }}
         >
@@ -97,7 +99,7 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
             tag="p"
             fontFamily="medium"
             style={{
-              fontSize: vw(12),
+              fontSize: rem(12),
               color: STYLES.palette.colors.inputLabel,
             }}
           >
@@ -114,14 +116,14 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
               width: '4ch',
               overflow: 'hidden',
               whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis'
+              textOverflow: 'ellipsis',
             }}
           />
           <Typography
             tag="p"
             fontFamily="medium"
             style={{
-              fontSize: vw(12),
+              fontSize: rem(12),
               color: STYLES.palette.colors.inputLabel,
             }}
           >
@@ -130,6 +132,15 @@ const Input = ({ variant, label, ...props }: InputFieldProps) => {
           </Typography>
         </AssetSection>
       </InputContainer>
+      {error ? (
+        <Typography
+          color={STYLES.palette.colors.red}
+          style={{ fontSize: rem(12), width: '100%', textAlign: 'center' }}
+          fontFamily="medium"
+        >
+          {error}
+        </Typography>
+      ) : null}
     </InputArea>
   )
 }

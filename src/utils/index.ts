@@ -1,5 +1,6 @@
-export const vw = (px: number | string) => {
+/* Don't use this method for 'Letter Spacing', 'Box Shadow/Drop shadow' and 'Small Borders'. Use px directly for them. */
+export const rem = (px: number | string) => {
   return typeof px === 'number'
-    ? `${(100 * px) / window.innerWidth}vw`
-    : `${(100 * parseInt(px.split('px')[0])) / window.innerWidth}vw`
+    ? `${px / 16}rem`
+    : `${parseInt(px.split('px')[0]) / 16}rem`
 }

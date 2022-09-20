@@ -1,52 +1,65 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 import { Sprite } from '..'
 
-interface StyleProps {
+interface StyleProps
+  extends React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  > {
   borderRadius?: number
 }
 
 const ButtonContainer = styled.button<StyleProps>`
   border-radius: ${(props) =>
-    props.borderRadius ? `${vw(props.borderRadius)}` : vw(100)};
-  padding: ${vw(16)} ${vw(32)};
+    props.borderRadius ? `${rem(props.borderRadius)}` : rem(100)};
+  padding: ${rem(16)} ${rem(32)};
   font-family: ${STYLES.typography.fonts.semiBold};
-  font-size: ${vw(16)};
+  font-size: ${rem(16)};
   color: ${STYLES.palette.colors.black};
   background: ${STYLES.palette.colors.white};
   display: flex;
   align-items: center;
-  gap: ${vw(10)};
-  border: ${vw(1)} solid ${STYLES.palette.colors.black};
-  cursor: pointer;
+  justify-content: center;
+  gap: ${rem(10)};
+  border: ${rem(1)} solid ${STYLES.palette.colors.black};
+  filter: brightness(${(props) => (props.disabled ? '20%' : '100%')});
+  cursor: ${(props) => (props.disabled ? 'not-allowed' : 'pointer')};
 
-  &:hover {
+  ${(props) =>
+    !props.disabled
+      ? `&:hover {
     background: ${STYLES.palette.colors.black};
-    border: ${vw(1)} solid ${STYLES.palette.colors.white};
+    border: ${rem(1)} solid ${STYLES.palette.colors.white};
     color: ${STYLES.palette.colors.white};
 
     svg {
       fill: ${STYLES.palette.colors.white};
     }
-  }
+  }`
+      : ''}
 `
 
 const ProtectButton = styled(ButtonContainer)`
   background: ${STYLES.palette.colors.logoBlue};
   color: ${STYLES.palette.colors.white};
-  border: ${vw(1)} solid ${STYLES.palette.colors.logoBlue};
+  border: ${rem(1)} solid ${STYLES.palette.colors.logoBlue};
   padding: 0px;
   width: 100%;
   justify-content: center;
-  border-radius: ${vw(8)};
+  border-radius: ${(props) =>
+    props.borderRadius ? `${rem(props.borderRadius)}` : rem(100)};
   position: relative;
-  min-height: ${vw(48)};
+  min-height: ${rem(48)};
 
-  &:hover {
+  ${(props) =>
+    !props.disabled
+      ? `&:hover {
     background: ${STYLES.palette.colors.logoBlue};
     filter: brightness(1.2);
-  }
+  }`
+      : ''}
 `
 
 interface ButtonProps extends StyleProps {
@@ -62,30 +75,35 @@ const Button = ({
   borderRadius,
   style,
   buttonType,
+  disabled,
 }: ButtonProps) => {
+  console.log(children, disabled)
+
   switch (buttonType) {
     case 'protect':
       return (
         <ProtectButton
-          onClick={onClick}
+          {...(!disabled ? { onClick: onClick } : undefined)}
           borderRadius={borderRadius}
           style={{ ...style }}
+          disabled={disabled}
         >
           {children}
           <Sprite
             id="protect-button-svg"
             height={48}
             width={61}
-            style={{ position: 'absolute', right: vw(10) }}
+            style={{ position: 'absolute', right: rem(10) }}
           />
         </ProtectButton>
       )
     case 'protect-small':
       return (
         <ProtectButton
-          onClick={onClick}
+          {...(!disabled ? { onClick: onClick } : undefined)}
           borderRadius={borderRadius}
           style={{ ...style }}
+          disabled={disabled}
         >
           {children}
         </ProtectButton>
@@ -93,9 +111,10 @@ const Button = ({
     default:
       return (
         <ButtonContainer
-          onClick={onClick}
+          {...(!disabled ? { onClick: onClick } : undefined)}
           borderRadius={borderRadius}
           style={{ ...style }}
+          disabled={disabled}
         >
           {children}
         </ButtonContainer>

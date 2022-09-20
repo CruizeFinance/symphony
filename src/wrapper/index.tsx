@@ -5,7 +5,7 @@ import Routes from '../routes'
 import Footer from './Footer'
 import { useLocation } from 'react-router-dom'
 import STYLES from '../style/styles.json'
-import { vw } from '../utils'
+import { rem } from '../utils'
 
 const Container = styled.div`
   height: 100%;
@@ -19,10 +19,10 @@ const Content = styled.div`
   justify-content: center;
 `
 const FakeDiv = styled.div`
-  height: ${vw(120)};
+  height: ${rem(120)};
 
   @media only screen and (max-width: 1024px) {
-    height: ${vw(80)};
+    height: ${rem(80)};
   }
 `
 

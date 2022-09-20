@@ -2,24 +2,28 @@ import STYLES from '../../style/styles.json'
 import styled from 'styled-components'
 import ProtectCard from './ProtectCard'
 import GraphArea from './GraphArea'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 const Container = styled.div`
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  gap: ${vw(64)};
+  gap: ${rem(64)};
   color: ${STYLES.palette.colors.white};
-  padding: ${vw(30)} ${vw(60)};
+  padding: ${rem(30)} ${rem(60)};
 
   @media only screen and (max-width: 1024px) {
-    padding: ${vw(20)} ${vw(16)};
+    padding: ${rem(20)} ${rem(16)};
   }
 `
 const ProtectArea = styled.div`
   display: block;
+  position: sticky;
+  top: ${rem(120)};
   @media only screen and (max-width: 1024px) {
     display: none;
+    position: static;
+    top: '';
   }
 `
 

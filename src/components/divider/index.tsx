@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 import { Sprite, Typography } from '..'
 
 interface StyleProps {
@@ -19,7 +19,7 @@ const Container = styled.div<StyleProps>`
 
 const HR = styled.hr<StyleProps>`
   border: none;
-  border-top: ${(props) => (props.thickness ? `${vw(props.thickness)}` : vw(1))}
+  border-top: ${(props) => (props.thickness ? `${rem(props.thickness)}` : rem(1))}
     ${(props) => props.type || 'solid'}
     ${(props) => props.color || STYLES.palette.colors.dividerStroke};
   width: 100%;
@@ -43,14 +43,14 @@ const LabelContainer = styled.div<LabelOptions>`
   justify-content: ${(props) => props.labelAlign || 'left'};
 
   label {
-    padding: ${vw(4)} ${vw(16)};
+    padding: ${rem(4)} ${rem(16)};
     backdrop-filter: brightness(0);
-    border: ${vw(1)} solid
+    border: ${rem(1)} solid
       ${(props) => props.color || STYLES.palette.colors.dividerStroke};
-    border-radius: ${vw(4)};
+    border-radius: ${rem(4)};
     display: flex;
     align-items: center;
-    gap: ${vw(10)};
+    gap: ${rem(10)};
     cursor: ${(props) => (props.dropdown ? 'pointer' : 'default')};
   }
 `
@@ -78,7 +78,7 @@ const Divider = ({
             tag="label"
             fontFamily={labelOptions.fontFamily}
             color={labelOptions.color}
-            style={{ fontSize: vw(labelOptions.fontSize || 14) }}
+            style={{ fontSize: rem(labelOptions.fontSize || 14) }}
           >
             {labelOptions.label}
             {labelOptions.dropdown ? (

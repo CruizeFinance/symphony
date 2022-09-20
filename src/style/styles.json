@@ -25,7 +25,8 @@
       "inputBackground": "#0F0F10",
       "assetBackground": "#191721",
       "dividerStroke": "#333537",
-      "notificationBackground": "#131416"
+      "notificationBackground": "#131416",
+      "red": "#FF0000"
     }
   }
 }

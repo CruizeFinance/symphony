@@ -1,4 +1,4 @@
-import { vw } from '../../utils';
+import { rem } from '../../utils';
 import sprite from './icons.svg';
 
 interface SpriteProps {
@@ -12,8 +12,8 @@ interface SpriteProps {
 
 const Sprite = ({ height, width, style, className, id, onClick }: SpriteProps) => {
     return <svg
-      height={vw(height)}
-      width={vw(width)}
+      height={rem(height)}
+      width={rem(width)}
       viewBox={`0 0 ${width} ${height}`}
       style={{ ...style }}
       className={className || ""}

@@ -2,27 +2,29 @@ import { useState } from 'react'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { Sprite, Typography } from '..'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 const AssetDetails = styled.div`
-  background: ${STYLES.palette.colors.assetBackground};
-  padding: ${vw(4)} ${vw(8)};
-  border-radius: ${vw(100)};
-  display: flex;
-  align-items: center;
-  gap: ${vw(10)};
-  cursor: pointer;
   position: relative;
 `
+const Picker = styled.div`
+  background: ${STYLES.palette.colors.assetBackground};
+  padding: ${rem(4)} ${rem(8)};
+  border-radius: ${rem(100)};
+  display: flex;
+  align-items: center;
+  gap: ${rem(10)};
+  cursor: pointer;
+`
 const Options = styled.div`
-  max-width: ${vw(300)};
+  max-width: ${rem(300)};
   background: ${STYLES.palette.colors.modalBackground};
   position: absolute;
-  max-height: ${vw(250)};
+  max-height: ${rem(250)};
   overflow-y: scroll;
   z-index: 9;
-  border-radius: ${vw(8)};
-  top: ${vw(40)};
+  border-radius: ${rem(8)};
+  top: ${rem(40)};
   left: 0;
 `
 const Option = styled.div`
@@ -30,12 +32,12 @@ const Option = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding: ${vw(4)} ${vw(8)};
+  padding: ${rem(4)} ${rem(8)};
   display: flex;
   align-items: center;
-  gap: ${vw(10)};
+  gap: ${rem(10)};
   filter: brightness(60%);
-
+  cursor: pointer;
   &:hover {
     filter: brightness(100%);
   }
@@ -49,9 +51,14 @@ interface Option {
 interface SelectOptions {
   options: Option[]
   onChange: (val: string) => void
-  pickerStyle?: React.CSSProperties
-  optionsStyle?: React.CSSProperties
+  pickerStyle?: IconDimesions
+  optionsStyle?: IconDimesions
   labelStyle?: React.CSSProperties
+}
+
+interface IconDimesions extends React.CSSProperties {
+  iconWidth?: number
+  iconHeight?: number
 }
 
 const Select = ({
@@ -59,7 +66,7 @@ const Select = ({
   onChange,
   pickerStyle,
   optionsStyle,
-  labelStyle
+  labelStyle,
 }: SelectOptions) => {
   const [showOptions, setShowOptions] = useState(false)
   const [selectedOption, setSelectedOption] = useState<Option>({
@@ -70,30 +77,33 @@ const Select = ({
   const handleClick = (val: Option) => {
     setSelectedOption(val)
     onChange(val.label)
+    setShowOptions(false)
   }
 
   return (
-    <AssetDetails
-      onClick={() => setShowOptions(!showOptions)}
-      style={{ ...pickerStyle }}
-    >
-      {selectedOption?.icon ? (
-        <Sprite id={selectedOption.icon} width={25} height={25} />
-      ) : null}
-      <Typography
-        fontFamily="semiBold"
-        style={{ ...labelStyle, fontSize: vw(labelStyle?.fontSize || 24) }}
+    <AssetDetails>
+      <Picker
+        onClick={() => setShowOptions(!showOptions)}
+        style={{ ...pickerStyle }}
       >
-        {selectedOption.label}
-      </Typography>
-      <Sprite
-        id="chevron-down"
-        width={12}
-        height={7}
-        {...(showOptions
-          ? { style: { transform: 'rotate(180deg)' } }
-          : undefined)}
-      />
+        {selectedOption?.icon ? (
+          <Sprite id={selectedOption.icon} width={pickerStyle?.iconWidth || 25} height={pickerStyle?.iconHeight || 25} />
+        ) : null}
+        <Typography
+          fontFamily="semiBold"
+          style={{ ...labelStyle, fontSize: rem(labelStyle?.fontSize || 24) }}
+        >
+          {selectedOption.label}
+        </Typography>
+        <Sprite
+          id="chevron-down"
+          width={12}
+          height={7}
+          {...(showOptions
+            ? { style: { transform: 'rotate(180deg)' } }
+            : undefined)}
+        />
+      </Picker>
       {showOptions ? (
         <Options style={{ ...optionsStyle }}>
           {options.map((option, index) => (
@@ -102,11 +112,11 @@ const Select = ({
               onClick={() => handleClick(option)}
             >
               {option.icon ? (
-                <Sprite id={option.icon} height={20} width={20} />
+                <Sprite id={option.icon} height={optionsStyle?.iconHeight || 20} width={optionsStyle?.iconWidth || 20} />
               ) : null}
               <Typography
                 fontFamily="regular"
-                style={{ fontSize: vw(optionsStyle?.fontSize || 20) }}
+                style={{ fontSize: rem(optionsStyle?.fontSize || 20) }}
               >
                 {option.label}
               </Typography>

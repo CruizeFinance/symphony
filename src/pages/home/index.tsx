@@ -1,21 +1,21 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Sprite, Typography } from '../../components'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: ${vw(40)};
+  gap: ${rem(40)};
 
   @media only screen and (max-width: 1024px) {
-    padding: ${vw(20)} ${vw(16)};
+    padding: ${rem(20)} ${rem(16)};
   }
 `
 const InfoArea = styled(Container)`
-  gap: ${vw(10)};
+  gap: ${rem(10)};
 
   @media only screen and (max-width: 1024px) {
     text-align: center;

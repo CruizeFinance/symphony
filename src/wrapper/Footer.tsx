@@ -4,17 +4,17 @@ import styled from 'styled-components'
 import { Button, Divider, Modal, Sprite, Typography } from '../components'
 import ProtectCard from '../pages/protect/ProtectCard'
 import STYLES from '../style/styles.json'
-import { vw } from '../utils'
+import { rem } from '../utils'
 
 const Container = styled.div`
-  padding: ${vw(30)} ${vw(60)};
-  border-top: ${vw(1)} solid ${STYLES.palette.colors.dividerStroke};
+  padding: ${rem(30)} ${rem(60)};
+  border-top: ${rem(1)} solid ${STYLES.palette.colors.dividerStroke};
   background: ${STYLES.palette.colors.black};
   position: sticky;
   top: 100%;
 
   @media only screen and (max-width: 1024px) {
-    padding: ${vw(48)} ${vw(16)} ${vw(16)};
+    padding: ${rem(48)} ${rem(16)} ${rem(16)};
   }
 `
 
@@ -33,7 +33,7 @@ const Links = styled.div`
 const Section = styled.div`
   display: flex;
   align-items: center;
-  gap: ${vw(10)};
+  gap: ${rem(10)};
 
   #mobile-section-header {
     display: none;
@@ -42,7 +42,7 @@ const Section = styled.div`
   @media only screen and (max-width: 1024px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: ${vw(12)};
+    gap: ${rem(12)};
 
     #mobile-section-header {
       display: block;
@@ -67,9 +67,9 @@ const MobileArea = styled.div`
 
   @media only screen and (max-width: 1024px) {
     display: flex;
-    margin: ${vw(48)} 0 0;
+    margin: ${rem(48)} 0 0;
     flex-direction: column;
-    gap: ${vw(32)};
+    gap: ${rem(32)};
   }
 `
 
@@ -87,8 +87,8 @@ const ProtectPad = styled.div`
   background: ${STYLES.palette.colors.black};
   display: flex;
   align-items: center;
-  padding: ${vw(20)} ${vw(16)};
-  gap: ${vw(26)};
+  padding: ${rem(20)} ${rem(16)};
+  gap: ${rem(26)};
 `
 
 const FakeFooter = styled.div`
@@ -96,7 +96,7 @@ const FakeFooter = styled.div`
 
   @media only screen and (max-width: 1024px) {
     display: block;
-    height: ${vw(80)};
+    height: ${rem(80)};
     width: 100%;
   }
 `
@@ -120,7 +120,7 @@ const Footer = () => {
             <Typography
               tag="label"
               fontFamily="semiBold"
-              style={{ fontSize: vw(14) }}
+              style={{ fontSize: rem(14) }}
               id={'mobile-section-header'}
             >
               Product
@@ -178,7 +178,7 @@ const Footer = () => {
             <Typography
               tag="label"
               fontFamily="semiBold"
-              style={{ fontSize: vw(14) }}
+              style={{ fontSize: rem(14) }}
               id={'mobile-section-header'}
             >
               Socials
@@ -243,7 +243,7 @@ const Footer = () => {
           </ProtectPad>
         </ProtectArea>
       ) : null}
-      <Modal open={openProtectModal} hide={() => setOpenProtectModal(false)} modalContentStyle={{ padding: vw(0) }}>
+      <Modal open={openProtectModal} hide={() => setOpenProtectModal(false)} modalContentStyle={{ padding: rem(0) }}>
         <ProtectCard />
       </Modal>
     </>

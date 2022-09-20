@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 
 interface StyleProps {
@@ -13,7 +13,7 @@ const H1 = styled.h1<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(32)};
+  font-size: ${rem(32)};
 `
 
 const H2 = styled.h2<StyleProps>`
@@ -21,7 +21,7 @@ const H2 = styled.h2<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(24)};
+  font-size: ${rem(24)};
 `
 
 const H3 = styled.h3<StyleProps>`
@@ -29,7 +29,7 @@ const H3 = styled.h3<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(19)};
+  font-size: ${rem(19)};
 `
 
 const H4 = styled.h4<StyleProps>`
@@ -37,7 +37,7 @@ const H4 = styled.h4<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(18)};
+  font-size: ${rem(18)};
 `
 
 const H5 = styled.h5<StyleProps>`
@@ -45,7 +45,7 @@ const H5 = styled.h5<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(16)};
+  font-size: ${rem(16)};
 `
 
 const H6 = styled.h6<StyleProps>`
@@ -53,7 +53,7 @@ const H6 = styled.h6<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(13)};
+  font-size: ${rem(13)};
 `
 
 const P = styled.p<StyleProps>`
@@ -61,7 +61,7 @@ const P = styled.p<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(16)};
+  font-size: ${rem(16)};
 `
 
 const Label = styled.label<StyleProps>`
@@ -69,7 +69,7 @@ const Label = styled.label<StyleProps>`
     STYLES.typography.fonts[props.fontFamily || 'regular']};
   color: ${(props) => props.color || STYLES.palette.colors.white};
   cursor: inherit;
-  font-size: ${vw(16)};
+  font-size: ${rem(16)};
 `
 
 const A = styled.a<StyleProps>`
@@ -79,7 +79,7 @@ const A = styled.a<StyleProps>`
     props.color ? props.color : STYLES.palette.colors.white};
   cursor: pointer;
   text-decoration: none;
-  font-size: ${vw(16)};
+  font-size: ${rem(16)};
 `
 
 interface TypographyProps extends StyleProps {

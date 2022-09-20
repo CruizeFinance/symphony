@@ -4,32 +4,47 @@ import styled from 'styled-components'
 import { Button, Select, Sprite, Typography } from '../components'
 import { Modal } from '../components'
 import STYLES from '../style/styles.json'
-import { useAccount } from 'wagmi'
+import { useAccount, useDisconnect } from 'wagmi'
 import { useNavigate } from 'react-router-dom'
-import { vw } from '../utils'
+import { rem } from '../utils'
 import { useOutsideAlerter } from '../hooks'
+
+interface DropdownProps {
+  dropdownWidth?: number
+}
 
 const Container = styled.div`
   position: fixed;
-  padding: ${vw(30)} ${vw(60)};
+  padding: ${rem(30)} ${rem(60)};
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: -webkit-fill-available;
-  backdrop-filter: blur(${vw(8)});
+  backdrop-filter: blur(${rem(8)});
   z-index: 9999;
 
   @media only screen and (max-width: 1024px) {
-    padding: ${vw(16)};
+    padding: ${rem(16)};
   }
+`
+const ConnectedButton = styled.div`
+  background: ${STYLES.palette.colors.assetBackground};
+  padding: ${rem(8)} ${rem(16)};
+  border-radius: ${rem(100)};
+  display: flex;
+  align-items: center;
+  gap: ${rem(10)};
+  cursor: pointer;
+  filter: brightness(70%);
+  line-height: 20px;
 `
 const LogoArea = styled.div`
   display: flex;
   align-items: center;
-  gap: ${vw(36)};
+  gap: ${rem(36)};
 `
 const DesktopArea = styled(LogoArea)`
-  gap: ${vw(10)};
+  gap: ${rem(10)};
 
   @media only screen and (max-width: 1024px) {
     display: none;
@@ -38,7 +53,7 @@ const DesktopArea = styled(LogoArea)`
 const Page = styled.label`
   font-family: ${STYLES.typography.fonts.semiBold};
   color: ${STYLES.palette.colors.white};
-  font-size: ${vw(20)};
+  font-size: ${rem(20)};
   cursor: default;
   text-transform: capitalize;
 
@@ -49,41 +64,41 @@ const Page = styled.label`
 const ModalContent = styled(LogoArea)`
   justify-content: center;
   flex-direction: column;
-  gap: ${vw(10)};
+  gap: ${rem(10)};
 `
-const NotificationArea = styled.div`
+const DropdownArea = styled.div`
   position: relative;
 `
-const NotificationDropdown = styled.div`
+const HeaderDropdown = styled.div<DropdownProps>`
   position: absolute;
   right: 0;
   background: ${STYLES.palette.colors.black};
   border: 1px solid ${STYLES.palette.colors.dividerStroke};
-  border-radius: ${vw(8)};
-  padding: ${vw(8)};
-  width: ${vw(300)};
+  border-radius: ${rem(8)};
+  padding: ${rem(8)};
+  width: ${(props) => rem(props.dropdownWidth || 300)};
   display: flex;
   flex-direction: column;
-  gap: ${vw(8)};
-  box-shadow: ${vw(0)} ${vw(4)} ${vw(20)} rgba(255, 255, 255, 0.2);
+  gap: ${rem(8)};
+  box-shadow: 0px 4px 20px rgba(255, 255, 255, 0.2);
 `
-const Notification = styled.div`
-  border-radius: ${vw(4)};
+const Section = styled.div`
+  border-radius: ${rem(4)};
   background: ${STYLES.palette.colors.notificationBackground};
   display: flex;
   align-items: flex-start;
-  gap: ${vw(8)};
-  padding: ${vw(4)};
+  gap: ${rem(8)};
+  padding: ${rem(4)};
   width: 100%;
 `
-const NotificationContent = styled.div`
+const DropdownContent = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
-  gap: ${vw(8)};
+  gap: ${rem(8)};
   width: 100%;
 `
-const NotificationLabel = styled(NotificationContent)`
+const DropdownLabel = styled(DropdownContent)`
   flex-direction: row;
   justify-content: space-between;
   width: 100%;
@@ -103,10 +118,13 @@ interface HeaderProps {
 const Header = ({ location }: HeaderProps) => {
   const [openConnectedModal, setOpenConnectedModal] = useState(false)
   const [showNotification, setShowNotification] = useState(false)
+  const [showButtonDropdown, setShowButtonDropdown] = useState(false)
+
   const notificationRef = useRef(null)
   // commenting to fix the logic
   // useOutsideAlerter(notificationRef, () => setShowNotification(false))
-  const { isConnected } = useAccount()
+  const { connector, address, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
   const navigate = useNavigate()
 
   const hideModal = () => {
@@ -139,118 +157,215 @@ const Header = ({ location }: HeaderProps) => {
           {location ? <Page>{location}</Page> : null}
         </LogoArea>
         <DesktopArea>
-          <NotificationArea>
-            <Sprite
-              id="notifications-icon"
-              width={42}
-              height={42}
-              style={{ cursor: 'pointer' }}
-              onClick={() => setShowNotification(!showNotification)}
-            />
-            {showNotification ? (
-              <NotificationDropdown ref={notificationRef}>
-                <Typography
-                  fontFamily="bold"
-                  style={{ filter: 'brightness(60%)' }}
-                >
-                  Recent Orders
+          {isConnected ? (
+            <>
+              <DropdownArea>
+                <Sprite
+                  id="notifications-icon"
+                  width={42}
+                  height={42}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => setShowNotification(!showNotification)}
+                />
+                {showNotification ? (
+                  <HeaderDropdown ref={notificationRef}>
+                    <Typography
+                      fontFamily="bold"
+                      style={{ filter: 'brightness(60%)' }}
+                    >
+                      Recent Orders
+                    </Typography>
+                    <Section>
+                      <Sprite id="protect-icon" width={16} height={16} />
+                      <DropdownContent>
+                        <DropdownLabel>
+                          <Typography
+                            fontFamily="medium"
+                            style={{ fontSize: rem(14) }}
+                          >
+                            Protect ETH
+                          </Typography>
+                          <Typography
+                            fontFamily="medium"
+                            style={{ fontSize: rem(14) }}
+                          >
+                            2345 ETH
+                          </Typography>
+                        </DropdownLabel>
+                        <DropdownLabel>
+                          <Typography
+                            fontFamily="medium"
+                            style={{
+                              fontSize: rem(10),
+                              filter: 'brightness(80%)',
+                            }}
+                          >
+                            View on etherscan
+                          </Typography>
+                          <Typography
+                            tag="a"
+                            openInNewTab={true}
+                            href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
+                          >
+                            <Sprite id="redirect-icon" width={12} height={12} />
+                          </Typography>
+                        </DropdownLabel>
+                      </DropdownContent>
+                    </Section>
+                    <Section>
+                      <Sprite id="withdraw-icon" width={16} height={16} />
+                      <DropdownContent>
+                        <DropdownLabel>
+                          <Typography
+                            fontFamily="medium"
+                            style={{ fontSize: rem(14) }}
+                          >
+                            Withdraw ETH
+                          </Typography>
+                          <Typography
+                            fontFamily="medium"
+                            style={{ fontSize: rem(14) }}
+                          >
+                            2345 ETH
+                          </Typography>
+                        </DropdownLabel>
+                        <DropdownLabel>
+                          <Typography
+                            fontFamily="medium"
+                            style={{
+                              fontSize: rem(10),
+                              filter: 'brightness(80%)',
+                            }}
+                          >
+                            View on etherscan
+                          </Typography>
+                          <Typography
+                            tag="a"
+                            openInNewTab={true}
+                            href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
+                          >
+                            <Sprite id="redirect-icon" width={12} height={12} />
+                          </Typography>
+                        </DropdownLabel>
+                      </DropdownContent>
+                    </Section>
+                  </HeaderDropdown>
+                ) : null}
+              </DropdownArea>
+              <Select
+                onChange={(val) => console.log(val)}
+                options={[{ label: 'Ethereum', icon: 'eth-asset-icon' }]}
+                pickerStyle={{
+                  padding: `${rem(8)} ${rem(16)}`,
+                  filter: 'brightness(70%)',
+                  iconHeight: 20,
+                  iconWidth: 20,
+                }}
+                labelStyle={{ fontSize: 16 }}
+              />
+            </>
+          ) : null}
+          {isConnected ? (
+            <DropdownArea>
+              <ConnectedButton
+                onClick={() => setShowButtonDropdown(!showButtonDropdown)}
+              >
+                <Typography>
+                  {address?.slice(0, 7)}...{address?.slice(-7)}
                 </Typography>
-                <Notification>
-                  <Sprite id="protect-icon" width={16} height={16} />
-                  <NotificationContent>
-                    <NotificationLabel>
-                      <Typography
-                        fontFamily="medium"
-                        style={{ fontSize: vw(14) }}
+                <Sprite
+                  id="chevron-down"
+                  width={12}
+                  height={12}
+                  {...(showButtonDropdown
+                    ? { style: { transform: 'rotate(180deg)' } }
+                    : undefined)}
+                />
+              </ConnectedButton>
+              {showButtonDropdown ? (
+                <HeaderDropdown style={{ gap: rem(2) }} dropdownWidth={250}>
+                  <Section>
+                    <DropdownContent>
+                      <DropdownLabel>
+                        <Typography fontFamily="medium">
+                          {address?.slice(0, 8)}...{address?.slice(-4)}
+                        </Typography>
+                      </DropdownLabel>
+                      <DropdownLabel>
+                        <Typography
+                          style={{
+                            fontSize: rem(14),
+                            filter: 'brightness(80%)',
+                          }}
+                        >
+                          Connected with {connector?.name}
+                        </Typography>
+                        <Sprite
+                          id={`${connector?.id?.toLowerCase()}-icon`}
+                          width={16}
+                          height={16}
+                        />
+                      </DropdownLabel>
+                    </DropdownContent>
+                  </Section>
+                  <Section>
+                    <DropdownContent>
+                      <DropdownLabel>
+                        <Typography fontFamily="medium">
+                          Copy Address
+                        </Typography>
+                        <Sprite
+                          id="copy-icon"
+                          width={16}
+                          height={16}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() =>
+                            navigator.clipboard.writeText(address || '')
+                          }
+                        />
+                      </DropdownLabel>
+                      <DropdownLabel>
+                        <Typography
+                          style={{
+                            fontSize: rem(14),
+                            filter: 'brightness(80%)',
+                          }}
+                        >
+                          View on Etherscan
+                        </Typography>
+                        <Typography
+                          tag="a"
+                          openInNewTab={true}
+                          href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
+                        >
+                          <Sprite id="redirect-icon" width={16} height={16} />
+                        </Typography>
+                      </DropdownLabel>
+                      <Button
+                        onClick={() => disconnect()}
+                        borderRadius={10}
+                        style={{ width: '100%' }}
                       >
-                        Protect ETH
-                      </Typography>
-                      <Typography
-                        fontFamily="medium"
-                        style={{ fontSize: vw(14) }}
-                      >
-                        2345 ETH
-                      </Typography>
-                    </NotificationLabel>
-                    <NotificationLabel>
-                      <Typography
-                        fontFamily="medium"
-                        style={{ fontSize: vw(10) }}
-                      >
-                        View on etherscan
-                      </Typography>
-                      <Typography
-                        tag="a"
-                        openInNewTab={true}
-                        href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
-                      >
-                        <Sprite id="redirect-icon" width={12} height={12} />
-                      </Typography>
-                    </NotificationLabel>
-                  </NotificationContent>
-                </Notification>
-                <Notification>
-                  <Sprite id="withdraw-icon" width={16} height={16} />
-                  <NotificationContent>
-                    <NotificationLabel>
-                      <Typography
-                        fontFamily="medium"
-                        style={{ fontSize: vw(14) }}
-                      >
-                        Withdraw ETH
-                      </Typography>
-                      <Typography
-                        fontFamily="medium"
-                        style={{ fontSize: vw(14) }}
-                      >
-                        2345 ETH
-                      </Typography>
-                    </NotificationLabel>
-                    <NotificationLabel>
-                      <Typography
-                        fontFamily="medium"
-                        style={{ fontSize: vw(10) }}
-                      >
-                        View on etherscan
-                      </Typography>
-                      <Typography
-                        tag="a"
-                        openInNewTab={true}
-                        href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
-                      >
-                        <Sprite id="redirect-icon" width={12} height={12} />
-                      </Typography>
-                    </NotificationLabel>
-                  </NotificationContent>
-                </Notification>
-              </NotificationDropdown>
-            ) : null}
-          </NotificationArea>
-          <Select
-            onChange={(val) => console.log(val)}
-            options={[{ label: 'Ethereum', icon: 'eth-asset-icon' }]}
-            labelStyle={{ fontSize: 16 }}
-          />
-          <ConnectKitButton.Custom>
-            {({ isConnected, show, truncatedAddress, ensName }) => {
-              return (
-                <Button onClick={show}>
-                  {isConnected ? (
-                    ensName ?? truncatedAddress
-                  ) : (
-                    <>
-                      <Sprite
-                        id="connect-wallet-black"
-                        width={20}
-                        height={20}
-                      />
-                      Connect
-                    </>
-                  )}
-                </Button>
-              )
-            }}
-          </ConnectKitButton.Custom>
+                        Disconnect
+                        <Sprite id="disconnect-icon" width={16} height={16} />
+                      </Button>
+                    </DropdownContent>
+                  </Section>
+                </HeaderDropdown>
+              ) : null}
+            </DropdownArea>
+          ) : (
+            <ConnectKitButton.Custom>
+              {({ show }) => {
+                return (
+                  <Button onClick={show}>
+                    <Sprite id="connect-wallet-black" width={20} height={20} />
+                    Connect
+                  </Button>
+                )
+              }}
+            </ConnectKitButton.Custom>
+          )}
         </DesktopArea>
         <Hamburger onClick={() => console.log('test')}>
           <Sprite id="hamburger-icon" height={24} width={24} />
@@ -262,7 +377,7 @@ const Header = ({ location }: HeaderProps) => {
           <Typography
             tag="label"
             fontFamily="medium"
-            style={{ fontSize: vw(18) }}
+            style={{ fontSize: rem(18) }}
           >
             Connected
           </Typography>

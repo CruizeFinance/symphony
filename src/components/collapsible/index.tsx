@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 interface StyleProps {
   open: boolean
@@ -11,7 +11,7 @@ const Container = styled.div<StyleProps>`
   width: 100%;
   transition: all 0.7s ease-in-out;
   max-height: ${(props) =>
-    props.open ? (props.maxHeight ? `${vw(props.maxHeight)}` : vw(500)) : '0px'};
+    props.open ? (props.maxHeight ? `${rem(props.maxHeight)}` : rem(500)) : '0px'};
 `
 
 interface CollapsibleProps extends StyleProps {

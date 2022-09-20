@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from 'react'
 import {
   Area,
   AreaChart,
@@ -7,16 +8,18 @@ import {
   YAxis,
 } from 'recharts'
 import styled from 'styled-components'
+import { getMarketChartRange } from '../../apis'
+import { MarketChartRangeData } from '../../apis/interfaces'
 import { Select, Sprite, Tabs, Typography } from '../../components'
 import STYLES from '../../style/styles.json'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 const GraphContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  gap: ${vw(30)};
+  gap: ${rem(30)};
 `
 const AssetSection = styled.div`
   display: flex;
@@ -27,22 +30,22 @@ const AssetSection = styled.div`
   @media only screen and (max-width: 1024px) {
     flex-direction: column;
     align-items: flex-start;
-    gap: ${vw(30)};
+    gap: ${rem(30)};
   }
 `
 const DropdownArea = styled(GraphContainer)`
   align-items: flex-start;
-  gap: ${vw(10)};
+  gap: ${rem(10)};
 `
 const ProtectRewardsInfo = styled.div`
-  padding: ${vw(20)};
-  border-radius: ${vw(8)};
+  padding: ${rem(20)};
+  border-radius: ${rem(8)};
   border: none;
   background: ${STYLES.palette.colors.inputBackground};
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: ${vw(20)};
+  gap: ${rem(20)};
 
   @media only screen and (max-width: 1024px) {
     > svg {
@@ -55,7 +58,7 @@ const ProtectRewardsContent = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: ${vw(10)};
+  gap: ${rem(10)};
 `
 
 const data = [
@@ -115,20 +118,79 @@ const options = [
 ]
 
 const GraphArea = () => {
+  const [asset, setAsset] = useState('ethereum')
+  const [range, setRange] = useState(1)
+  const [chartData, setChartData] = useState<MarketChartRangeData>({
+    prices: [],
+    market_caps: [],
+    total_volumes: [],
+  })
+
+  const onRangeChange = (val: string) => {
+    switch (val) {
+      case '7D':
+        setRange(7)
+        break
+      case '1M':
+        setRange(30)
+        break
+      case '3M':
+        setRange(90)
+        break
+      case '1Y':
+        setRange(365)
+        break
+      default:
+        setRange(1)
+        break
+    }
+  }
+
+  const onAssetChange = (val: string) => {
+    switch(val) {
+      case 'Wrapped Bitcoin (WBTC)':
+        setAsset('bitcoin')
+        break
+      default:
+        setAsset('ethereum')
+        break
+    }
+  }
+
+  async function apiCall() {
+    const data = await getMarketChartRange(asset, range)
+    if (data.prices.length) setChartData(data)
+  }
+
+  useEffect(() => {
+    apiCall()
+  }, [asset, range])
+
+  const graphData = useMemo(
+    () =>
+      chartData.prices.map((price) => {
+        return {
+          eth: price[1],
+        }
+      }),
+    [chartData],
+  )
+
   return (
     <GraphContainer>
       <AssetSection>
         <DropdownArea>
           <Select
             options={options}
-            onChange={(val) => console.log(val)}
+            onChange={(val) => onAssetChange(val)}
             pickerStyle={{
               background: 'inherit',
               padding: '0px',
+              width: rem(267),
             }}
             labelStyle={{
               fontSize: '32px',
-              width: '15ch',
+              width: '100%',
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -170,10 +232,13 @@ const GraphArea = () => {
             : 400
         }
       >
-        <AreaChart data={data} style={{ position: 'relative', right: '10px' }}>
+        <AreaChart
+          data={graphData}
+          style={{ position: 'relative', right: '10px' }}
+        >
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.6} />
               <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
@@ -191,29 +256,29 @@ const GraphArea = () => {
             fillOpacity={1}
             fill="url(#colorUv)"
           />
-          <Area
+          {/* <Area
             type="monotone"
             dataKey="crEth"
             stroke="#82ca9d"
             fillOpacity={1}
             fill="url(#colorPv)"
-          />
+          /> */}
         </AreaChart>
       </ResponsiveContainer>
       <Tabs
-        onClick={(val) => console.log(val)}
+        onClick={(val) => onRangeChange(val)}
         tabs={[
-          {
-            label: '1H',
-          },
           {
             label: '1D',
           },
           {
-            label: '3D',
+            label: '7D',
           },
           {
             label: '1M',
+          },
+          {
+            label: '3M',
           },
           {
             label: '1Y',

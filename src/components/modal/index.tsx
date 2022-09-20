@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { vw } from '../../utils'
+import { rem } from '../../utils'
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -9,7 +9,7 @@ const ModalContainer = styled.div`
   right: 0;
   bottom: 0;
   background-color: ${STYLES.palette.colors.modalBackdrop};
-  backdrop-filter: blur(${vw(8)});
+  backdrop-filter: blur(${rem(8)});
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,11 +17,11 @@ const ModalContainer = styled.div`
 `
 
 const ModalContent = styled.div`
-  padding: ${vw(24)};
-  min-width: ${vw(300)};
+  padding: ${rem(24)};
+  min-width: ${rem(300)};
   max-width: 100%;
   background-color: ${STYLES.palette.colors.modalBackground};
-  border-radius: ${vw(8)};
+  border-radius: ${rem(8)};
 `
 
 interface ModalProps {
