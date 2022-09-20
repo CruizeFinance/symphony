@@ -93,7 +93,7 @@ const Button = ({
             id="protect-button-svg"
             height={48}
             width={61}
-            style={{ position: 'absolute', right: rem(10) }}
+            style={{ position: 'absolute', right: rem(24) }}
           />
         </ProtectButton>
       )
