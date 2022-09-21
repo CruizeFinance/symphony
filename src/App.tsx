@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import Wrapper from './wrapper'
 import STYLES from './style/styles.json'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import { WagmiConfig, createClient } from 'wagmi'
+import { WagmiConfig, createClient, chain } from 'wagmi'
 import {
   ConnectKitProvider,
   getDefaultClient,
@@ -13,17 +13,16 @@ const AppContainer = styled.div`
   margin: auto;
   background: ${STYLES.palette.colors.black};
 `
-
 const alchemyId = process.env.REACT_APP_ALCHEMY_ID
 
-const client = createClient(
-  getDefaultClient({
-    appName: 'Your App Name',
-    alchemyId,
-  }),
-)
-
 function App(): JSX.Element {
+  const client = createClient(
+    getDefaultClient({
+      appName: 'Your App Name',
+      alchemyId,
+      chains:[chain.goerli,chain.mainnet]
+    }),
+  )
   return (
     <WagmiConfig client={client}>
       <ConnectKitProvider theme='midnight'>

@@ -13,6 +13,7 @@ import STYLES from '../../style/styles.json'
 import { useState } from 'react'
 import { rem } from '../../utils'
 import { useAccount } from 'wagmi'
+import { Deposit, Withdraw } from '../../hooks/useCruize'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -53,13 +54,29 @@ const ButtonContainer = styled.div`
   display: flex;
   justify-content: end;
   gap: ${rem(8)};
-`
+
+  `
+
 
 const ProtectCard = () => {
   const [openTransactionDetails, setOpenTransactionDetails] = useState(false)
   const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
   const [tab, setTab] = useState('protect')
   const { isConnected } = useAccount()
+  const depositToCruize =  Deposit()
+  const withdrawFromCruize =  Withdraw()
+  const handleTab = async()=>{
+    console.log("Hello world")
+    // setTab(tab.toLowerCase())
+    // if(tab === 'Withdraw'){
+    //   // await Withdraw('23','xo')
+    // }
+    await withdrawFromCruize('0.01',"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+    // else{
+      console.log("Hello world")
+      // await depositToCruize('0.01',"0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+    // }
+  }
 
   return (
     <>
@@ -84,7 +101,7 @@ const ProtectCard = () => {
             type="contained"
           />
         ) : null}
-        <Input label="AMOUNT" />
+        <Input label="AMOUNT"  />
         <DetailArea>
           <Typography
             style={{ width: '100%', textAlign: 'left', marginBottom: rem(8) }}
@@ -172,7 +189,7 @@ const ProtectCard = () => {
             </Detail>
           </DetailArea>
         </Collapsible>
-        <Button buttonType="protect" disabled={!isConnected}>
+        <Button buttonType="protect" onClick={handleTab} disabled={!isConnected}>
           {isConnected ? (
             <>Protect</>
           ) : (
