@@ -1,4 +1,4 @@
-import Tabs from '../../components/tabs'
+import Tabs from "../../components/tabs";
 import {
   Button,
   Collapsible,
@@ -14,7 +14,7 @@ import STYLES from '../../style/styles.json'
 import { useEffect, useState } from 'react'
 import { rem } from '../../utils'
 import { useAccount } from 'wagmi'
-
+import { useDeposit, useWithdraw } from "../../hooks/useCruize";
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
   padding: ${rem(24)} ${rem(20)};
@@ -29,14 +29,14 @@ const ProtectArea = styled.div`
   @media only screen and (max-width: 1024px) {
     padding: ${rem(20)} ${rem(16)};
   }
-`
+`;
 const DetailArea = styled.div`
   display: flex;
   align-items: flex-start;
   flex-direction: column;
   gap: ${rem(8)};
   width: 100%;
-`
+`;
 const Detail = styled.div`
   display: flex;
   align-items: center;
@@ -48,13 +48,13 @@ const Detail = styled.div`
     align-items: center;
     gap: ${rem(4)};
   }
-`
+`;
 const ButtonContainer = styled.div`
   width: 100%;
   display: flex;
   justify-content: end;
   gap: ${rem(8)};
-`
+`;
 
 const ProtectCard = () => {
   const [openTransactionDetails, setOpenTransactionDetails] = useState(false)
@@ -62,7 +62,21 @@ const ProtectCard = () => {
   const [inputValue, setInputValue] = useState('0.0')
   const [tab, setTab] = useState('protect')
   const { isConnected } = useAccount()
-
+  const depositToCruize = useDeposit();
+  const withdrawFromCruize = useWithdraw();
+  const handleTab = async () => {
+    if (tab === "Withdraw") {
+      await withdrawFromCruize(
+        "0.01",
+        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      );
+    } else {
+      await depositToCruize(
+        "0.01",
+        "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      );
+    }
+  };
   const setDefaultValues = () => {
     setOpenTransactionDetails(false)
     setInputValue('0.0')
@@ -77,9 +91,9 @@ const ProtectCard = () => {
       <ProtectArea>
         <Tabs
           onClick={(val) => setTab(val.toLowerCase())}
-          tabs={[{ label: 'Protect' }, { label: 'Withdraw' }]}
+          tabs={[{ label: "Protect" }, { label: "Withdraw" }]}
         />
-        {tab === 'withdraw' ? (
+        {tab === "withdraw" ? (
           <Tabs
             onClick={(val) => console.log(val)}
             tabs={[
@@ -104,7 +118,7 @@ const ProtectCard = () => {
         <Input label="AMOUNT" inputValue={inputValue} />
         <DetailArea>
           <Typography
-            style={{ width: '100%', textAlign: 'left', marginBottom: rem(8) }}
+            style={{ width: "100%", textAlign: "left", marginBottom: rem(8) }}
           >
             Protection Details
           </Typography>
@@ -158,8 +172,8 @@ const ProtectCard = () => {
         </DetailArea>
         <Divider
           labelOptions={{
-            label: 'Transaction Details',
-            labelAlign: 'center',
+            label: "Transaction Details",
+            labelAlign: "center",
             dropdown: true,
             dropdownOpen: openTransactionDetails,
           }}
@@ -193,7 +207,11 @@ const ProtectCard = () => {
             </Detail>
           </DetailArea>
         </Collapsible>
-        <Button buttonType="protect" disabled={!isConnected}>
+        <Button
+          buttonType="protect"
+          onClick={handleTab}
+          disabled={!isConnected}
+        >
           {isConnected ? (
             <>{tab === 'protect' ? 'Protect' : 'Withdraw'}</>
           ) : (
@@ -209,7 +227,7 @@ const ProtectCard = () => {
             tag="label"
             color={STYLES.palette.colors.linkBlue}
             onClick={() => setOpenTutorialVideo(true)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: "pointer" }}
           >
             Learn from video tutorials/docs
           </Typography>
@@ -219,9 +237,9 @@ const ProtectCard = () => {
         open={openTutorialVideo}
         hide={() => setOpenTutorialVideo(false)}
         modalContentStyle={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
           gap: rem(24),
           maxWidth: rem(500),
           background: STYLES.palette.colors.notificationBackground,
@@ -234,17 +252,17 @@ const ProtectCard = () => {
           To help you get started, we recorded a set of tutorials and a hand on
           guide that can be viewed on youtube.
         </Typography>
-        <img src="confused.gif" alt="confused-gif" width={'100%'} />
+        <img src="confused.gif" alt="confused-gif" width={"100%"} />
         <ButtonContainer>
           <Button
             buttonType="protect-small"
             borderRadius={100}
-            style={{ width: 'auto', padding: rem(16) }}
+            style={{ width: "auto", padding: rem(16) }}
             onClick={() =>
               window.open(
-                'https://www.cruize.org',
-                '_blank',
-                'noopener noreferrer',
+                "https://www.cruize.org",
+                "_blank",
+                "noopener noreferrer"
               )
             }
           >
@@ -255,7 +273,7 @@ const ProtectCard = () => {
             style={{
               background: STYLES.palette.colors.modalBackground,
               color: STYLES.palette.colors.white,
-              filter: 'brightness(70%)',
+              filter: "brightness(70%)",
               padding: rem(16),
               borderColor: STYLES.palette.colors.modalBackground,
             }}
@@ -266,7 +284,7 @@ const ProtectCard = () => {
         </ButtonContainer>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default ProtectCard
+export default ProtectCard;

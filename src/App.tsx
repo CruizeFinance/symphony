@@ -10,7 +10,6 @@ const AppContainer = styled.div`
   margin: auto;
   background: ${STYLES.palette.colors.black};
 `
-
 const alchemyId = process.env.REACT_APP_ALCHEMY_ID
 
 const chains = [chain.mainnet, chain.goerli]
