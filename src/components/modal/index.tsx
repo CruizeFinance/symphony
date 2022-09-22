@@ -4,6 +4,7 @@ import { rem } from '../../utils'
 
 const ModalContainer = styled.div`
   position: fixed;
+  height: 100%;
   top: 0;
   left: 0;
   right: 0;

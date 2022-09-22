@@ -8,7 +8,7 @@ import {
   YAxis,
 } from 'recharts'
 import styled from 'styled-components'
-import { getMarketChartRange } from '../../apis'
+import { getAssetPrice, getMarketChartData } from '../../apis'
 import { MarketChartRangeData } from '../../apis/interfaces'
 import { Select, Sprite, Tabs, Typography } from '../../components'
 import STYLES from '../../style/styles.json'
@@ -61,50 +61,6 @@ const ProtectRewardsContent = styled.div`
   gap: ${rem(10)};
 `
 
-const data = [
-  {
-    name: 'Page A',
-    eth: 4000,
-    crEth: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    eth: 3000,
-    crEth: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    eth: 2000,
-    crEth: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    eth: 2780,
-    crEth: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    eth: 1890,
-    crEth: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    eth: 2390,
-    crEth: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    eth: 3490,
-    crEth: 4300,
-    amt: 2100,
-  },
-]
 const options = [
   {
     label: 'Ethereum (ETH)',
@@ -122,9 +78,9 @@ const GraphArea = () => {
   const [range, setRange] = useState(1)
   const [chartData, setChartData] = useState<MarketChartRangeData>({
     prices: [],
-    market_caps: [],
-    total_volumes: [],
+    error: null,
   })
+  const [assetPrice, setAssetPrice] = useState()
 
   const onRangeChange = (val: string) => {
     switch (val) {
@@ -147,7 +103,7 @@ const GraphArea = () => {
   }
 
   const onAssetChange = (val: string) => {
-    switch(val) {
+    switch (val) {
       case 'Wrapped Bitcoin (WBTC)':
         setAsset('bitcoin')
         break
@@ -157,13 +113,19 @@ const GraphArea = () => {
     }
   }
 
-  async function apiCall() {
-    const data = await getMarketChartRange(asset, range)
+  async function chartApiCall() {
+    const data = await getMarketChartData(asset, range)
     if (data.prices.length) setChartData(data)
   }
 
+  async function priceApiCall() {
+    const data = await getAssetPrice(asset)
+    if (data.price) setAssetPrice(data.price)
+  }
+
   useEffect(() => {
-    apiCall()
+    chartApiCall()
+    priceApiCall()
   }, [asset, range])
 
   const graphData = useMemo(
@@ -197,18 +159,20 @@ const GraphArea = () => {
             }}
           />
           <Typography tag="h1" style={{ filter: 'brightness(40%)' }}>
-            $1,566.00&nbsp;
-            <Typography
+            {assetPrice ? `$${assetPrice}` : '-'}
+            {/* hidden for demo */}
+            {/* <Typography
               tag="label"
               color={STYLES.palette.colors.green}
               style={{ filter: 'brightness(100%)' }}
             >
               +23%&nbsp;
               <Typography tag="label">(24h)</Typography>
-            </Typography>
+            </Typography> */}
           </Typography>
         </DropdownArea>
-        <Tabs
+        {/* hidden for demo */}
+        {/* <Tabs
           onClick={(val) => console.log(val)}
           tabs={[
             {
@@ -221,20 +185,20 @@ const GraphArea = () => {
             },
           ]}
           type="contained"
-        />
+        /> */}
       </AssetSection>
       <ResponsiveContainer
-        minHeight={
+        minHeight={rem(
           window.innerWidth <= 800
             ? 300
-            : window.innerWidth === 1024
+            : window.innerWidth <= 1024
             ? 350
-            : 400
-        }
+            : 400,
+        )}
       >
         <AreaChart
           data={graphData}
-          style={{ position: 'relative', right: '10px' }}
+          style={{ position: 'relative', right: rem(16) }}
         >
           <defs>
             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
@@ -246,8 +210,7 @@ const GraphArea = () => {
               <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
             </linearGradient>
           </defs>
-          <XAxis dataKey="name" style={{ fontSize: '0.75rem' }} />
-          <YAxis style={{ fontSize: '0.75rem' }} />
+          <YAxis style={{ fontSize: rem(12) }} />
           <Tooltip />
           <Area
             type="monotone"

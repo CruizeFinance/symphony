@@ -7,7 +7,7 @@ interface StyleProps {
 }
 
 const Container = styled.div<StyleProps>`
-  overflow: hidden;
+  ${(props) => props.open ? '' : 'overflow: hidden;'}
   width: 100%;
   transition: all 0.7s ease-in-out;
   max-height: ${(props) =>
