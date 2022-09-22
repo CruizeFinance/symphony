@@ -1,14 +1,34 @@
-import { MarketChartRangeData } from "./interfaces";
+import { MarketChartRangeData } from './interfaces'
 
-export const getMarketChartRange = async (asset: string, days: number) => {
-  const response = await fetch(
-    `https://api.coingecko.com/api/v3/coins/${asset}/market_chart?vs_currency=usd&days=${days}`,
-    {
-      headers: {
-        accept: 'application/json',
-      },
+export const getMarketChartData = async (asset: string, days: number) => {
+  const response = await fetch(`/market_data/day/`, {
+    method: 'POST',
+    headers: {
+      accept: '*/*',
+      'Content-Type': 'application/json',
     },
-  )
+    body: JSON.stringify({
+      asset,
+      vs_currency: 'usd',
+      days,
+    }),
+  })
   const data: MarketChartRangeData = await response.json()
-  return data;
+  return data
+}
+
+export const getAssetPrice = async (asset: string) => {
+  const response = await fetch(`/market_data/asset_price/`, {
+    method: 'POST',
+    headers: {
+      accept: '*/*',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      asset,
+      vs_currency: 'usd',
+    }),
+  })
+  const data = await response.json()
+  return data
 }

@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
-import { loaders } from "../utils/contracts";
-import { Contract } from "../utils/types";
+import { Contract,loaders } from "../utils";
 import { useSigner } from "./useSigner";
 
 

@@ -49,7 +49,7 @@ const ProtectButton = styled(ButtonContainer)`
   width: 100%;
   justify-content: center;
   border-radius: ${(props) =>
-    props.borderRadius ? `${rem(props.borderRadius)}` : rem(100)};
+    props.borderRadius ? `${rem(props.borderRadius)}` : rem(8)};
   position: relative;
   min-height: ${rem(48)};
 
@@ -77,7 +77,6 @@ const Button = ({
   buttonType,
   disabled,
 }: ButtonProps) => {
-  console.log(children, disabled)
 
   switch (buttonType) {
     case 'protect':

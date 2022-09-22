@@ -6,15 +6,15 @@ import {
   Input,
   Modal,
   Sprite,
+  Tooltip,
   Typography,
-} from "../../components";
-import styled from "styled-components";
-import STYLES from "../../style/styles.json";
-import { useState } from "react";
-import { rem } from "../../utils";
-import { useAccount } from "wagmi";
+} from '../../components'
+import styled from 'styled-components'
+import STYLES from '../../style/styles.json'
+import { useEffect, useState } from 'react'
+import { rem } from '../../utils'
+import { useAccount } from 'wagmi'
 import { useDeposit, useWithdraw } from "../../hooks/useCruize";
-
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
   padding: ${rem(24)} ${rem(20)};
@@ -57,10 +57,11 @@ const ButtonContainer = styled.div`
 `;
 
 const ProtectCard = () => {
-  const [openTransactionDetails, setOpenTransactionDetails] = useState(false);
-  const [openTutorialVideo, setOpenTutorialVideo] = useState(false);
-  const [tab, setTab] = useState("protect");
-  const { isConnected } = useAccount();
+  const [openTransactionDetails, setOpenTransactionDetails] = useState(false)
+  const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
+  const [inputValue, setInputValue] = useState('0.0')
+  const [tab, setTab] = useState('protect')
+  const { isConnected } = useAccount()
   const depositToCruize = useDeposit();
   const withdrawFromCruize = useWithdraw();
   const handleTab = async () => {
@@ -76,6 +77,14 @@ const ProtectCard = () => {
       );
     }
   };
+  const setDefaultValues = () => {
+    setOpenTransactionDetails(false)
+    setInputValue('0.0')
+  }
+
+  useEffect(() => {
+    setDefaultValues()
+  }, [tab])
 
   return (
     <>
@@ -89,18 +98,24 @@ const ProtectCard = () => {
             onClick={(val) => console.log(val)}
             tabs={[
               {
-                label: "Standard",
-                icon: <Sprite id="info-icon" width={15} height={15} />,
+                label: 'Standard',
+                icon: (
+                  <Tooltip content={'test'}>
+                    <Sprite id="info-icon" width={20} height={20} />
+                  </Tooltip>
+                ),
               },
               {
-                label: "Instant",
-                icon: <Sprite id="info-icon" width={15} height={15} />,
+                label: 'Instant',
+                icon: <Tooltip content={'test'}>
+                <Sprite id="info-icon" width={20} height={20} />
+              </Tooltip>,
               },
             ]}
             type="contained"
           />
         ) : null}
-        <Input label="AMOUNT" />
+        <Input label="AMOUNT" inputValue={inputValue} />
         <DetailArea>
           <Typography
             style={{ width: "100%", textAlign: "left", marginBottom: rem(8) }}
@@ -109,45 +124,47 @@ const ProtectCard = () => {
           </Typography>
           <Detail>
             <Typography
-              style={{ filter: "brightness(60%)" }}
               fontFamily="regular"
+              color={STYLES.palette.colors.white60}
             >
               Price floor
-              <Sprite id="info-icon" width={20} height={20} />
+              <Tooltip content={'test'}>
+                <Sprite id="info-icon" width={20} height={20} />
+              </Tooltip>
             </Typography>
             <Typography
-              style={{ filter: "brightness(60%)" }}
               fontFamily="regular"
+              color={STYLES.palette.colors.white60}
             >
               3000 USDC
             </Typography>
           </Detail>
           <Detail>
             <Typography
-              style={{ filter: "brightness(60%)" }}
               fontFamily="regular"
+              color={STYLES.palette.colors.white60}
             >
               Staking Price Limit
               <Sprite id="info-icon" width={20} height={20} />
             </Typography>
             <Typography
-              style={{ filter: "brightness(60%)" }}
               fontFamily="regular"
+              color={STYLES.palette.colors.white60}
             >
               3000 USDC
             </Typography>
           </Detail>
           <Detail>
             <Typography
-              style={{ filter: "brightness(60%)" }}
               fontFamily="regular"
+              color={STYLES.palette.colors.white60}
             >
               APY
               <Sprite id="info-icon" width={20} height={20} />
             </Typography>
             <Typography
-              style={{ filter: "brightness(60%)" }}
               fontFamily="regular"
+              color={STYLES.palette.colors.white60}
             >
               3000 USDC
             </Typography>
@@ -173,15 +190,17 @@ const ProtectCard = () => {
             </Detail>
             <Detail>
               <Typography
-                style={{ filter: "brightness(60%)" }}
                 fontFamily="regular"
+                color={STYLES.palette.colors.white60}
               >
                 Gas fee
-                <Sprite id="info-icon" width={20} height={20} />
+                <Tooltip content={'test'}>
+                  <Sprite id="info-icon" width={20} height={20} />
+                </Tooltip>
               </Typography>
               <Typography
-                style={{ filter: "brightness(60%)" }}
                 fontFamily="regular"
+                color={STYLES.palette.colors.white60}
               >
                 0.0015678 ETH
               </Typography>
@@ -194,7 +213,7 @@ const ProtectCard = () => {
           disabled={!isConnected}
         >
           {isConnected ? (
-            <>Protect</>
+            <>{tab === 'protect' ? 'Protect' : 'Withdraw'}</>
           ) : (
             <>
               Connect Wallet
