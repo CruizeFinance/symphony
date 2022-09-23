@@ -82,6 +82,7 @@ interface InputFieldProps
   onInputChange?: (val: string) => void
   onAssetChange?: (val: string) => void
   inputValue?: string
+  showBalance?: boolean
 }
 
 const Input = ({
@@ -91,6 +92,7 @@ const Input = ({
   inputValue,
   onInputChange,
   onAssetChange,
+  showBalance,
   ...props
 }: InputFieldProps) => {
   const [input, setInputValue] = useState<string>('0.0')
@@ -190,7 +192,7 @@ const Input = ({
               textOverflow: 'ellipsis',
             }}
           />
-          {isConnected ? (
+          {isConnected && showBalance ? (
             <Typography
               tag="p"
               fontFamily="medium"

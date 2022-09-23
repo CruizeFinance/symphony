@@ -179,6 +179,7 @@ const ProtectCard = () => {
           inputValue={inputValue}
           onInputChange={(val) => setInputValue(val || '0.0')}
           onAssetChange={(val) => handleAssetChange(val)}
+          showBalance={tab === 'protect'}
         />
         <DetailArea>
           <Typography
