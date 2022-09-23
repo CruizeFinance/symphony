@@ -177,7 +177,7 @@ const ProtectCard = () => {
         <Input
           label="AMOUNT"
           inputValue={inputValue}
-          onInputChange={(val) => setInputValue(val)}
+          onInputChange={(val) => setInputValue(val || '0.0')}
           onAssetChange={(val) => handleAssetChange(val)}
         />
         <DetailArea>
