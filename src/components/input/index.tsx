@@ -100,6 +100,7 @@ const Input = ({
   const { address } = useAccount()
   const balance = useBalance({
     addressOrName: address,
+    watch: true,
     ...(selectedAsset !== 'ethereum'
       ? {
           token:
@@ -111,16 +112,18 @@ const Input = ({
   })
 
   const handleAssetChange = (val: string) => {
-    onAssetChange && onAssetChange(val)
     switch (val) {
       case 'WBTC':
-        setSelectedAsset('bitcoin')
+        setSelectedAsset('wrapped-bitcoin')
+        onAssetChange && onAssetChange('wrapped-bitcoin')
         break
       case 'WETH':
         setSelectedAsset('weth')
+        onAssetChange && onAssetChange('weth')
         break
       default:
         setSelectedAsset('ethereum')
+        onAssetChange && onAssetChange('ethereum')
         break
     }
   }
@@ -135,6 +138,10 @@ const Input = ({
       assetPriceApi()
     }
   }, [selectedAsset])
+
+  useEffect(() => {
+    setInputValue(inputValue || '0.0')
+  }, [inputValue])
 
   return (
     <InputArea>

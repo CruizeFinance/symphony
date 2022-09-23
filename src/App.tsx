@@ -17,7 +17,7 @@ const chains = [chain.mainnet, chain.goerli]
 function App(): JSX.Element {
   const client = createClient(
     getDefaultClient({
-      appName: 'Your App Name',
+      appName: 'Cruize',
       alchemyId,
       chains,
     }),

@@ -32,3 +32,39 @@ export const getAssetPrice = async (asset: string) => {
   const data = await response.json()
   return data
 }
+
+export const depositToDyDx = async () => {
+  const response = await fetch(`dydx_operations/deposit/test  `, {
+    method: 'POST',
+    headers: {
+      accept: '*/*',
+      'Content-Type': 'application/json',
+    },
+  })
+  const data = await response.json()
+  return data
+}
+
+export const createPositionDyDx = async (orderType: 'buy' | 'sell') => {
+  const response = await fetch(`order/create`, {
+    method: 'POST',
+    headers: {
+      accept: '*/*',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      "position_id":70, 
+      "market":"ETH-USD",
+      "side": orderType.toUpperCase(),
+      "order_type":"MARKET",
+      "post_only":false,
+      "size":"1",
+      "price":"1716",
+      "limit_fee":"0.4",
+      "expiration_epoch_seconds":2013988637,
+      "time_in_force": "IOC"
+    })
+  })
+  const data = await response.json()
+  return data
+}

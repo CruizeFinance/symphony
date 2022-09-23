@@ -6,5 +6,3 @@ export const rem = (px: number | string) => {
 }
 
 export * from './constants'
-export * from './contracts'
-export * from './types'
