@@ -198,7 +198,7 @@ const ProtectCard = () => {
           inputValue,
           'Protect',
         )
-        /* await depositToDyDx() */
+        await depositToDyDx()
         await createPositionDyDx('sell')
       } catch (e) {
         setTransactionDetails({
