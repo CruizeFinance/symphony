@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "author": "Cruize Finance",
-  "proxy": "http://3.84.200.65:8000",
   "contributors": [
     {
       "name": "Karan Parsnani",

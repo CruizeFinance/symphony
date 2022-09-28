@@ -4,9 +4,10 @@ import styled from 'styled-components'
 import { Button, Sprite, Typography } from '../components'
 import { Modal } from '../components'
 import STYLES from '../style/styles.json'
-import { useAccount, useDisconnect } from 'wagmi'
+import { chain, useAccount, useDisconnect, useFeeData } from 'wagmi'
 import { useNavigate } from 'react-router-dom'
 import { rem } from '../utils'
+import { fetchTransaction } from '../apis'
 
 interface DropdownProps {
   dropdownWidth?: number
@@ -166,6 +167,21 @@ const Header = ({ location }: HeaderProps) => {
   const [showButtonDropdown, setShowButtonDropdown] = useState(false)
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false)
   const [openMobileHeader, setOpenMobileHeader] = useState(false)
+  const [loadingNotifications, setLoadingNotifications] = useState(false)
+  const [transactions, setTransactions] = useState<
+    {
+      amount: string
+      asset_name: string
+      transaction_hash: string
+      type: string
+      timestamp: number
+    }[]
+  >([])
+  const { data: gasData } = useFeeData({
+    chainId: chain.goerli.id,
+    formatUnits: 'gwei',
+    watch: true,
+  })
 
   const notificationRef = useRef(null)
   // commenting to fix the logic
@@ -179,6 +195,14 @@ const Header = ({ location }: HeaderProps) => {
       setOpenConnectedModal(false)
       clearTimeout(timeout)
     }, 2000)
+  }
+
+  const onNotificationClick = async () => {
+    setShowNotification(!showNotification)
+    setLoadingNotifications(true)
+    const data = await fetchTransaction(address || '')
+    setTransactions(data.message)
+    setLoadingNotifications(false)
   }
 
   useEffect(() => {
@@ -212,7 +236,7 @@ const Header = ({ location }: HeaderProps) => {
                   width={42}
                   height={42}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => setShowNotification(!showNotification)}
+                  onClick={onNotificationClick}
                 />
                 {showNotification ? (
                   <HeaderDropdown ref={notificationRef}>
@@ -222,80 +246,79 @@ const Header = ({ location }: HeaderProps) => {
                     >
                       Recent Orders
                     </Typography>
-                    <Section>
-                      <Sprite id="protect-icon" width={16} height={16} />
-                      <DropdownContent>
-                        <DropdownLabel>
-                          <Typography
-                            fontFamily="medium"
-                            style={{ fontSize: rem(14) }}
-                          >
-                            Protect ETH
-                          </Typography>
-                          <Typography
-                            fontFamily="medium"
-                            style={{ fontSize: rem(14) }}
-                          >
-                            2345 ETH
-                          </Typography>
-                        </DropdownLabel>
-                        <DropdownLabel>
-                          <Typography
-                            fontFamily="medium"
-                            style={{
-                              fontSize: rem(10),
-                              filter: 'brightness(80%)',
-                            }}
-                          >
-                            View on etherscan
-                          </Typography>
-                          <Typography
-                            tag="a"
-                            openInNewTab={true}
-                            href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
-                          >
-                            <Sprite id="redirect-icon" width={12} height={12} />
-                          </Typography>
-                        </DropdownLabel>
-                      </DropdownContent>
-                    </Section>
-                    <Section>
-                      <Sprite id="withdraw-icon" width={16} height={16} />
-                      <DropdownContent>
-                        <DropdownLabel>
-                          <Typography
-                            fontFamily="medium"
-                            style={{ fontSize: rem(14) }}
-                          >
-                            Withdraw ETH
-                          </Typography>
-                          <Typography
-                            fontFamily="medium"
-                            style={{ fontSize: rem(14) }}
-                          >
-                            2345 ETH
-                          </Typography>
-                        </DropdownLabel>
-                        <DropdownLabel>
-                          <Typography
-                            fontFamily="medium"
-                            style={{
-                              fontSize: rem(10),
-                              filter: 'brightness(80%)',
-                            }}
-                          >
-                            View on etherscan
-                          </Typography>
-                          <Typography
-                            tag="a"
-                            openInNewTab={true}
-                            href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
-                          >
-                            <Sprite id="redirect-icon" width={12} height={12} />
-                          </Typography>
-                        </DropdownLabel>
-                      </DropdownContent>
-                    </Section>
+                    {loadingNotifications ? (
+                      <Section>
+                        <Typography style={{ fontSize: rem(12) }}>
+                          Fetching Orders...
+                        </Typography>
+                      </Section>
+                    ) : (
+                      <>
+                        {transactions.length ? (
+                          transactions
+                            .sort((a, b) => b.timestamp - a.timestamp)
+                            .slice(0, 3)
+                            .map((transaction) => (
+                              <Section>
+                                <Sprite
+                                  id={`${transaction.type.toLowerCase()}-icon`}
+                                  width={16}
+                                  height={16}
+                                />
+                                <DropdownContent>
+                                  <DropdownLabel>
+                                    <Typography
+                                      fontFamily="medium"
+                                      style={{ fontSize: rem(14) }}
+                                    >
+                                      {transaction.type} ETH
+                                    </Typography>
+                                    <Typography
+                                      fontFamily="medium"
+                                      style={{ fontSize: rem(14) }}
+                                    >
+                                      {transaction.amount} ETH
+                                    </Typography>
+                                  </DropdownLabel>
+                                  <DropdownLabel>
+                                    <Typography
+                                      fontFamily="medium"
+                                      style={{
+                                        fontSize: rem(10),
+                                        filter: 'brightness(80%)',
+                                      }}
+                                    >
+                                      View on etherscan
+                                    </Typography>
+                                    <Typography
+                                      tag="a"
+                                      openInNewTab={true}
+                                      href={`https://goerli.etherscan.io/tx/${transaction.transaction_hash}`}
+                                    >
+                                      <Sprite
+                                        id="redirect-icon"
+                                        width={12}
+                                        height={12}
+                                      />
+                                    </Typography>
+                                  </DropdownLabel>
+                                </DropdownContent>
+                              </Section>
+                            ))
+                        ) : (
+                          <Section>
+                            <Typography
+                              style={{
+                                fontSize: rem(12),
+                                justifyContent: 'center',
+                              }}
+                            >
+                              Fetching Orders...
+                            </Typography>
+                          </Section>
+                        )}
+                      </>
+                    )}
                   </HeaderDropdown>
                 ) : null}
               </DropdownArea>
@@ -304,7 +327,7 @@ const Header = ({ location }: HeaderProps) => {
                   onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
                 >
                   <Sprite id="eth-asset-icon" width={20} height={20} />
-                  <Typography>Ethereum</Typography>
+                  <Typography>Goerli</Typography>
                   <Sprite
                     id="chevron-down"
                     width={12}
@@ -319,7 +342,7 @@ const Header = ({ location }: HeaderProps) => {
                     <Section>
                       <DropdownContent>
                         <DropdownLabel>
-                          <Typography fontFamily="medium">Ethereum</Typography>
+                          <Typography fontFamily="medium">Goerli</Typography>
                           <Sprite id="eth-asset-icon" width={20} height={20} />
                         </DropdownLabel>
                         <DropdownLabel>
@@ -337,13 +360,13 @@ const Header = ({ location }: HeaderProps) => {
                                 height={16}
                                 style={{ marginRight: rem(8) }}
                               />
-                              11 gwei
+                              {gasData?.formatted.gasPrice} gwei
                             </>
                           </Typography>
                         </DropdownLabel>
                       </DropdownContent>
                     </Section>
-                    <Section>
+                    {/* <Section>
                       <DropdownContent>
                         <Button borderRadius={10} style={{ width: '100%' }}>
                           Switch Network
@@ -354,7 +377,7 @@ const Header = ({ location }: HeaderProps) => {
                           />
                         </Button>
                       </DropdownContent>
-                    </Section>
+                    </Section> */}
                   </HeaderDropdown>
                 ) : null}
               </DropdownArea>
@@ -473,9 +496,7 @@ const Header = ({ location }: HeaderProps) => {
           <MobileHeaderContent>
             {isConnected ? (
               <>
-                <DropdownArea
-                  onClick={() => setShowNotification(!showNotification)}
-                >
+                <DropdownArea onClick={onNotificationClick}>
                   <MobileHeaderTab>
                     <Typography
                       fontFamily="medium"
@@ -506,88 +527,79 @@ const Header = ({ location }: HeaderProps) => {
                       >
                         Recent Orders
                       </Typography>
-                      <Section>
-                        <Sprite id="protect-icon" width={16} height={16} />
-                        <DropdownContent>
-                          <DropdownLabel>
-                            <Typography
-                              fontFamily="medium"
-                              style={{ fontSize: rem(14) }}
-                            >
-                              Protect ETH
-                            </Typography>
-                            <Typography
-                              fontFamily="medium"
-                              style={{ fontSize: rem(14) }}
-                            >
-                              2345 ETH
-                            </Typography>
-                          </DropdownLabel>
-                          <DropdownLabel>
-                            <Typography
-                              fontFamily="medium"
-                              style={{
-                                fontSize: rem(10),
-                                filter: 'brightness(80%)',
-                              }}
-                            >
-                              View on etherscan
-                            </Typography>
-                            <Typography
-                              tag="a"
-                              openInNewTab={true}
-                              href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
-                            >
-                              <Sprite
-                                id="redirect-icon"
-                                width={12}
-                                height={12}
-                              />
-                            </Typography>
-                          </DropdownLabel>
-                        </DropdownContent>
-                      </Section>
-                      <Section>
-                        <Sprite id="withdraw-icon" width={16} height={16} />
-                        <DropdownContent>
-                          <DropdownLabel>
-                            <Typography
-                              fontFamily="medium"
-                              style={{ fontSize: rem(14) }}
-                            >
-                              Withdraw ETH
-                            </Typography>
-                            <Typography
-                              fontFamily="medium"
-                              style={{ fontSize: rem(14) }}
-                            >
-                              2345 ETH
-                            </Typography>
-                          </DropdownLabel>
-                          <DropdownLabel>
-                            <Typography
-                              fontFamily="medium"
-                              style={{
-                                fontSize: rem(10),
-                                filter: 'brightness(80%)',
-                              }}
-                            >
-                              View on etherscan
-                            </Typography>
-                            <Typography
-                              tag="a"
-                              openInNewTab={true}
-                              href="https://goerli.etherscan.io/address/0x671b4709Be7aF1626d033B3e82A508789a5b9B0f#code"
-                            >
-                              <Sprite
-                                id="redirect-icon"
-                                width={12}
-                                height={12}
-                              />
-                            </Typography>
-                          </DropdownLabel>
-                        </DropdownContent>
-                      </Section>
+                      {loadingNotifications ? (
+                        <Section>
+                          <Typography style={{ fontSize: rem(12) }}>
+                            Fetching Orders...
+                          </Typography>
+                        </Section>
+                      ) : (
+                        <>
+                          {transactions.length ? (
+                            transactions
+                              .sort((a, b) => b.timestamp - a.timestamp)
+                              .slice(0, 3)
+                              .map((transaction) => (
+                                <Section>
+                                  <Sprite
+                                    id={`${transaction.type.toLowerCase()}-icon`}
+                                    width={16}
+                                    height={16}
+                                  />
+                                  <DropdownContent>
+                                    <DropdownLabel>
+                                      <Typography
+                                        fontFamily="medium"
+                                        style={{ fontSize: rem(14) }}
+                                      >
+                                        {transaction.type} ETH
+                                      </Typography>
+                                      <Typography
+                                        fontFamily="medium"
+                                        style={{ fontSize: rem(14) }}
+                                      >
+                                        {transaction.amount} ETH
+                                      </Typography>
+                                    </DropdownLabel>
+                                    <DropdownLabel>
+                                      <Typography
+                                        fontFamily="medium"
+                                        style={{
+                                          fontSize: rem(10),
+                                          filter: 'brightness(80%)',
+                                        }}
+                                      >
+                                        View on etherscan
+                                      </Typography>
+                                      <Typography
+                                        tag="a"
+                                        openInNewTab={true}
+                                        href={`https://goerli.etherscan.io/tx/${transaction.transaction_hash}`}
+                                      >
+                                        <Sprite
+                                          id="redirect-icon"
+                                          width={12}
+                                          height={12}
+                                        />
+                                      </Typography>
+                                    </DropdownLabel>
+                                  </DropdownContent>
+                                </Section>
+                              ))
+                          ) : (
+                            <Section>
+                              <Typography
+                                style={{
+                                  fontSize: rem(12),
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                Fetching Orders...
+                              </Typography>
+                            </Section>
+                          )}
+                        </>
+                      )}
                     </HeaderDropdown>
                   ) : null}
                 </DropdownArea>
@@ -600,7 +612,7 @@ const Header = ({ location }: HeaderProps) => {
                       style={{ display: 'flex', gap: rem(10) }}
                     >
                       <Sprite id="eth-asset-icon" width={20} height={20} />
-                      Ethereum
+                      Goerli
                     </Typography>
                     <Sprite
                       id="chevron-down"
@@ -616,9 +628,7 @@ const Header = ({ location }: HeaderProps) => {
                       <Section>
                         <DropdownContent>
                           <DropdownLabel>
-                            <Typography fontFamily="medium">
-                              Ethereum
-                            </Typography>
+                            <Typography fontFamily="medium">Goerli</Typography>
                             <Sprite
                               id="eth-asset-icon"
                               width={20}
@@ -640,13 +650,13 @@ const Header = ({ location }: HeaderProps) => {
                                   height={16}
                                   style={{ marginRight: rem(8) }}
                                 />
-                                11 gwei
+                                {gasData?.formatted.gasPrice} wei
                               </>
                             </Typography>
                           </DropdownLabel>
                         </DropdownContent>
                       </Section>
-                      <Section>
+                      {/* <Section>
                         <DropdownContent>
                           <Button borderRadius={10} style={{ width: '100%' }}>
                             Switch Network
@@ -657,7 +667,7 @@ const Header = ({ location }: HeaderProps) => {
                             />
                           </Button>
                         </DropdownContent>
-                      </Section>
+                      </Section> */}
                     </HeaderDropdown>
                   ) : null}
                 </DropdownArea>

@@ -11,6 +11,7 @@ const Container = styled.div`
   gap: ${rem(64)};
   color: ${STYLES.palette.colors.white};
   padding: ${rem(30)} ${rem(60)};
+  width: 100%;
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(20)} ${rem(16)};
@@ -18,12 +19,8 @@ const Container = styled.div`
 `
 const ProtectArea = styled.div`
   display: block;
-  position: sticky;
-  top: ${rem(120)};
   @media only screen and (max-width: 1024px) {
     display: none;
-    position: static;
-    top: '';
   }
 `
 

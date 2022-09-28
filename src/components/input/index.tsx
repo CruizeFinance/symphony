@@ -1,11 +1,10 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { rem, WBTC_MAINNET_CONTRACT_ADDRESS } from '../../utils'
-import { Select, Typography } from '..'
-import { useEffect, useState } from 'react'
-import { useAccount, useBalance, useConnect } from 'wagmi'
-import { WETH_MAINNET_CONTRACT_ADDRESS } from '../../utils'
-import { getAssetPrice } from '../../apis'
+import { rem, WBTC_TESTNET_CONTRACT_ADDRESS, WETH_TESTNET_CONTRACT_ADDRESS } from '../../utils'
+import { AssetDropdown, Typography } from '..'
+import { useContext, useEffect, useState } from 'react'
+import { useAccount, useBalance } from 'wagmi'
+import { AppContext } from '../../context'
 
 const InputArea = styled.div`
   display: flex;
@@ -83,6 +82,7 @@ interface InputFieldProps
   onAssetChange?: (val: string) => void
   inputValue?: string
   showBalance?: boolean
+  onMaxClick?: (val: string) => void
 }
 
 const Input = ({
@@ -93,11 +93,12 @@ const Input = ({
   onInputChange,
   onAssetChange,
   showBalance,
+  onMaxClick,
   ...props
 }: InputFieldProps) => {
   const [input, setInputValue] = useState<string>('0.0')
   const [selectedAsset, setSelectedAsset] = useState<string>('ethereum')
-  const [assetPrice, setAssetPrice] = useState()
+  const [state] = useContext(AppContext)
   const { isConnected } = useAccount()
   const { address } = useAccount()
   const balance = useBalance({
@@ -107,8 +108,8 @@ const Input = ({
       ? {
           token:
             selectedAsset === 'weth'
-              ? WETH_MAINNET_CONTRACT_ADDRESS
-              : WBTC_MAINNET_CONTRACT_ADDRESS,
+              ? WETH_TESTNET_CONTRACT_ADDRESS
+              : WBTC_TESTNET_CONTRACT_ADDRESS,
         }
       : undefined),
   })
@@ -129,17 +130,6 @@ const Input = ({
         break
     }
   }
-
-  async function assetPriceApi() {
-    const data = await getAssetPrice(selectedAsset)
-    if (data.price) setAssetPrice(data.price)
-  }
-
-  useEffect(() => {
-    if (selectedAsset) {
-      assetPriceApi()
-    }
-  }, [selectedAsset])
 
   useEffect(() => {
     setInputValue(inputValue || '0.0')
@@ -176,13 +166,13 @@ const Input = ({
               color: STYLES.palette.colors.inputLabel,
             }}
           >
-            {assetPrice
-              ? `~$${(assetPrice * parseFloat(input || '0.0')).toFixed(4)}`
+            {state.assetPrice
+              ? `~$${(state.assetPrice * parseFloat(input || '0.0')).toFixed(4)}`
               : '-'}
           </Typography>
         </InputSection>
         <AssetSection>
-          <Select
+          <AssetDropdown
             options={options}
             onChange={(val) => handleAssetChange(val)}
             labelStyle={{
@@ -203,9 +193,10 @@ const Input = ({
             >
               <>Balance: {balance.data?.formatted.slice(0, 10) || '-'}</>
               <MaxButton
-                onClick={() =>
+                onClick={() =>{
+                  onMaxClick && onMaxClick(balance.data?.formatted.slice(0, 10) ?? '0.0')
                   setInputValue(balance.data?.formatted.slice(0, 10) ?? '0.0')
-                }
+                }}
               >
                 MAX
               </MaxButton>

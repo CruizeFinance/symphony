@@ -9,19 +9,22 @@ import {
   Tooltip,
   Typography,
 } from '../../components'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { rem } from '../../utils'
 import {
+  chain,
   useAccount,
-  useContract,
   useDeprecatedContractWrite,
+  useFeeData,
   usePrepareContractWrite,
 } from 'wagmi'
-import abi from '../../abis/cruize_abi.json'
-import { BigNumber, ethers } from 'ethers'
-import { createPositionDyDx, depositToDyDx, getAssetPrice } from '../../apis'
+import testnet_abi from '../../abis/testnet_cruize_abi.json'
+import { ethers } from 'ethers'
+import { createPositionDyDx, depositToDyDx, storeTransaction } from '../../apis'
+import { AppContext } from '../../context'
+import { useNavigate } from 'react-router-dom'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -63,18 +66,49 @@ const ButtonContainer = styled.div`
   justify-content: end;
   gap: ${rem(8)};
 `
+const loading = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`
+const Loader = styled.div`
+  display: inline-block;
+  width: ${rem(40)};
+  height: ${rem(40)};
+  border: ${rem(3)} solid ${STYLES.palette.colors.white};
+  border-radius: 50%;
+  border-top-color: ${STYLES.palette.colors.loaderColor};
+  animation: ${loading} 1s linear infinite;
+`
 
 const ProtectCard = () => {
+  const navigate = useNavigate()
   const [openTransactionDetails, setOpenTransactionDetails] = useState(false)
   const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
   const [inputValue, setInputValue] = useState('0.0')
-  const [assetPrice, setAssetPrice] = useState(0)
   const [tab, setTab] = useState('protect')
+  const [openTransactionModal, setOpenTransactionModal] = useState(false)
+  const [transactionLoading, setTransactionLoading] = useState(false)
+  const [transactionDetails, setTransactionDetails] = useState<{
+    hash: string
+    status: number
+  }>({ hash: '', status: 0 })
   const { isConnected, address } = useAccount()
 
+  const [state] = useContext(AppContext)
+
+  const { data: gasData } = useFeeData({
+    chainId: chain.goerli.id,
+    formatUnits: 'ether',
+    watch: true,
+  })
+
   const { config: depositConfig } = usePrepareContractWrite({
-    addressOrName: '0x8519D277273F6d07CA7DE0e2aBCD6C2E69485ecD',
-    contractInterface: abi,
+    addressOrName: '0xCB7d7264b70aE89a65F9ee660Fe5c5BAB0Ab4f3c',
+    contractInterface: testnet_abi,
     functionName: 'depositTest',
     args: [
       ethers.utils.parseEther(inputValue),
@@ -83,7 +117,7 @@ const ProtectCard = () => {
     overrides: {
       from: address,
       value: ethers.utils.parseEther(inputValue),
-      gasLimit: 1000000
+      gasLimit: 1000000,
     },
   })
   const { writeAsync: depositWriteAsync } = useDeprecatedContractWrite(
@@ -91,16 +125,16 @@ const ProtectCard = () => {
   )
 
   const { config: withdrawConfig } = usePrepareContractWrite({
-    addressOrName: '0x8519D277273F6d07CA7DE0e2aBCD6C2E69485ecD',
-    contractInterface: abi,
+    addressOrName: '0xCB7d7264b70aE89a65F9ee660Fe5c5BAB0Ab4f3c',
+    contractInterface: testnet_abi,
     functionName: 'withdrawTest',
     args: [
       ethers.utils.parseEther(inputValue),
       '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      (assetPrice * Math.pow(10, 6)).toString()
+      (state.assetPrice * Math.pow(10, 6)).toFixed(0),
     ],
     overrides: {
-      gasLimit: 1000000
+      gasLimit: 1000000,
     },
   })
   const { writeAsync: withdrawWriteAsync } = useDeprecatedContractWrite(
@@ -108,21 +142,74 @@ const ProtectCard = () => {
   )
 
   const handleTab = async () => {
+    setOpenTransactionModal(true)
     if (tab === 'withdraw') {
-      const tx = await withdrawWriteAsync?.();
-      const data = await tx.wait();
-      if (data.status === 1) {
-        const positionData = await createPositionDyDx('buy')
-        console.log(positionData);
+      try {
+        setTransactionLoading(true)
+        const tx = await withdrawWriteAsync?.()
+        const data = await tx.wait()
+        setTransactionDetails({
+          hash: data.transactionHash,
+          status: data.status || 0,
+        })
+        setTransactionLoading(false)
+        const timer = setTimeout(() => {
+          setOpenTransactionModal(false)
+          clearTimeout(timer)
+        }, 1500)
+        await storeTransaction(
+          address ?? '',
+          data.transactionHash,
+          state.selectedAsset.label,
+          inputValue,
+          'Withdraw',
+        )
+        await createPositionDyDx('buy')
+      } catch (e) {
+        console.log(e)
+        setTransactionDetails({
+          hash: '',
+          status: 0,
+        })
+        setTransactionLoading(false)
+        const timer = setTimeout(() => {
+          setOpenTransactionModal(false)
+          clearTimeout(timer)
+        }, 1500)
       }
     } else {
-      const tx = await depositWriteAsync?.();
-      const data = await tx.wait();
-      if (data.status === 1) {
-        const depositData = await depositToDyDx();
-        console.log(depositData);
-        const positionData = await createPositionDyDx('sell');
-        console.log(positionData);
+      try {
+        setTransactionLoading(true)
+        const tx = await depositWriteAsync?.()
+        const data = await tx.wait()
+        setTransactionLoading(false)
+        setTransactionDetails({
+          hash: data.transactionHash,
+          status: data.status || 0,
+        })
+        const timer = setTimeout(() => {
+          setOpenTransactionModal(false)
+          clearTimeout(timer)
+        }, 1500)
+        await storeTransaction(
+          address ?? '',
+          data.transactionHash,
+          state.selectedAsset.label,
+          inputValue,
+          'Protect',
+        )
+        /* await depositToDyDx() */
+        await createPositionDyDx('sell')
+      } catch (e) {
+        setTransactionDetails({
+          hash: '',
+          status: 0,
+        })
+        setTransactionLoading(false)
+        const timer = setTimeout(() => {
+          setOpenTransactionModal(false)
+          clearTimeout(timer)
+        }, 1500)
       }
     }
   }
@@ -130,18 +217,10 @@ const ProtectCard = () => {
     setOpenTransactionDetails(false)
     setInputValue('0.0')
   }
-  const handleAssetChange = async (val: string) => {
-    const data = await getAssetPrice(val)
-    if (data.price) setAssetPrice(data.price)
-  }
 
   useEffect(() => {
     setDefaultValues()
   }, [tab])
-
-  useEffect(() => {
-    handleAssetChange('ethereum')
-  }, [])
 
   return (
     <>
@@ -150,7 +229,8 @@ const ProtectCard = () => {
           onClick={(val) => setTab(val.toLowerCase())}
           tabs={[{ label: 'Protect' }, { label: 'Withdraw' }]}
         />
-        {tab === 'withdraw' ? (
+        {/* hidden for demo */}
+        {/* {tab === 'withdraw' ? (
           <Tabs
             onClick={(val) => console.log(val)}
             tabs={[
@@ -173,13 +253,13 @@ const ProtectCard = () => {
             ]}
             type="contained"
           />
-        ) : null}
+        ) : null} */}
         <Input
           label="AMOUNT"
           inputValue={inputValue}
           onInputChange={(val) => setInputValue(val || '0.0')}
-          onAssetChange={(val) => handleAssetChange(val)}
           showBalance={tab === 'protect'}
+          onMaxClick={(val) => setInputValue(val)}
         />
         <DetailArea>
           <Typography
@@ -201,10 +281,11 @@ const ProtectCard = () => {
               fontFamily="regular"
               color={STYLES.palette.colors.white60}
             >
-              3000 USDC
+              {state.priceFloor.toFixed(2)} USDC
             </Typography>
           </Detail>
-          <Detail>
+          {/* hidden for demo */}
+          {/* <Detail>
             <Typography
               fontFamily="regular"
               color={STYLES.palette.colors.white60}
@@ -218,7 +299,7 @@ const ProtectCard = () => {
             >
               3000 USDC
             </Typography>
-          </Detail>
+          </Detail> */}
           <Detail>
             <Typography
               fontFamily="regular"
@@ -231,7 +312,9 @@ const ProtectCard = () => {
               fontFamily="regular"
               color={STYLES.palette.colors.white60}
             >
-              3000 USDC
+              {((((0.9 * (Number(inputValue) * state.assetPrice) * 0.0102) -
+                (0.25 * (Number(inputValue) * (state.assetPrice - 100)) * 0.0222))/(Number(inputValue) * state.assetPrice) * 100) || 0).toFixed(3)}{' '}
+              %
             </Typography>
           </Detail>
         </DetailArea>
@@ -251,7 +334,12 @@ const ProtectCard = () => {
                 Total
                 <Sprite id="info-icon" width={20} height={20} />
               </Typography>
-              <Typography fontFamily="bold">0.10040784ETH ($164.93)</Typography>
+              <Typography fontFamily="bold">
+                {(
+                  Number(inputValue) + Number(gasData?.formatted.gasPrice)
+                ).toFixed(8) || 0}{' '}
+                ETH
+              </Typography>
             </Detail>
             <Detail>
               <Typography
@@ -267,7 +355,7 @@ const ProtectCard = () => {
                 fontFamily="regular"
                 color={STYLES.palette.colors.white60}
               >
-                0.0015678 ETH
+                {gasData?.formatted.gasPrice || '-'} ETH
               </Typography>
             </Detail>
           </DetailArea>
@@ -347,6 +435,57 @@ const ProtectCard = () => {
             It's fine, I know stuff
           </Button>
         </ButtonContainer>
+      </Modal>
+      <Modal
+        open={openTransactionModal}
+        modalContentStyle={{
+          padding: `${rem(36)} ${rem(40)}`,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: rem(24),
+        }}
+      >
+        {transactionLoading ? (
+          <Loader />
+        ) : (
+          <Sprite
+            id={
+              transactionDetails.status === 1
+                ? 'green-check-icon'
+                : 'red-cross-icon'
+            }
+            width={40}
+            height={40}
+          />
+        )}
+        <Typography fontFamily="extraBold" style={{ fontSize: rem(20) }}>
+          {transactionLoading
+            ? 'Transaction Pending'
+            : tab === 'protect'
+            ? transactionDetails.status === 1
+              ? 'Deposit Successful'
+              : 'Deposit Failed'
+            : transactionDetails.status === 1
+            ? 'Withdraw Successful'
+            : 'Withdraw Failed'}
+        </Typography>
+        {transactionDetails.hash ? (
+          <Typography
+            style={{ display: 'flex', gap: rem(10) }}
+            tag="a"
+            href={`https://goerli.etherscan.io/tx/${transactionDetails.hash}`}
+            openInNewTab={true}
+            color={STYLES.palette.colors.linkBlue}
+          >
+            View on etherscan
+            <Sprite id="redirect-icon" width={16} height={16} />
+          </Typography>
+        ) : null}
+        <Button borderRadius={8} onClick={() => navigate('/')}>
+          Back to Home
+        </Button>
       </Modal>
     </>
   )

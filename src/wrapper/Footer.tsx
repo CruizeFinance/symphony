@@ -128,7 +128,7 @@ const Footer = () => {
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href="https://www.cruize.finance/"
               openInNewTab={true}
             >
               Home
@@ -136,7 +136,7 @@ const Footer = () => {
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href="https://www.cruize.finance/about"
               openInNewTab={true}
             >
               About
@@ -144,34 +144,18 @@ const Footer = () => {
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href="https://docs.cruize.org"
               openInNewTab={true}
             >
-              Blog
+              Guide
             </Typography>
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href=" https://www.cruize.finance/terms"
               openInNewTab={true}
             >
-              FAQ
-            </Typography>
-            <Typography
-              tag="a"
-              fontFamily="regular"
-              href="https://cruize.org"
-              openInNewTab={true}
-            >
-              Docs
-            </Typography>
-            <Typography
-              tag="a"
-              fontFamily="regular"
-              href="https://cruize.org"
-              openInNewTab={true}
-            >
-              Privacy
+              Terms
             </Typography>
           </Section>
           <Section>
@@ -186,26 +170,26 @@ const Footer = () => {
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href="https://twitter.com/CruizeFinance"
               openInNewTab={true}
             >
-              Discord
+              <Sprite id='twitter-icon' width={24} height={24} />
             </Typography>
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href="https://discord.gg/uM5BGUZpFb"
               openInNewTab={true}
             >
-              Twitter
+            <Sprite id='discord-icon' width={24} height={24} />
             </Typography>
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://cruize.org"
+              href="https://github.com/CruizeFinance"
               openInNewTab={true}
             >
-              Contact
+            <Sprite id='github-icon' width={24} height={24} />
             </Typography>
           </Section>
         </Links>

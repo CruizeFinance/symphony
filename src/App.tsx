@@ -4,6 +4,7 @@ import STYLES from './style/styles.json'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { WagmiConfig, createClient, chain } from 'wagmi'
 import { ConnectKitProvider, getDefaultClient } from 'connectkit'
+import { AppContextProvider } from './context'
 
 const AppContainer = styled.div`
   height: 100%;
@@ -12,7 +13,7 @@ const AppContainer = styled.div`
 `
 const alchemyId = process.env.REACT_APP_ALCHEMY_ID
 
-const chains = [chain.mainnet, chain.goerli]
+const chains = [chain.goerli]
 
 function App(): JSX.Element {
   const client = createClient(
@@ -25,13 +26,15 @@ function App(): JSX.Element {
   return (
     <WagmiConfig client={client}>
       <ConnectKitProvider theme="midnight">
-        <AppContainer>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/*" element={<Wrapper />} />
-            </Routes>
-          </BrowserRouter>
-        </AppContainer>
+        <AppContextProvider>
+          <AppContainer>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/*" element={<Wrapper />} />
+              </Routes>
+            </BrowserRouter>
+          </AppContainer>
+        </AppContextProvider>
       </ConnectKitProvider>
     </WagmiConfig>
   )
