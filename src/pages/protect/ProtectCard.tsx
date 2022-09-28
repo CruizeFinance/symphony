@@ -154,6 +154,10 @@ const ProtectCard = () => {
         })
         setTransactionLoading(false)
         const timer = setTimeout(() => {
+          setTransactionDetails({
+            hash: '',
+            status: 0,
+          })
           setOpenTransactionModal(false)
           clearTimeout(timer)
         }, 1500)
@@ -188,6 +192,10 @@ const ProtectCard = () => {
           status: data.status || 0,
         })
         const timer = setTimeout(() => {
+          setTransactionDetails({
+            hash: '',
+            status: 0,
+          })
           setOpenTransactionModal(false)
           clearTimeout(timer)
         }, 1500)
@@ -413,7 +421,7 @@ const ProtectCard = () => {
             style={{ width: 'auto', padding: rem(16) }}
             onClick={() =>
               window.open(
-                'https://www.cruize.org',
+                'https://docs.cruize.org',
                 '_blank',
                 'noopener noreferrer',
               )

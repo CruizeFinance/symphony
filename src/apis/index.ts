@@ -52,7 +52,7 @@ export const createPositionDyDx = async (orderType: 'buy' | 'sell') => {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      "position_id":  67, 
+      // "position_id":  70, 
       "market":"ETH-USD",
       "side": orderType.toUpperCase(),
       "order_type":"MARKET",
