@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { rem, WBTC_TESTNET_CONTRACT_ADDRESS, WETH_TESTNET_CONTRACT_ADDRESS } from '../../utils'
+import { DROPDOWN_OPTIONS, rem } from '../../utils'
 import { AssetDropdown, Typography } from '..'
 import { useContext, useEffect, useState } from 'react'
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { AppContext } from '../../context'
 
 const InputArea = styled.div`
@@ -44,8 +44,7 @@ const MaxButton = styled.button`
   margin-left: ${rem(4)};
   border: none;
   padding: ${rem(1)} ${rem(4)};
-  background: ${STYLES.palette.colors.tagBlue};
-  filter: brightness(43%);
+  background: ${STYLES.palette.colors.maxButtonBackground};
   cursor: pointer;
   color: ${STYLES.palette.colors.maxButtonFont};
   border-radius: ${rem(4)};
@@ -55,21 +54,7 @@ const AssetSection = styled(InputSection)`
   gap: ${rem(8)};
 `
 
-const options = [
-  {
-    label: 'ETH',
-    icon: 'eth-asset-icon',
-  },
-  {
-    label: 'WETH',
-    icon: 'weth-asset-icon',
-  },
-  {
-    label: 'WBTC',
-    icon: 'wbtc-asset-icon',
-  },
-]
-
+// input field props
 interface InputFieldProps
   extends React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
@@ -85,6 +70,12 @@ interface InputFieldProps
   onMaxClick?: (val: string) => void
 }
 
+/*
+ * Input
+ * Used to enter the amount for an asset the user would like to protect or withdraw
+ * Enables asset selection and a max button
+ * Displays price in USD and balance for a particular asset
+ */
 const Input = ({
   variant,
   label,
@@ -96,24 +87,20 @@ const Input = ({
   onMaxClick,
   ...props
 }: InputFieldProps) => {
+  // context
+  const [state] = useContext(AppContext)
+
+  // web3 hook
+  const { isConnected } = useAccount()
+
+  // state hook
   const [input, setInputValue] = useState<string>('0.0')
   const [selectedAsset, setSelectedAsset] = useState<string>('ethereum')
-  const [state] = useContext(AppContext)
-  const { isConnected } = useAccount()
-  const { address } = useAccount()
-  const balance = useBalance({
-    addressOrName: address,
-    watch: true,
-    ...(selectedAsset !== 'ethereum'
-      ? {
-          token:
-            selectedAsset === 'weth'
-              ? WETH_TESTNET_CONTRACT_ADDRESS
-              : WBTC_TESTNET_CONTRACT_ADDRESS,
-        }
-      : undefined),
-  })
 
+  /*
+   * function to handle asset changes
+   * returns the selected asset id to the parent component
+   */
   const handleAssetChange = (val: string) => {
     switch (val) {
       case 'WBTC':
@@ -131,6 +118,9 @@ const Input = ({
     }
   }
 
+  /*
+   * effect to set the input value on change
+   */
   useEffect(() => {
     setInputValue(inputValue || '0.0')
   }, [inputValue])
@@ -152,6 +142,10 @@ const Input = ({
       <InputContainer>
         <InputSection>
           <InputField
+            pattern="\d*" 
+            maxLength={10}
+            size={10}
+            type={'text'}
             value={input}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setInputValue(e.target.value)
@@ -167,16 +161,18 @@ const Input = ({
             }}
           >
             {state.assetPrice
-              ? `~$${(state.assetPrice * parseFloat(input || '0.0')).toFixed(4)}`
+              ? `~$${(state.assetPrice * parseFloat(input || '0.0')).toFixed(
+                  4,
+                )}`
               : '-'}
           </Typography>
         </InputSection>
         <AssetSection>
           <AssetDropdown
-            options={options}
+            options={DROPDOWN_OPTIONS}
             onChange={(val) => handleAssetChange(val)}
             labelStyle={{
-              width: '4ch',
+              width: '5ch',
               overflow: 'hidden',
               whiteSpace: 'nowrap',
               textOverflow: 'ellipsis',
@@ -191,11 +187,12 @@ const Input = ({
                 color: STYLES.palette.colors.inputLabel,
               }}
             >
-              <>Balance: {balance.data?.formatted.slice(0, 10) || '-'}</>
+              <>Balance: {state.assetBalance?.slice(0, 10) || '-'}</>
               <MaxButton
-                onClick={() =>{
-                  onMaxClick && onMaxClick(balance.data?.formatted.slice(0, 10) ?? '0.0')
-                  setInputValue(balance.data?.formatted.slice(0, 10) ?? '0.0')
+                onClick={() => {
+                  onMaxClick &&
+                    onMaxClick(state.assetBalance?.slice(0, 10) ?? '0.0')
+                  setInputValue(state.assetBalance?.slice(0, 10) ?? '0.0')
                 }}
               >
                 MAX

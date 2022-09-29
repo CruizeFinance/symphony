@@ -1,103 +1,124 @@
-import { MarketChartRangeData } from './interfaces'
+import { BASE_URL, fetchWrapper } from '../utils'
+import {
+  APYs,
+  AssetPrice,
+  DepositToDyDx,
+  FetchTransactions,
+  PriceFloors,
+  StoreTransactions,
+} from './interfaces'
 
-export const getMarketChartData = async (asset: string, days: number) => {
-  const response = await fetch(`http://app.cruize.finance:8000/market_data/day/`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      asset,
-      vs_currency: 'usd',
-      days,
-    }),
-  })
-  const data: MarketChartRangeData = await response.json()
-  return data
-}
-
+/*
+ * Used to fetch the asset's current price
+ */
 export const getAssetPrice = async (asset: string) => {
-  const response = await fetch(`http://app.cruize.finance:8000/market_data/asset_price/`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      asset_address: asset
-    }),
-  })
-  const data = await response.json()
-  return data
+  try {
+    const data: AssetPrice = await fetchWrapper.get(
+      `${BASE_URL}/market_data/asset_price?asset_name=${asset}`,
+    )
+    return data
+  } catch (e) {
+    return {
+      price: null,
+      error: e,
+    }
+  }
 }
 
+/*
+ * Used to deposit funds to dydx on successful protection
+ */
 export const depositToDyDx = async () => {
-  const response = await fetch(`http://app.cruize.finance:8000/dydx_operations/deposit/test  `, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-  })
-  const data = await response.json()
-  return data
+  try {
+    const data: DepositToDyDx = await fetchWrapper.post(
+      `${BASE_URL}/dydx_operations/test`,
+    )
+    return data
+  } catch (e) {
+    return {
+      message: null,
+      error: e,
+    }
+  }
 }
 
-export const createPositionDyDx = async (orderType: 'buy' | 'sell') => {
-  const response = await fetch(`http://app.cruize.finance:8000/order/create`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      // "position_id":  70, 
-      "market":"ETH-USD",
-      "side": orderType.toUpperCase(),
-      "order_type":"MARKET",
-      "post_only":false,
-      "size":"1",
-      "price":"1716",
-      "limit_fee":"0.4",
-      "expiration_epoch_seconds":2013988637,
-      "time_in_force": "IOC"
-    })
-  })
-  const data = await response.json()
-  return data
+/*
+ * Used to store user transaction details... protection or withdrawal
+ */
+export const storeTransaction = async (
+  user_address: string,
+  transaction_hash: string,
+  asset_name: string,
+  amount: string,
+  type: string,
+) => {
+  try {
+    const data: StoreTransactions = await fetchWrapper.post(
+      `${BASE_URL}/cruize_operations/transaction/store`,
+      JSON.stringify({
+        user_address,
+        transaction_hash,
+        asset_name,
+        amount,
+        type,
+      }),
+    )
+    return data
+  } catch (e) {
+    return {
+      message: null,
+      error: e,
+    }
+  }
 }
 
-export const storeTransaction = async (user_address: string, transaction_hash: string, asset_name: string, amount: string, type: string) => {
-  const response = await fetch(`http://app.cruize.finance:8000/cruize_operations/transaction/store`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_address,
-      transaction_hash,
-      asset_name,
-      amount,
-      type
-    })
-  })
-  const data = await response.json()
-  return data
+/*
+ * Used to fetch user transaction details
+ */
+export const fetchRecentOrders = async (user_address: string) => {
+  try {
+    const data: FetchTransactions = await fetchWrapper.get(
+      `${BASE_URL}/cruize_operations/transaction/fetch?wallet_address=${user_address}`,
+    )
+    return data
+  } catch (e) {
+    return {
+      message: null,
+      error: e,
+    }
+  }
 }
 
-export const fetchTransaction = async (user_address: string) => {
-  const response = await fetch(`http://app.cruize.finance:8000/cruize_operations/transaction/fetch`, {
-    method: 'POST',
-    headers: {
-      accept: '*/*',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_address
-    })
-  })
-  const data = await response.json()
-  return data
+/*
+ * Used to fetch all assets price floors
+ */
+export const fetchPriceFloors = async () => {
+  try {
+    const data: PriceFloors = await fetchWrapper.get(
+      `${BASE_URL}/cruize_operations/price_floor`,
+    )
+    return data
+  } catch (e) {
+    return {
+      result: null,
+      error: e,
+    }
+  }
+}
+
+/*
+ * Used to fetch all assets AAVE APYs
+ */
+export const fetchAPYs = async () => {
+  try {
+    const data: APYs = await fetchWrapper.get(
+      `${BASE_URL}/cruize_operations/apy`,
+    )
+    return data
+  } catch (e) {
+    return {
+      result: null,
+      error: e,
+    }
+  }
 }

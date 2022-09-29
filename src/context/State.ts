@@ -1,10 +1,22 @@
 import { AssetDropdownOptions } from '../enums'
 import State from './StateModel'
 
+// initial values of the application state
 const initialState: State = {
+  ethPrice: 0,
   assetPrice: 0,
   selectedAsset: { label: AssetDropdownOptions.ETH },
-  priceFloor: 0,
+  chainId: 1,
+  assetBalance: '',
+  priceFloors: {
+    ethereum: 0,
+    bitcoin: 0,
+  },
+  apys: {
+    WBTC: 0,
+    WETH: 0,
+    LINK: 0,
+  },
 }
 
 export default initialState

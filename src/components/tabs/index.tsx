@@ -4,6 +4,7 @@ import STYLES from '../../style/styles.json'
 import { Typography } from '..'
 import { rem } from '../../utils'
 
+// style props
 interface StyleProps {
   selected?: boolean
 }
@@ -61,6 +62,7 @@ const FilledTab = styled.div<StyleProps>`
   }
 `
 
+// tabs interface
 interface TabsProps extends StyleProps {
   tabs: { label: string; icon?: React.ReactNode }[]
   onClick: (tab: string) => void
@@ -70,6 +72,12 @@ interface TabsProps extends StyleProps {
   tabStyle?: React.CSSProperties
 }
 
+/*
+ * Tabs
+ * Works like any tab but styled
+ * Can render different look based on the choice
+ * Returns the selected tab to the parent component
+ */
 const Tabs = ({
   onClick,
   type,
@@ -78,8 +86,12 @@ const Tabs = ({
   containerStyle,
   tabStyle,
 }: TabsProps) => {
+  // state hook
   const [selectedTab, setSelectedTab] = useState<string>(tabs[0].label || '')
 
+  /*
+   * function to highlight the selected tab and return it tothe parent component
+   */
   const onTabClicked = (tab: string) => {
     setSelectedTab(tab)
     onClick(tab)

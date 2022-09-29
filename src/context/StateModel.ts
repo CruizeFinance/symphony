@@ -1,7 +1,19 @@
-import { Option } from "../components/assetdropdown/SelectInterfaces"
+import { Option } from '../components/assetdropdown/SelectInterfaces'
 
+// state interface
 export default interface State {
-    assetPrice: number
-    selectedAsset: Option
-    priceFloor: number
+  ethPrice: number
+  assetPrice: number
+  selectedAsset: Option
+  priceFloors: {
+    ethereum: number,
+    bitcoin: number
+  }
+  chainId: number
+  assetBalance: string
+  apys: {
+    WBTC: number
+    WETH: number
+    LINK: number
+  }
 }

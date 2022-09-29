@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { rem } from '../../utils'
 
+// style interface
 interface StyleProps {
   position?: 'top' | 'bottom' | 'left' | 'right'
 }
@@ -41,13 +42,19 @@ const TooltipArea = styled.span<StyleProps>`
       : `top: 100%;`}
 `
 
+// tooltip interface
 interface TooltipProps extends StyleProps {
   children: React.ReactNode
   content: React.ReactNode
   style?: React.CSSProperties
 }
 
+/*
+ * Tooltip
+ * Used to display extra information to explain jargons or a particular term
+ */
 const Tooltip = ({ children, content, position, style }: TooltipProps) => {
+  // state hook
   const [showTooltip, setShowTooltip] = useState(false)
 
   return (

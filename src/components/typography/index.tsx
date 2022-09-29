@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { rem } from '../../utils'
 
-
+// style interface
 interface StyleProps {
   fontFamily?: 'extraBold' | 'bold' | 'semiBold' | 'medium' | 'regular'
   color?: string
@@ -82,8 +82,17 @@ const A = styled.a<StyleProps>`
   font-size: ${rem(16)};
 `
 
+const SPAN = styled.span<StyleProps>`
+  font-family: ${(props) =>
+    STYLES.typography.fonts[props.fontFamily || 'regular']};
+  color: ${(props) => props.color || STYLES.palette.colors.white};
+  cursor: inherit;
+  font-size: ${rem(14)};
+`
+
+// typography interface
 interface TypographyProps extends StyleProps {
-  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'a'
+  tag?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'label' | 'a' | 'span'
   children: React.ReactNode
   style?: React.CSSProperties
   href?: string
@@ -92,6 +101,10 @@ interface TypographyProps extends StyleProps {
   id?: string
 }
 
+/*
+ * Typography
+ * Render the standard font tags to display content
+ */
 const Typography = ({
   fontFamily,
   tag,
@@ -101,7 +114,7 @@ const Typography = ({
   color,
   openInNewTab,
   onClick,
-  id
+  id,
 }: TypographyProps) => {
   switch (tag) {
     case 'h1':
@@ -202,6 +215,18 @@ const Typography = ({
         >
           {children}
         </A>
+      )
+    case 'span':
+      return (
+        <SPAN
+          fontFamily={fontFamily}
+          style={{ ...style }}
+          color={color}
+          onClick={onClick}
+          id={id}
+        >
+          {children}
+        </SPAN>
       )
     default:
       return (

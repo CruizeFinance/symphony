@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Sprite, Typography } from '../../components'
 import { rem } from '../../utils'
+import STYLES from '../../style/styles.json'
 
 const Container = styled.div`
   display: flex;
@@ -22,7 +23,11 @@ const InfoArea = styled(Container)`
   }
 `
 
+/* 
+  * Landing page for the dApp
+*/
 const Home = () => {
+  // react router dom hook
   const navigate = useNavigate()
 
   return (
@@ -35,7 +40,7 @@ const Home = () => {
         <Typography
           tag="p"
           fontFamily="regular"
-          style={{ filter: 'brightness(60%)' }}
+          color={STYLES.palette.colors.white60}
         >
           Save your assets from market volatility
         </Typography>
