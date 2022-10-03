@@ -1,7 +1,7 @@
 import { MarketChartRangeData } from './interfaces'
 
 export const getMarketChartData = async (asset: string, days: number) => {
-  const response = await fetch(`http://3.88.209.22:8000/market_data/day/`, {
+  const response = await fetch(`http://app.cruize.finance:8000/market_data/day/`, {
     method: 'POST',
     headers: {
       accept: '*/*',
@@ -18,7 +18,7 @@ export const getMarketChartData = async (asset: string, days: number) => {
 }
 
 export const getAssetPrice = async (asset: string) => {
-  const response = await fetch(`http://3.88.209.22:8000/market_data/asset_price/`, {
+  const response = await fetch(`http://app.cruize.finance:8000/market_data/asset_price/`, {
     method: 'POST',
     headers: {
       accept: '*/*',
@@ -33,7 +33,7 @@ export const getAssetPrice = async (asset: string) => {
 }
 
 export const depositToDyDx = async () => {
-  const response = await fetch(`http://3.88.209.22:8000/dydx_operations/deposit/test  `, {
+  const response = await fetch(`http://app.cruize.finance:8000/dydx_operations/deposit/test  `, {
     method: 'POST',
     headers: {
       accept: '*/*',
@@ -45,7 +45,7 @@ export const depositToDyDx = async () => {
 }
 
 export const createPositionDyDx = async (orderType: 'buy' | 'sell') => {
-  const response = await fetch(`http://3.88.209.22:8000/order/create`, {
+  const response = await fetch(`http://app.cruize.finance:8000/order/create`, {
     method: 'POST',
     headers: {
       accept: '*/*',
@@ -69,7 +69,7 @@ export const createPositionDyDx = async (orderType: 'buy' | 'sell') => {
 }
 
 export const storeTransaction = async (user_address: string, transaction_hash: string, asset_name: string, amount: string, type: string) => {
-  const response = await fetch(`http://3.88.209.22:8000/cruize_operations/transaction/store`, {
+  const response = await fetch(`http://app.cruize.finance:8000/cruize_operations/transaction/store`, {
     method: 'POST',
     headers: {
       accept: '*/*',
@@ -88,7 +88,7 @@ export const storeTransaction = async (user_address: string, transaction_hash: s
 }
 
 export const fetchTransaction = async (user_address: string) => {
-  const response = await fetch(`http://3.88.209.22:8000/cruize_operations/transaction/fetch`, {
+  const response = await fetch(`http://app.cruize.finance:8000/cruize_operations/transaction/fetch`, {
     method: 'POST',
     headers: {
       accept: '*/*',
