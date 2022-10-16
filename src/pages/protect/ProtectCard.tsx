@@ -18,7 +18,6 @@ import {
   rem,
 } from '../../utils'
 import {
-  chain,
   useAccount,
   useDeprecatedContractWrite,
   useFeeData,
@@ -134,17 +133,40 @@ const ProtectCard = () => {
     addressOrName: APP_CONFIG[state.chainId]?.CRUIZE_CONTRACT || '',
     contractInterface: testnet_abi,
     functionName: tab === 'protect' ? 'depositTest' : 'withdrawTest',
-    args: [
-      ethers.utils.parseEther(inputValue),
-      APP_CONFIG[state.chainId]?.ETH_CONTRACT_ADDRESS,
-    ],
+    ...(tab === 'protect'
+      ? {
+          args: [
+            ethers.utils.parseEther(inputValue),
+            APP_CONFIG[state.chainId]?.ETH_CONTRACT_ADDRESS,
+          ],
+        }
+      : {
+          args: [
+            ethers.utils.parseEther(inputValue),
+            APP_CONFIG[state.chainId]?.ETH_CONTRACT_ADDRESS,
+            (state.assetPrice * Math.pow(10, 6)).toString(),
+          ],
+        }),
     overrides: {
-      from: address,
-      value: ethers.utils.parseEther(inputValue),
+      ...(tab === 'protect'
+        ? {
+            from: address,
+            value: ethers.utils.parseEther(inputValue),
+          }
+        : undefined),
       gasLimit: 1000000,
     },
   })
   const { writeAsync } = useDeprecatedContractWrite(depositConfig)
+
+  const setError = () => {
+    return parseFloat(inputValue) === 0
+      ? 'Amount should be greater than 0'
+      : tab === 'protect' &&
+        parseFloat(inputValue) > parseFloat(state.assetBalance)
+      ? 'Amount exceeds balance'
+      : ''
+  }
 
   /*
    * function to protect or withdraw the asset based on the user's choice
@@ -155,6 +177,10 @@ const ProtectCard = () => {
       setTransactionLoading(true)
       // interacting with the contract
       const tx = await writeAsync?.()
+      setTransactionDetails({
+        ...transactionDetails,
+        hash: tx.hash,
+      })
       // waiting on the transaction to retrieve the data
       const data = await tx.wait()
       setTransactionDetails({
@@ -237,19 +263,14 @@ const ProtectCard = () => {
           showBalance={tab === 'protect'}
           onMaxClick={(val) => setInputValue(val)}
           // error shown if the input value is 0 or the input value exceeds the user asset's balance
-          error={
-            parseFloat(inputValue) === 0
-              ? 'Amount should be greater than 0'
-              : tab === 'protect' &&
-                parseFloat(inputValue) > parseFloat(state.assetBalance)
-              ? 'Amount exceeds balance'
-              : ''
-          }
+          error={setError()}
         />
-        <DetailComponent
-          label="You will receive"
-          value={`${inputValue} cr${state.selectedAsset.label}`}
-        />
+        {tab === 'protect' ? (
+          <DetailComponent
+            label="You will receive"
+            value={`${inputValue} cr${state.selectedAsset.label}`}
+          />
+        ) : null}
         <DetailArea>
           <Typography
             style={{ width: '100%', textAlign: 'left', marginBottom: rem(8) }}
@@ -284,8 +305,10 @@ const ProtectCard = () => {
               <Typography tag="span" color={STYLES.palette.colors.white60}>
                 $
                 {(
-                  Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
-                ).toFixed(9) || '-'}
+                  Number(gasData?.formatted.gasPrice || 0) *
+                  state.ethPrice *
+                  Math.pow(10, 8)
+                ).toFixed(4) || '-'}
               </Typography>
             </>
           }
@@ -293,7 +316,7 @@ const ProtectCard = () => {
         <Button
           buttonType="protect"
           onClick={onButtonClick}
-          disabled={!isConnected}
+          disabled={!isConnected || setError() !== '' ? true : false}
           borderRadius={32}
         >
           {isConnected ? (
