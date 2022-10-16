@@ -1,26 +1,49 @@
-import { Action, Actions }  from "./Action";
-import State from "./StateModel";
+import { Action, Actions } from './Action'
+import State from './StateModel'
 
+/*
+ * app reducer to store a value based on the executed action
+ */
 const reducer = (state: State, action: Action): State => {
-    switch(action.type) {
-        case Actions.STORE_ASSET_PRICE:
-            return {
-                ...state,
-                assetPrice: action.payload
-            }
-        case Actions.STORE_SELECTED_ASSET:
-            return {
-                ...state,
-                selectedAsset: action.payload
-            }
-        case Actions.STORE_PRICE_FLOOR:
-            return {
-                ...state,
-                priceFloor: action.payload
-            }
-        default:
-            return state
-    }
+  switch (action.type) {
+    case Actions.STORE_ETH_PRICE:
+      return {
+        ...state,
+        ethPrice: action.payload
+      }
+    case Actions.STORE_ASSET_PRICE:
+      return {
+        ...state,
+        assetPrice: action.payload,
+      }
+    case Actions.STORE_SELECTED_ASSET:
+      return {
+        ...state,
+        selectedAsset: action.payload,
+      }
+    case Actions.STORE_PRICE_FLOORS:
+      return {
+        ...state,
+        priceFloors: action.payload,
+      }
+    case Actions.STORE_APYS:
+      return {
+        ...state,
+        apys: action.payload,
+      }
+    case Actions.STORE_CHAIN_ID:
+      return {
+        ...state,
+        chainId: action.payload,
+      }
+    case Actions.STORE_ASSET_BALANCE:
+      return {
+        ...state,
+        assetBalance: action.payload,
+      }
+    default:
+      return state
+  }
 }
 
-export default reducer;
+export default reducer

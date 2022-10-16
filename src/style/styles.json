@@ -16,7 +16,9 @@
       "white": "#FFFFFF",
       "white60": "#ffffff99",
       "logoBlue": "#396AF4",
-      "tagBlue": "#246ef06e",
+      "maxButtonBackground": "#246ef06e",
+      "tagBlue": "#396af438",
+      "stepNumberBlue": "#516bb524",
       "maxButtonFont": "#246ef0",
       "linkBlue": "#0059F7",
       "modalBackdrop": "#00000080",
@@ -28,7 +30,7 @@
       "dividerStroke": "#333537",
       "notificationBackground": "#131416",
       "red": "#FF0000",
-      "loaderColor": "#8247E5"
+      "pickerIconBackground": "#FFFFFF0A"
     }
   }
 }

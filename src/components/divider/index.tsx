@@ -2,7 +2,9 @@ import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { rem } from '../../utils'
 import { Sprite, Typography } from '..'
+import { CSSProperties } from 'react'
 
+// style interface
 interface StyleProps {
   thickness?: number
   type?: 'dashed' | 'dotted' | 'solid'
@@ -19,12 +21,14 @@ const Container = styled.div<StyleProps>`
 
 const HR = styled.hr<StyleProps>`
   border: none;
-  border-top: ${(props) => (props.thickness ? `${rem(props.thickness)}` : rem(1))}
+  border-top: ${(props) =>
+      props.thickness ? `${rem(props.thickness)}` : rem(1)}
     ${(props) => props.type || 'solid'}
     ${(props) => props.color || STYLES.palette.colors.dividerStroke};
   width: 100%;
 `
 
+// divider label interface
 interface LabelOptions extends StyleProps {
   label?: string
   labelAlign?: 'left' | 'right' | 'center'
@@ -55,21 +59,29 @@ const LabelContainer = styled.div<LabelOptions>`
   }
 `
 
+// divider interface
 interface DividerProps extends StyleProps {
   onClick?: () => void
   labelOptions?: LabelOptions
+  style?: CSSProperties
 }
 
+/*
+ * Divider
+ * Can work as a standard hr tag
+ * Can also work as a clickable label
+ */
 const Divider = ({
   onClick,
   labelOptions,
   thickness,
   type,
   color,
+  style
 }: DividerProps) => {
   if (labelOptions && labelOptions.label) {
     return (
-      <Container onClick={onClick}>
+      <Container onClick={onClick} style={{ ...style }}>
         <LabelContainer
           labelAlign={labelOptions.labelAlign}
           dropdown={labelOptions.dropdown}
@@ -99,7 +111,7 @@ const Divider = ({
   }
 
   return (
-    <HR thickness={thickness} type={type} color={color} onClick={onClick} />
+    <HR thickness={thickness} type={type} color={color} onClick={onClick} style={{ ...style }} />
   )
 }
 

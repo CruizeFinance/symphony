@@ -39,6 +39,10 @@ const Section = styled.div`
     display: none;
   }
 
+  span {
+    display: none;
+  }
+
   @media only screen and (max-width: 1024px) {
     flex-direction: column;
     align-items: flex-start;
@@ -58,6 +62,12 @@ const Section = styled.div`
     }
     a {
       filter: brightness(60%);
+      display: flex;
+      align-items: center;
+      gap: ${rem(10)};
+    }
+    span {
+      display: block;
     }
   }
 `
@@ -101,9 +111,17 @@ const FakeFooter = styled.div`
   }
 `
 
+/*
+ * Footer
+ * Stuck to the bottom of the page
+ * A component written to show extra resources for cruize protocol
+ * Will also enable a protect button on the protect page to interact with the contract
+ */
 const Footer = () => {
+  // react router dom hook
   const location = useLocation()
 
+  // state hook
   const [openProtectModal, setOpenProtectModal] = useState(false)
 
   return (
@@ -170,10 +188,11 @@ const Footer = () => {
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://twitter.com/CruizeFinance"
+              href="https://github.com/CruizeFinance"
               openInNewTab={true}
             >
-              <Sprite id='twitter-icon' width={24} height={24} />
+              <Sprite id="github-icon" width={24} height={24} />
+              <Typography tag="span">GitHub</Typography>
             </Typography>
             <Typography
               tag="a"
@@ -181,15 +200,17 @@ const Footer = () => {
               href="https://discord.gg/uM5BGUZpFb"
               openInNewTab={true}
             >
-            <Sprite id='discord-icon' width={24} height={24} />
+              <Sprite id="discord-icon" width={24} height={24} />
+              <Typography tag="span">Discord</Typography>
             </Typography>
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://github.com/CruizeFinance"
+              href="https://twitter.com/CruizeFinance"
               openInNewTab={true}
             >
-            <Sprite id='github-icon' width={24} height={24} />
+              <Sprite id="twitter-icon" width={24} height={24} />
+              <Typography tag="span">Twitter</Typography>
             </Typography>
           </Section>
         </Links>
@@ -213,12 +234,13 @@ const Footer = () => {
           <ProtectPad>
             <Typography
               fontFamily="semiBold"
-              style={{ filter: 'brightness(60%)', width: '50%' }}
+              color={STYLES.palette.colors.white60}
+              style={{ width: '50%' }}
             >
               Protect your assets with Cruize 🚢
             </Typography>
             <Button
-              buttonType="protect-small"
+              buttonType="protect"
               style={{ width: '50%' }}
               onClick={() => setOpenProtectModal(true)}
             >
@@ -227,7 +249,11 @@ const Footer = () => {
           </ProtectPad>
         </ProtectArea>
       ) : null}
-      <Modal open={openProtectModal} hide={() => setOpenProtectModal(false)} modalContentStyle={{ padding: rem(0) }}>
+      <Modal
+        open={openProtectModal}
+        hide={() => setOpenProtectModal(false)}
+        modalContentStyle={{ padding: rem(0) }}
+      >
         <ProtectCard />
       </Modal>
     </>

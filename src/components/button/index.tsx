@@ -3,6 +3,7 @@ import STYLES from '../../style/styles.json'
 import { rem } from '../../utils'
 import { Sprite } from '..'
 
+// button style interface
 interface StyleProps
   extends React.DetailedHTMLProps<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -41,6 +42,25 @@ const ButtonContainer = styled.button<StyleProps>`
       : ''}
 `
 
+const ButtonFlipStyle = styled(ButtonContainer)`
+  color: ${STYLES.palette.colors.white};
+  background: ${STYLES.palette.colors.black};
+  border: ${rem(1)} solid ${STYLES.palette.colors.white};
+
+  ${(props) =>
+    !props.disabled
+      ? `&:hover {
+  background: ${STYLES.palette.colors.white};
+  border: ${rem(1)} solid ${STYLES.palette.colors.black};
+  color: ${STYLES.palette.colors.black};
+
+  svg {
+    fill: ${STYLES.palette.colors.black};
+  }
+}`
+      : ''}
+`
+
 const ProtectButton = styled(ButtonContainer)`
   background: ${STYLES.palette.colors.logoBlue};
   color: ${STYLES.palette.colors.white};
@@ -62,13 +82,18 @@ const ProtectButton = styled(ButtonContainer)`
       : ''}
 `
 
+// button functionality interface
 interface ButtonProps extends StyleProps {
   children: React.ReactNode
   onClick?: () => void
   style?: React.CSSProperties
-  buttonType?: 'protect-small' | 'protect'
+  buttonType?: 'protect-small' | 'protect' | 'flip-style'
 }
 
+/*
+ * Button
+ * Returns different button styles based on the choice
+ */
 const Button = ({
   children,
   onClick,
@@ -77,7 +102,6 @@ const Button = ({
   buttonType,
   disabled,
 }: ButtonProps) => {
-
   switch (buttonType) {
     case 'protect':
       return (
@@ -88,24 +112,18 @@ const Button = ({
           disabled={disabled}
         >
           {children}
-          <Sprite
-            id="protect-button-svg"
-            height={48}
-            width={61}
-            style={{ position: 'absolute', right: rem(24) }}
-          />
         </ProtectButton>
       )
-    case 'protect-small':
+    case 'flip-style':
       return (
-        <ProtectButton
+        <ButtonFlipStyle
           {...(!disabled ? { onClick: onClick } : undefined)}
           borderRadius={borderRadius}
           style={{ ...style }}
           disabled={disabled}
         >
           {children}
-        </ProtectButton>
+        </ButtonFlipStyle>
       )
     default:
       return (

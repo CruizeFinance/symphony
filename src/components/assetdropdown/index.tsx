@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { Sprite, Typography } from '..'
@@ -6,6 +6,7 @@ import { rem } from '../../utils'
 import { AssetDropdownOptions, Option } from './SelectInterfaces'
 import { AppContext } from '../../context'
 import { Actions } from '../../context/Action'
+import { useOutsideAlerter } from '../../hooks'
 
 const AssetDetails = styled.div`
   position: relative;
@@ -47,7 +48,15 @@ const OptionComponent = styled.div`
     filter: brightness(100%);
   }
 `
-
+const IconContainer = styled.div`
+  background: ${STYLES.palette.colors.pickerIconBackground};
+  padding: ${rem(2)} ${rem(8)};
+  border-radius: 50%;
+`
+/*
+ * Asset Dropdown
+ * Used to select the asset the user wants to protect or withdraw
+ */
 const AssetDropdown = ({
   options,
   onChange,
@@ -56,7 +65,10 @@ const AssetDropdown = ({
   labelStyle,
   hidePickerIcon,
 }: AssetDropdownOptions) => {
+  // context
   const [state, dispatch] = useContext(AppContext)
+
+  // state hooks
   const [showOptions, setShowOptions] = useState(false)
   const [selectedOption, setSelectedOption] = useState<Option>({
     icon: options[0].icon,
@@ -64,33 +76,49 @@ const AssetDropdown = ({
     pickerLabel: options[0].pickerLabel,
   })
 
+  // hooks written to close the dropdown when clicked outside
+  const dropdownRef = useRef(null)
+  useOutsideAlerter(dropdownRef, () => setShowOptions(false))
+
+  /*
+   * function written to display the selected asset on the picker
+   * return the asset to the parent component
+   * store the asset in context
+   */
   const handleClick = (val: Option) => {
-    setSelectedOption(val)
     onChange && onChange(val.label)
     setShowOptions(false)
+    // storing the selected asset in context
     dispatch({ type: Actions.STORE_SELECTED_ASSET, payload: val })
   }
 
   useEffect(() => {
+    if (state.selectedAsset) {
     setSelectedOption({
-      icon: options.filter(o => o.label === state.selectedAsset.label)[0].icon,
-      label: options.filter(o => o.label === state.selectedAsset.label)[0].label,
-      pickerLabel: options.filter(o => o.label === state.selectedAsset.label)[0].pickerLabel
+      icon: options.filter((o) => o.label === state.selectedAsset.label)[0]
+        .icon,
+      label: options.filter((o) => o.label === state.selectedAsset.label)[0]
+        .label,
+      pickerLabel: options.filter(
+        (o) => o.label === state.selectedAsset.label,
+      )[0].pickerLabel,
     })
+    }
   }, [state.selectedAsset])
 
   return (
-    <AssetDetails>
+    <AssetDetails ref={dropdownRef}>
       <Picker
         onClick={() => setShowOptions(!showOptions)}
         style={{ ...pickerStyle }}
       >
         {!hidePickerIcon && selectedOption.icon ? (
+          <IconContainer>
           <Sprite
             id={selectedOption.icon}
             width={pickerStyle?.iconWidth || 25}
             height={pickerStyle?.iconHeight || 25}
-          />
+          /></IconContainer>
         ) : null}
         <Typography
           fontFamily="semiBold"

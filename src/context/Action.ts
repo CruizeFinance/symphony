@@ -1,10 +1,16 @@
+// action interface
 export interface Action {
   type: string
   payload: any
 }
 
+// type of actions that can be carried out
 export enum Actions {
+  STORE_ETH_PRICE = 'STORE_ETH_PRICE',
   STORE_ASSET_PRICE = 'STORE_ASSET_PRICE',
   STORE_SELECTED_ASSET = 'STORE_SELECTED_ASSET',
-  STORE_PRICE_FLOOR = 'STORE_PRICE_FLOOR'
+  STORE_CHAIN_ID = 'STORE_CHAIN_ID',
+  STORE_ASSET_BALANCE = 'STORE_ASSET_BALANCE',
+  STORE_PRICE_FLOORS = 'STORE_PRICE_FLOORS',
+  STORE_APYS = 'STORE_APYS',
 }

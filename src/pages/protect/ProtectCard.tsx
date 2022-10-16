@@ -1,18 +1,22 @@
 import Tabs from '../../components/tabs'
 import {
   Button,
-  Collapsible,
-  Divider,
   Input,
+  Loader,
   Modal,
   Sprite,
   Tooltip,
   Typography,
 } from '../../components'
-import styled, { keyframes } from 'styled-components'
+import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { useContext, useEffect, useState } from 'react'
-import { rem } from '../../utils'
+import {
+  APP_CONFIG,
+  APYS_RESPONSE_MAPPING,
+  PRICE_FLOORS_RESPONSE_MAPPING,
+  rem,
+} from '../../utils'
 import {
   chain,
   useAccount,
@@ -22,14 +26,13 @@ import {
 } from 'wagmi'
 import testnet_abi from '../../abis/testnet_cruize_abi.json'
 import { ethers } from 'ethers'
-import { createPositionDyDx, depositToDyDx, storeTransaction } from '../../apis'
+import { depositToDyDx, storeTransaction } from '../../apis'
 import { AppContext } from '../../context'
-import { useNavigate } from 'react-router-dom'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
   padding: ${rem(24)} ${rem(20)};
-  border-radius: ${rem(8)};
+  border-radius: ${rem(20)};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,27 +69,56 @@ const ButtonContainer = styled.div`
   justify-content: end;
   gap: ${rem(8)};
 `
-const loading = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`
-const Loader = styled.div`
-  display: inline-block;
-  width: ${rem(40)};
-  height: ${rem(40)};
-  border: ${rem(3)} solid ${STYLES.palette.colors.white};
-  border-radius: 50%;
-  border-top-color: ${STYLES.palette.colors.loaderColor};
-  animation: ${loading} 1s linear infinite;
-`
 
+// props that can be passed to the detail component
+interface DetailComponentProps {
+  label: string
+  value: React.ReactNode
+  tooltipContent?: string
+}
+
+/*
+ * Pure component created to display the protection details
+ */
+const DetailComponent = ({
+  label,
+  value,
+  tooltipContent,
+}: DetailComponentProps) => (
+  <Detail>
+    <Typography fontFamily="regular" color={STYLES.palette.colors.white60}>
+      {label}
+      {tooltipContent ? (
+        <Tooltip content={tooltipContent}>
+          <Sprite id="info-icon" width={20} height={20} />
+        </Tooltip>
+      ) : null}
+    </Typography>
+    <Typography fontFamily="regular" color={STYLES.palette.colors.white60}>
+      {value}
+    </Typography>
+  </Detail>
+)
+
+/*
+ * Protect Card
+ * Created to carry out protection and withdrawal functionalities
+ * This is where the users are expected to interact the most
+ */
 const ProtectCard = () => {
-  const navigate = useNavigate()
-  const [openTransactionDetails, setOpenTransactionDetails] = useState(false)
+  // context
+  const [state] = useContext(AppContext)
+
+  // web3 hooks
+  const { isConnected, address } = useAccount()
+  const { data: gasData } = useFeeData({
+    chainId: state.chainId,
+    formatUnits: 'ether',
+    watch: true,
+  })
+
+  // state hooks
+  const [priceFloor, setPriceFloor] = useState(0)
   const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
   const [inputValue, setInputValue] = useState('0.0')
   const [tab, setTab] = useState('protect')
@@ -96,23 +128,15 @@ const ProtectCard = () => {
     hash: string
     status: number
   }>({ hash: '', status: 0 })
-  const { isConnected, address } = useAccount()
 
-  const [state] = useContext(AppContext)
-
-  const { data: gasData } = useFeeData({
-    chainId: chain.goerli.id,
-    formatUnits: 'ether',
-    watch: true,
-  })
-
+  // web3 hooks to interact with the contract
   const { config: depositConfig } = usePrepareContractWrite({
-    addressOrName: '0xCB7d7264b70aE89a65F9ee660Fe5c5BAB0Ab4f3c',
+    addressOrName: APP_CONFIG[state.chainId]?.CRUIZE_CONTRACT || '',
     contractInterface: testnet_abi,
-    functionName: 'depositTest',
+    functionName: tab === 'protect' ? 'depositTest' : 'withdrawTest',
     args: [
       ethers.utils.parseEther(inputValue),
-      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      APP_CONFIG[state.chainId]?.ETH_CONTRACT_ADDRESS,
     ],
     overrides: {
       from: address,
@@ -120,115 +144,84 @@ const ProtectCard = () => {
       gasLimit: 1000000,
     },
   })
-  const { writeAsync: depositWriteAsync } = useDeprecatedContractWrite(
-    depositConfig,
-  )
+  const { writeAsync } = useDeprecatedContractWrite(depositConfig)
 
-  const { config: withdrawConfig } = usePrepareContractWrite({
-    addressOrName: '0xCB7d7264b70aE89a65F9ee660Fe5c5BAB0Ab4f3c',
-    contractInterface: testnet_abi,
-    functionName: 'withdrawTest',
-    args: [
-      ethers.utils.parseEther(inputValue),
-      '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      (state.assetPrice * Math.pow(10, 6)).toFixed(0),
-    ],
-    overrides: {
-      gasLimit: 1000000,
-    },
-  })
-  const { writeAsync: withdrawWriteAsync } = useDeprecatedContractWrite(
-    withdrawConfig,
-  )
-
-  const handleTab = async () => {
-    setOpenTransactionModal(true)
-    if (tab === 'withdraw') {
-      try {
-        setTransactionLoading(true)
-        const tx = await withdrawWriteAsync?.()
-        const data = await tx.wait()
-        setTransactionDetails({
-          hash: data.transactionHash,
-          status: data.status || 0,
-        })
-        setTransactionLoading(false)
-        const timer = setTimeout(() => {
-          setTransactionDetails({
-            hash: '',
-            status: 0,
-          })
-          setOpenTransactionModal(false)
-          clearTimeout(timer)
-        }, 1500)
-        await storeTransaction(
-          address ?? '',
-          data.transactionHash,
-          state.selectedAsset.label,
-          inputValue,
-          'Withdraw',
-        )
-        await createPositionDyDx('buy')
-      } catch (e) {
-        console.log(e)
+  /*
+   * function to protect or withdraw the asset based on the user's choice
+   */
+  const onButtonClick = async () => {
+    try {
+      setOpenTransactionModal(true)
+      setTransactionLoading(true)
+      // interacting with the contract
+      const tx = await writeAsync?.()
+      // waiting on the transaction to retrieve the data
+      const data = await tx.wait()
+      setTransactionDetails({
+        hash: data.transactionHash,
+        status: data.status || 0,
+      })
+      setTransactionLoading(false)
+      const timer = setTimeout(() => {
         setTransactionDetails({
           hash: '',
           status: 0,
         })
-        setTransactionLoading(false)
-        const timer = setTimeout(() => {
-          setOpenTransactionModal(false)
-          clearTimeout(timer)
-        }, 1500)
-      }
-    } else {
-      try {
-        setTransactionLoading(true)
-        const tx = await depositWriteAsync?.()
-        const data = await tx.wait()
-        setTransactionLoading(false)
-        setTransactionDetails({
-          hash: data.transactionHash,
-          status: data.status || 0,
-        })
-        const timer = setTimeout(() => {
-          setTransactionDetails({
-            hash: '',
-            status: 0,
-          })
-          setOpenTransactionModal(false)
-          clearTimeout(timer)
-        }, 1500)
-        await storeTransaction(
-          address ?? '',
-          data.transactionHash,
-          state.selectedAsset.label,
-          inputValue,
-          'Protect',
-        )
-        await depositToDyDx()
-        await createPositionDyDx('sell')
-      } catch (e) {
-        setTransactionDetails({
-          hash: '',
-          status: 0,
-        })
-        setTransactionLoading(false)
-        const timer = setTimeout(() => {
-          setOpenTransactionModal(false)
-          clearTimeout(timer)
-        }, 1500)
-      }
+        setOpenTransactionModal(false)
+        clearTimeout(timer)
+      }, 1500)
+      // functions to execute after the transaction has been executed
+      // store the record for type of transaction in the DB
+      await storeTransaction(
+        address ?? '',
+        data.transactionHash,
+        state.selectedAsset.label,
+        inputValue,
+        tab === 'withdraw' ? 'Withdraw' : 'Protect',
+      )
+      // deposit assets to dydx in case of protect
+      if (tab === 'protect') await depositToDyDx()
+    } catch (e) {
+      setTransactionDetails({
+        hash: '',
+        status: 0,
+      })
+      setTransactionLoading(false)
+      const timer = setTimeout(() => {
+        setOpenTransactionModal(false)
+        clearTimeout(timer)
+      }, 1500)
     }
   }
+
+  /*
+   * a default value setter function
+   * written to set the input values back to 0 and close the transaction details on tab change
+   */
   const setDefaultValues = () => {
-    setOpenTransactionDetails(false)
     setInputValue('0.0')
   }
 
+  /*
+   * an effect to call the set default values function
+   */
   useEffect(() => {
     setDefaultValues()
   }, [tab])
+
+  /*
+   * effect to set a local price floor state instead of rewriting the same code multiple times
+   */
+  useEffect(() => {
+    setPriceFloor(
+      state.priceFloors[
+        PRICE_FLOORS_RESPONSE_MAPPING[
+          state.selectedAsset
+            .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
+        ] as keyof typeof state.priceFloors
+      ],
+    )
+  }, [state.selectedAsset, state.priceFloors])
 
   return (
     <>
@@ -237,37 +230,25 @@ const ProtectCard = () => {
           onClick={(val) => setTab(val.toLowerCase())}
           tabs={[{ label: 'Protect' }, { label: 'Withdraw' }]}
         />
-        {/* hidden for demo */}
-        {/* {tab === 'withdraw' ? (
-          <Tabs
-            onClick={(val) => console.log(val)}
-            tabs={[
-              {
-                label: 'Standard',
-                icon: (
-                  <Tooltip content={'test'}>
-                    <Sprite id="info-icon" width={20} height={20} />
-                  </Tooltip>
-                ),
-              },
-              {
-                label: 'Instant',
-                icon: (
-                  <Tooltip content={'test'}>
-                    <Sprite id="info-icon" width={20} height={20} />
-                  </Tooltip>
-                ),
-              },
-            ]}
-            type="contained"
-          />
-        ) : null} */}
         <Input
           label="AMOUNT"
           inputValue={inputValue}
           onInputChange={(val) => setInputValue(val || '0.0')}
           showBalance={tab === 'protect'}
           onMaxClick={(val) => setInputValue(val)}
+          // error shown if the input value is 0 or the input value exceeds the user asset's balance
+          error={
+            parseFloat(inputValue) === 0
+              ? 'Amount should be greater than 0'
+              : tab === 'protect' &&
+                parseFloat(inputValue) > parseFloat(state.assetBalance)
+              ? 'Amount exceeds balance'
+              : ''
+          }
+        />
+        <DetailComponent
+          label="You will receive"
+          value={`${inputValue} cr${state.selectedAsset.label}`}
         />
         <DetailArea>
           <Typography
@@ -275,103 +256,45 @@ const ProtectCard = () => {
           >
             Protection Details
           </Typography>
-          <Detail>
-            <Typography
-              fontFamily="regular"
-              color={STYLES.palette.colors.white60}
-            >
-              Price floor
-              <Tooltip content={'test'}>
-                <Sprite id="info-icon" width={20} height={20} />
-              </Tooltip>
-            </Typography>
-            <Typography
-              fontFamily="regular"
-              color={STYLES.palette.colors.white60}
-            >
-              {state.priceFloor.toFixed(2)} USDC
-            </Typography>
-          </Detail>
-          {/* hidden for demo */}
-          {/* <Detail>
-            <Typography
-              fontFamily="regular"
-              color={STYLES.palette.colors.white60}
-            >
-              Staking Price Limit
-              <Sprite id="info-icon" width={20} height={20} />
-            </Typography>
-            <Typography
-              fontFamily="regular"
-              color={STYLES.palette.colors.white60}
-            >
-              3000 USDC
-            </Typography>
-          </Detail> */}
-          <Detail>
-            <Typography
-              fontFamily="regular"
-              color={STYLES.palette.colors.white60}
-            >
-              APY
-              <Sprite id="info-icon" width={20} height={20} />
-            </Typography>
-            <Typography
-              fontFamily="regular"
-              color={STYLES.palette.colors.white60}
-            >
-              {((((0.9 * (Number(inputValue) * state.assetPrice) * 0.0102) -
-                (0.25 * (Number(inputValue) * (state.assetPrice - 100)) * 0.0222))/(Number(inputValue) * state.assetPrice) * 100) || 0).toFixed(3)}{' '}
-              %
-            </Typography>
-          </Detail>
+          <DetailComponent
+            label="Price Floor"
+            value={`${priceFloor || '-'} USDC`}
+          />
+          <DetailComponent
+            label="APY"
+            value={`${
+              state.apys[
+                APYS_RESPONSE_MAPPING[
+                  state.selectedAsset
+                    .label as keyof typeof APYS_RESPONSE_MAPPING
+                ] as keyof typeof state.apys
+              ]?.toFixed(8) || '-'
+            } %`}
+          />
         </DetailArea>
-        <Divider
-          labelOptions={{
-            label: 'Transaction Details',
-            labelAlign: 'center',
-            dropdown: true,
-            dropdownOpen: openTransactionDetails,
-          }}
-          onClick={() => setOpenTransactionDetails(!openTransactionDetails)}
-        />
-        <Collapsible open={openTransactionDetails}>
-          <DetailArea>
-            <Detail>
-              <Typography fontFamily="bold">
-                Total
-                <Sprite id="info-icon" width={20} height={20} />
-              </Typography>
-              <Typography fontFamily="bold">
+        <DetailComponent
+          label={`1 cr${state.selectedAsset.label} = ${
+            priceFloor > state.assetPrice
+              ? priceFloor.toFixed(4)
+              : state.assetPrice.toFixed(4) || '-'
+          } USDC`}
+          value={
+            <>
+              <Sprite id="gas-icon" width={16} height={16} />
+              <Typography tag="span" color={STYLES.palette.colors.white60}>
+                $
                 {(
-                  Number(inputValue) + Number(gasData?.formatted.gasPrice)
-                ).toFixed(8) || 0}{' '}
-                ETH
+                  Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
+                ).toFixed(9) || '-'}
               </Typography>
-            </Detail>
-            <Detail>
-              <Typography
-                fontFamily="regular"
-                color={STYLES.palette.colors.white60}
-              >
-                Gas fee
-                <Tooltip content={'test'}>
-                  <Sprite id="info-icon" width={20} height={20} />
-                </Tooltip>
-              </Typography>
-              <Typography
-                fontFamily="regular"
-                color={STYLES.palette.colors.white60}
-              >
-                {gasData?.formatted.gasPrice || '-'} ETH
-              </Typography>
-            </Detail>
-          </DetailArea>
-        </Collapsible>
+            </>
+          }
+        />
         <Button
           buttonType="protect"
-          onClick={handleTab}
+          onClick={onButtonClick}
           disabled={!isConnected}
+          borderRadius={32}
         >
           {isConnected ? (
             <>{tab === 'protect' ? 'Protect' : 'Withdraw'}</>
@@ -413,7 +336,7 @@ const ProtectCard = () => {
           To help you get started, we recorded a set of tutorials and a hand on
           guide that can be viewed on youtube.
         </Typography>
-        <img src="confused.gif" alt="confused-gif" width={'100%'} />
+        <img src="assets/confused.gif" alt="confused-gif" width={'100%'} />
         <ButtonContainer>
           <Button
             buttonType="protect-small"
@@ -491,8 +414,8 @@ const ProtectCard = () => {
             <Sprite id="redirect-icon" width={16} height={16} />
           </Typography>
         ) : null}
-        <Button borderRadius={8} onClick={() => navigate('/')}>
-          Back to Home
+        <Button borderRadius={8} onClick={() => setOpenTransactionModal(false)}>
+          Close
         </Button>
       </Modal>
     </>

@@ -1,9 +1,8 @@
 import styled from 'styled-components'
-import Header from './Header'
+import Header from './header'
 import React from 'react'
 import Routes from '../routes'
 import Footer from './Footer'
-import { useLocation } from 'react-router-dom'
 import STYLES from '../style/styles.json'
 import { rem } from '../utils'
 
@@ -25,14 +24,15 @@ const FakeDiv = styled.div`
     height: ${rem(80)};
   }
 `
-
+/*
+ * Wrapper
+ * Structure for the app
+ */
 const Wrapper = () => {
-  const location = useLocation()
-  const pathnameArray = location.pathname.split('/')
 
   return (
     <Container>
-      <Header location={pathnameArray[pathnameArray.length - 1]} />
+      <Header />
       <FakeDiv />
       <Content>
         <Routes />

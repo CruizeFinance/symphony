@@ -25,6 +25,7 @@ const ModalContent = styled.div`
   border-radius: ${rem(8)};
 `
 
+// modal interface
 interface ModalProps {
   open: boolean
   hide?: () => void
@@ -33,12 +34,19 @@ interface ModalProps {
   modalContentStyle?: React.CSSProperties
 }
 
+/*
+ * Modal
+ * Displays contract activity or any other additional info
+ */
 const Modal = ({ open, hide, children, modalContentStyle }: ModalProps) => {
   if (!open) return null
 
   return (
     <ModalContainer onClick={hide}>
-      <ModalContent onClick={(e) => e.stopPropagation()} style={{ ...modalContentStyle }}>
+      <ModalContent
+        onClick={(e) => e.stopPropagation()}
+        style={{ ...modalContentStyle }}
+      >
         {children}
       </ModalContent>
     </ModalContainer>
