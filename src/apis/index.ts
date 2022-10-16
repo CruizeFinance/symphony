@@ -31,7 +31,7 @@ export const getAssetPrice = async (asset: string) => {
 export const depositToDyDx = async () => {
   try {
     const data: DepositToDyDx = await fetchWrapper.post(
-      `${BASE_URL}/dydx_operations/test`,
+      `${BASE_URL}/dydx_operations/deposit/test`,
     )
     return data
   } catch (e) {
@@ -46,7 +46,7 @@ export const depositToDyDx = async () => {
  * Used to store user transaction details... protection or withdrawal
  */
 export const storeTransaction = async (
-  user_address: string,
+  wallet_address: string,
   transaction_hash: string,
   asset_name: string,
   amount: string,
@@ -54,9 +54,9 @@ export const storeTransaction = async (
 ) => {
   try {
     const data: StoreTransactions = await fetchWrapper.post(
-      `${BASE_URL}/cruize_operations/transaction/store`,
+      `${BASE_URL}/cruize_operations/transaction/save`,
       JSON.stringify({
-        user_address,
+        wallet_address,
         transaction_hash,
         asset_name,
         amount,

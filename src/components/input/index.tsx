@@ -142,7 +142,7 @@ const Input = ({
       <InputContainer>
         <InputSection>
           <InputField
-            pattern="\d*" 
+            pattern="\d*"
             maxLength={10}
             size={10}
             type={'text'}
@@ -191,8 +191,16 @@ const Input = ({
               <MaxButton
                 onClick={() => {
                   onMaxClick &&
-                    onMaxClick(state.assetBalance?.slice(0, 10) ?? '0.0')
-                  setInputValue(state.assetBalance?.slice(0, 10) ?? '0.0')
+                    onMaxClick(
+                      (Number(state.assetBalance || 0) * 0.9)
+                        .toString()
+                        ?.slice(0, 10) ?? '0.0',
+                    )
+                  setInputValue(
+                    (Number(state.assetBalance || 0) * 0.9)
+                      .toString()
+                      ?.slice(0, 10) ?? '0.0',
+                  )
                 }}
               >
                 MAX
