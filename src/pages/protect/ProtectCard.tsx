@@ -11,6 +11,7 @@ import {
   GAS_LIMIT,
 } from '../../utils'
 import {
+  chain,
   erc20ABI,
   useAccount,
   useBalance,
@@ -109,7 +110,7 @@ const ProtectCard = () => {
   })
 
   // object for fetching token contracts per chain
-  const contractsConfig = CONTRACTS_CONFIG[state.chainId]
+  const contractsConfig = CONTRACTS_CONFIG[state.chainId || chain.goerli.id]
 
   /*
    * memoised value to set a local price floor state instead of rewriting the same code multiple times
@@ -154,11 +155,11 @@ const ProtectCard = () => {
               inputValue || '0',
               contractsConfig[
                 state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.decimals,
+              ]?.decimals || '',
             ),
             contractsConfig[
               state.selectedAsset.label as keyof typeof contractsConfig
-            ]?.address,
+            ]?.address || '',
           ],
         }
       : {
@@ -167,11 +168,11 @@ const ProtectCard = () => {
               inputValue || '0',
               contractsConfig[
                 state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.decimals,
+              ]?.decimals || '',
             ),
             contractsConfig[
               state.selectedAsset.label as keyof typeof contractsConfig
-            ]?.address,
+            ]?.address || '',
             priceFloor * Math.pow(10, 8),
           ],
         }),
