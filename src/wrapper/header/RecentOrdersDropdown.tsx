@@ -1,6 +1,6 @@
 import { Sprite, Typography } from '../../components'
 import { rem } from '../../utils'
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { fetchRecentOrders } from '../../apis'
 import { useAccount } from 'wagmi'
 import {
@@ -14,6 +14,7 @@ import {
 } from './DropdownStyledComponents'
 import { useOutsideAlerter } from '../../hooks'
 import STYLES from '../../style/styles.json'
+import { AppContext } from '../../context'
 
 /*
  * Recent Orders Dropdown
@@ -21,18 +22,22 @@ import STYLES from '../../style/styles.json'
  * Is displayed only when the user is connected on the app
  */
 const RecentOrdersDropdown = () => {
+  // context hook
+  const [state] = useContext(AppContext)
+
   // web3 hook
   const { address } = useAccount()
 
   // state hooks
   const [transactions, setTransactions] = useState<
-    {
-      amount: string
-      asset_name: string
-      transaction_hash: string
-      type: string
-      timestamp: number
-    }[] | null
+    | {
+        amount: string
+        asset_name: string
+        transaction_hash: string
+        type: string
+        timestamp: number
+      }[]
+    | string
   >([])
   const [loadRecentOrders, setLoadRecentOrders] = useState(false)
   const [showRecentOrders, setShowRecentOrders] = useState(false)
@@ -112,9 +117,10 @@ const RecentOrdersDropdown = () => {
             </Section>
           ) : (
             <>
-              {transactions && transactions.length ? (
+              {transactions &&
+              typeof transactions !== 'string' &&
+              transactions.length ? (
                 transactions
-                  .sort((a, b) => b.timestamp - a.timestamp)
                   .slice(0, 3)
                   .map((transaction) => (
                     <Section key={transaction.transaction_hash}>
@@ -129,13 +135,13 @@ const RecentOrdersDropdown = () => {
                             fontFamily="medium"
                             style={{ fontSize: rem(14) }}
                           >
-                            {transaction.type} ETH
+                            {transaction.type} {state.selectedAsset.label}
                           </Typography>
                           <Typography
                             fontFamily="medium"
                             style={{ fontSize: rem(14) }}
                           >
-                            {transaction.amount} ETH
+                            {transaction.amount} {state.selectedAsset.label}
                           </Typography>
                         </DropdownLabel>
                         <DropdownLabel>

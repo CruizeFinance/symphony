@@ -1,32 +1,30 @@
 import Tabs from '../../components/tabs'
-import {
-  Button,
-  Input,
-  Loader,
-  Modal,
-  Sprite,
-  Tooltip,
-  Typography,
-} from '../../components'
+import { Button, Input, Sprite, Tooltip, Typography } from '../../components'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import {
-  APP_CONFIG,
+  CONTRACTS_CONFIG,
   APYS_RESPONSE_MAPPING,
   PRICE_FLOORS_RESPONSE_MAPPING,
   rem,
+  GAS_LIMIT,
 } from '../../utils'
 import {
+  erc20ABI,
   useAccount,
+  useBalance,
+  useContractRead,
   useDeprecatedContractWrite,
   useFeeData,
   usePrepareContractWrite,
 } from 'wagmi'
 import testnet_abi from '../../abis/testnet_cruize_abi.json'
-import { ethers } from 'ethers'
+import { BigNumber, constants, ethers } from 'ethers'
 import { depositToDyDx, storeTransaction } from '../../apis'
 import { AppContext } from '../../context'
+import ProtectCardModals from './ProtectCardModals'
+import { Actions } from '../../context/Action'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -61,12 +59,6 @@ const Detail = styled.div`
     align-items: center;
     gap: ${rem(4)};
   }
-`
-const ButtonContainer = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: end;
-  gap: ${rem(8)};
 `
 
 // props that can be passed to the detail component
@@ -106,7 +98,7 @@ const DetailComponent = ({
  */
 const ProtectCard = () => {
   // context
-  const [state] = useContext(AppContext)
+  const [state, dispatch] = useContext(AppContext)
 
   // web3 hooks
   const { isConnected, address } = useAccount()
@@ -116,67 +108,169 @@ const ProtectCard = () => {
     watch: true,
   })
 
+  // object for fetching token contracts per chain
+  const contractsConfig = CONTRACTS_CONFIG[state.chainId]
+
+  /*
+   * memoised value to set a local price floor state instead of rewriting the same code multiple times
+   */
+  const priceFloor = useMemo(
+    () =>
+      state.priceFloors[
+        PRICE_FLOORS_RESPONSE_MAPPING[
+          state.selectedAsset
+            .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
+        ] as keyof typeof state.priceFloors
+      ],
+    [state.selectedAsset, state.priceFloors],
+  )
+
   // state hooks
-  const [priceFloor, setPriceFloor] = useState(0)
+  const [tokenApproved, setTokenApproved] = useState(false)
   const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
-  const [inputValue, setInputValue] = useState('0.0')
-  const [tab, setTab] = useState('protect')
+  const [inputValue, setInputValue] = useState<string | undefined>('')
   const [openTransactionModal, setOpenTransactionModal] = useState(false)
   const [transactionLoading, setTransactionLoading] = useState(false)
   const [transactionDetails, setTransactionDetails] = useState<{
     hash: string
     status: number
   }>({ hash: '', status: 0 })
+  const [modalType, setModalType] = useState<'tutorial' | 'transaction'>(
+    'tutorial',
+  )
 
   // web3 hooks to interact with the contract
-  const { config: depositConfig } = usePrepareContractWrite({
-    addressOrName: APP_CONFIG[state.chainId]?.CRUIZE_CONTRACT || '',
+  /*
+   * hook to prepare contract config for protecting or withdrawing
+   */
+  const { config: writeConfig } = usePrepareContractWrite({
+    addressOrName: contractsConfig?.CRUIZE?.address || '',
     contractInterface: testnet_abi,
-    functionName: tab === 'protect' ? 'depositTest' : 'withdrawTest',
-    ...(tab === 'protect'
+    functionName: state.tab === 'protect' ? 'deposit' : 'withdrawTest',
+    ...(state.tab === 'protect'
       ? {
           args: [
-            ethers.utils.parseEther(inputValue),
-            APP_CONFIG[state.chainId]?.ETH_CONTRACT_ADDRESS,
+            ethers.utils.parseUnits(
+              inputValue || '0',
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.decimals,
+            ),
+            contractsConfig[
+              state.selectedAsset.label as keyof typeof contractsConfig
+            ]?.address,
           ],
         }
       : {
           args: [
-            ethers.utils.parseEther(inputValue),
-            APP_CONFIG[state.chainId]?.ETH_CONTRACT_ADDRESS,
-            (state.assetPrice * Math.pow(10, 6)).toString(),
+            ethers.utils.parseUnits(
+              inputValue || '0',
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.decimals,
+            ),
+            contractsConfig[
+              state.selectedAsset.label as keyof typeof contractsConfig
+            ]?.address,
+            priceFloor * Math.pow(10, 8),
           ],
         }),
     overrides: {
-      ...(tab === 'protect'
+      ...(state.tab === 'protect' && state.selectedAsset.label === 'ETH'
         ? {
             from: address,
-            value: ethers.utils.parseEther(inputValue),
+            value: ethers.utils.parseEther(inputValue || '0'),
           }
         : undefined),
-      gasLimit: 1000000,
+      gasLimit: GAS_LIMIT,
     },
   })
-  const { writeAsync } = useDeprecatedContractWrite(depositConfig)
 
+  /*
+   * hook that returns a function to execute while writing the contract... either protect or withdraw
+   */
+  const { writeAsync } = useDeprecatedContractWrite(writeConfig)
+
+  /*
+   * hook to prepare config for taking token approval to deposit in the contract
+   */
+  const { config: approveConfig } = usePrepareContractWrite({
+    addressOrName:
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.address || '',
+    contractInterface: erc20ABI,
+    functionName: 'approve',
+    args: [contractsConfig?.CRUIZE?.address || '', constants.MaxUint256],
+  })
+
+  /*
+   * hook that returns a function to execute for token approval
+   */
+  const { writeAsync: approveAsync } = useDeprecatedContractWrite(approveConfig)
+
+  /*
+   * hook to return token allowance data
+   */
+  const { data: allowanceData, status: allowanceStatus } = useContractRead({
+    addressOrName:
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.address || '',
+    contractInterface: erc20ABI,
+    functionName: 'allowance',
+    args: [address, contractsConfig?.CRUIZE?.address || ''],
+  })
+
+  // balance hook for cruize wrapped assets
+  const { data: cruizeBalanceData } = useBalance({
+    addressOrName: address,
+    token:
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.cruizeAddress,
+    watch: true,
+  })
+
+  /*
+   * memoised data to check whether the token is approved or not
+   */
+  const allowed = useMemo(() => {
+    if (state.selectedAsset.label === 'ETH') return true
+    if (allowanceData) {
+      return BigNumber.from(allowanceData).gt(BigNumber.from('0'))
+    }
+  }, [allowanceData, state.selectedAsset])
+
+  /*
+   * a function to display error in case of a mistype during protection or withdrawal
+   */
   const setError = () => {
-    return parseFloat(inputValue) === 0
-      ? 'Amount should be greater than 0'
-      : tab === 'protect' &&
-        parseFloat(inputValue) > parseFloat(state.assetBalance)
-      ? 'Amount exceeds balance'
+    return inputValue && parseFloat(inputValue) === 0
+      ? 'Amount should be greater than 0.'
+      : inputValue &&
+        parseFloat(inputValue) >
+          parseFloat(
+            state.tab === 'protect'
+              ? state.assetBalance
+              : cruizeBalanceData?.formatted!,
+          )
+      ? 'Amount exceeds balance.'
+      : state.assetPrice < priceFloor
+      ? 'Cannot protect. Asset price lower than the price floor.'
       : ''
   }
 
   /*
    * function to protect or withdraw the asset based on the user's choice
+   * also enables token approval in case the asset is not approved for depositing in contract
    */
   const onButtonClick = async () => {
     try {
+      setModalType('transaction')
+      // interacting with the contract
+      const tx =
+        allowed || tokenApproved ? await writeAsync?.() : await approveAsync?.()
+      if (!allowed) setTokenApproved(true)
       setOpenTransactionModal(true)
       setTransactionLoading(true)
-      // interacting with the contract
-      const tx = await writeAsync?.()
       setTransactionDetails({
         ...transactionDetails,
         hash: tx.hash,
@@ -194,19 +288,21 @@ const ProtectCard = () => {
           status: 0,
         })
         setOpenTransactionModal(false)
+        setInputValue('')
         clearTimeout(timer)
       }, 1500)
       // functions to execute after the transaction has been executed
       // store the record for type of transaction in the DB
-      await storeTransaction(
-        address ?? '',
-        data.transactionHash,
-        state.selectedAsset.label,
-        inputValue,
-        tab === 'withdraw' ? 'Withdraw' : 'Protect',
-      )
+      if (allowed)
+        await storeTransaction(
+          address ?? '',
+          data.transactionHash,
+          state.selectedAsset.label,
+          inputValue || '0',
+          state.tab === 'withdraw' ? 'Withdraw' : 'Protect',
+        )
       // deposit assets to dydx in case of protect
-      if (tab === 'protect') await depositToDyDx()
+      if (allowed && state.tab === 'protect') await depositToDyDx()
     } catch (e) {
       setTransactionDetails({
         hash: '',
@@ -215,60 +311,49 @@ const ProtectCard = () => {
       setTransactionLoading(false)
       const timer = setTimeout(() => {
         setOpenTransactionModal(false)
+        setInputValue('')
+        setTokenApproved(false)
         clearTimeout(timer)
       }, 1500)
     }
   }
 
   /*
-   * a default value setter function
-   * written to set the input values back to 0 and close the transaction details on tab change
-   */
-  const setDefaultValues = () => {
-    setInputValue('0.0')
-  }
-
-  /*
    * an effect to call the set default values function
    */
   useEffect(() => {
-    setDefaultValues()
-  }, [tab])
+    setInputValue('')
+  }, [state.tab, state.selectedAsset])
 
   /*
-   * effect to set a local price floor state instead of rewriting the same code multiple times
+   * an effect to set token approval based on memoised data
    */
   useEffect(() => {
-    setPriceFloor(
-      state.priceFloors[
-        PRICE_FLOORS_RESPONSE_MAPPING[
-          state.selectedAsset
-            .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
-        ] as keyof typeof state.priceFloors
-      ],
-    )
-  }, [state.selectedAsset, state.priceFloors])
+    setTokenApproved(!!allowed)
+  }, [allowed])
 
   return (
     <>
       <ProtectArea>
         <Tabs
-          onClick={(val) => setTab(val.toLowerCase())}
+          onClick={(val) =>
+            dispatch({ type: Actions.STORE_TAB, payload: val.toLowerCase() })
+          }
           tabs={[{ label: 'Protect' }, { label: 'Withdraw' }]}
         />
         <Input
           label="AMOUNT"
           inputValue={inputValue}
-          onInputChange={(val) => setInputValue(val || '0.0')}
-          showBalance={tab === 'protect'}
+          onInputChange={(val) => setInputValue(val)}
           onMaxClick={(val) => setInputValue(val)}
           // error shown if the input value is 0 or the input value exceeds the user asset's balance
           error={setError()}
+          cruizeBalanceData={cruizeBalanceData?.formatted}
         />
-        {tab === 'protect' ? (
+        {state.tab === 'protect' ? (
           <DetailComponent
             label="You will receive"
-            value={`${inputValue} cr${state.selectedAsset.label}`}
+            value={`${inputValue || 0} cr${state.selectedAsset.label}`}
           />
         ) : null}
         <DetailArea>
@@ -305,10 +390,8 @@ const ProtectCard = () => {
               <Typography tag="span" color={STYLES.palette.colors.white60}>
                 $
                 {(
-                  Number(gasData?.formatted.gasPrice || 0) *
-                  state.ethPrice *
-                  Math.pow(10, 8)
-                ).toFixed(4) || '-'}
+                  Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
+                ).toFixed(10) || '-'}
               </Typography>
             </>
           }
@@ -316,11 +399,24 @@ const ProtectCard = () => {
         <Button
           buttonType="protect"
           onClick={onButtonClick}
-          disabled={!isConnected || setError() !== '' ? true : false}
+          disabled={
+            !isConnected ||
+            setError() !== '' ||
+            !inputValue ||
+            allowanceStatus === 'loading'
+          }
           borderRadius={32}
         >
           {isConnected ? (
-            <>{tab === 'protect' ? 'Protect' : 'Withdraw'}</>
+            <>
+              {allowanceStatus === 'loading'
+                ? 'Please wait...'
+                : state.tab === 'protect'
+                ? allowed || tokenApproved
+                  ? 'Protect'
+                  : 'Approve'
+                : 'Withdraw'}
+            </>
           ) : (
             <>
               Connect Wallet
@@ -333,114 +429,32 @@ const ProtectCard = () => {
           <Typography
             tag="label"
             color={STYLES.palette.colors.linkBlue}
-            onClick={() => setOpenTutorialVideo(true)}
+            onClick={() => {
+              setModalType('tutorial')
+              setOpenTutorialVideo(true)
+            }}
             style={{ cursor: 'pointer' }}
           >
             Learn from video tutorials/docs
           </Typography>
         </Typography>
       </ProtectArea>
-      <Modal
-        open={openTutorialVideo}
-        hide={() => setOpenTutorialVideo(false)}
-        modalContentStyle={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          gap: rem(24),
-          maxWidth: rem(500),
-          background: STYLES.palette.colors.notificationBackground,
+      <ProtectCardModals
+        tutorialModalOptions={{
+          openTutorialVideo: openTutorialVideo,
+          setOpenTutorialVideo: (val) => setOpenTutorialVideo(val),
         }}
-      >
-        <Typography tag="h2" fontFamily="extraBold">
-          Need any help?
-        </Typography>
-        <Typography tag="h4" fontFamily="regular">
-          To help you get started, we recorded a set of tutorials and a hand on
-          guide that can be viewed on youtube.
-        </Typography>
-        <img src="assets/confused.gif" alt="confused-gif" width={'100%'} />
-        <ButtonContainer>
-          <Button
-            buttonType="protect-small"
-            borderRadius={100}
-            style={{ width: 'auto', padding: rem(16) }}
-            onClick={() =>
-              window.open(
-                'https://docs.cruize.org',
-                '_blank',
-                'noopener noreferrer',
-              )
-            }
-          >
-            Tutorial
-            <Sprite id="top-right-arrow" width={16} height={16} />
-          </Button>
-          <Button
-            style={{
-              background: STYLES.palette.colors.modalBackground,
-              color: STYLES.palette.colors.white,
-              filter: 'brightness(70%)',
-              padding: rem(16),
-              borderColor: STYLES.palette.colors.modalBackground,
-            }}
-            onClick={() => setOpenTutorialVideo(false)}
-          >
-            It's fine, I know stuff
-          </Button>
-        </ButtonContainer>
-      </Modal>
-      <Modal
-        open={openTransactionModal}
-        modalContentStyle={{
-          padding: `${rem(36)} ${rem(40)}`,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: rem(24),
+        transactionModalOptions={{
+          openTransactionModal: openTransactionModal,
+          setOpenTransactionModal: (val) => setOpenTransactionModal(val),
+          transactionDetails: {
+            transactionLoading: transactionLoading,
+            hash: transactionDetails.hash,
+            status: transactionDetails.status,
+          },
         }}
-      >
-        {transactionLoading ? (
-          <Loader />
-        ) : (
-          <Sprite
-            id={
-              transactionDetails.status === 1
-                ? 'green-check-icon'
-                : 'red-cross-icon'
-            }
-            width={40}
-            height={40}
-          />
-        )}
-        <Typography fontFamily="extraBold" style={{ fontSize: rem(20) }}>
-          {transactionLoading
-            ? 'Transaction Pending'
-            : tab === 'protect'
-            ? transactionDetails.status === 1
-              ? 'Deposit Successful'
-              : 'Deposit Failed'
-            : transactionDetails.status === 1
-            ? 'Withdraw Successful'
-            : 'Withdraw Failed'}
-        </Typography>
-        {transactionDetails.hash ? (
-          <Typography
-            style={{ display: 'flex', gap: rem(10) }}
-            tag="a"
-            href={`https://goerli.etherscan.io/tx/${transactionDetails.hash}`}
-            openInNewTab={true}
-            color={STYLES.palette.colors.linkBlue}
-          >
-            View on etherscan
-            <Sprite id="redirect-icon" width={16} height={16} />
-          </Typography>
-        ) : null}
-        <Button borderRadius={8} onClick={() => setOpenTransactionModal(false)}>
-          Close
-        </Button>
-      </Modal>
+        type={modalType}
+      />
     </>
   )
 }

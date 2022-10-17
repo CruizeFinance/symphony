@@ -69,15 +69,5 @@ async function handleResponse(response: Response) {
   })
 }
 
-export function getOffset(el: HTMLElement) {
-  const rect = el.getBoundingClientRect();
-  return {
-    left: rect.left + window.scrollX,
-    top: rect.top + window.scrollY
-  };
-}
-
 // exporting constants to index to a single file in utils
 export * from './constants'
-
-export * from './graph'

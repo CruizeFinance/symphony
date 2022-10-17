@@ -1,7 +1,7 @@
 import STYLES from '../../style/styles.json'
 import styled from 'styled-components'
 import ProtectCard from './ProtectCard'
-import { getOffset, rem } from '../../utils'
+import { rem } from '../../utils'
 import HowItWorks from './HowItWorks'
 import { useEffect } from 'react'
 

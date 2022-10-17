@@ -1,7 +1,7 @@
 import { createContext, useEffect, useReducer } from 'react'
 import { useAccount, useBalance, useNetwork } from 'wagmi'
 import { fetchAPYs, fetchPriceFloors, getAssetPrice } from '../apis'
-import { ASSET_PRICE_API_PARAMS } from '../utils'
+import { ASSET_PRICE_API_PARAMS, CONTRACTS_CONFIG } from '../utils'
 import { Action, Actions } from './Action'
 import reducer from './Reducer'
 import initialState from './State'
@@ -23,11 +23,25 @@ export const AppContext = createContext<[State, React.Dispatch<Action>]>([
  * Used to store certain values that can be used throughout the application in unrelated components
  */
 export const AppContextProvider = ({ children }: ProviderProps) => {
+  // context hook
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  // object for fetching token contracts per chain
+  const contractsConfig = CONTRACTS_CONFIG[state.chainId]
+
+  // web3 hooks
   const { address } = useAccount()
   const { chain } = useNetwork()
   const { data: balanceData } = useBalance({
     addressOrName: address,
+    ...(state.selectedAsset.label !== 'ETH'
+      ? {
+          token:
+            contractsConfig[
+              state.selectedAsset.label as keyof typeof contractsConfig
+            ]?.address,
+        }
+      : undefined),
     watch: true,
   })
 

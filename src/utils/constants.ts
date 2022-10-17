@@ -30,19 +30,47 @@ export const ASSET_PRICE_API_PARAMS = {
   [AssetDropdownOptions.WBTC]: 'bitcoin',
 }
 
-// app config to update automatically when changing network
-export const APP_CONFIG = {
+// contracts config to update automatically when changing network
+export const CONTRACTS_CONFIG = {
   [chain.goerli.id]: {
-    CRUIZE_CONTRACT: '0xCB7d7264b70aE89a65F9ee660Fe5c5BAB0Ab4f3c',
-    WETH_CONTRACT_ADDRESS: '0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6',
-    WBTC_CONTRACT_ADDRESS: '0xC04B0d3107736C32e19F1c62b2aF67BE61d63a05',
-    ETH_CONTRACT_ADDRESS: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // dummy value
+    CRUIZE: {
+      address: '0x5Ad5c04578961d3Ef883EDDFcF0c255D732B02d8',
+      cruizeAddress: '',
+      decimals: 0,
+    },
+    [AssetDropdownOptions.WETH]: {
+      address: '0xCCa7d1416518D095E729904aAeA087dBA749A4dC',
+      cruizeAddress: '0xbA878d620CBe48C499a08c070DAAfe777DE35A20',
+      decimals: 18,
+    },
+    [AssetDropdownOptions.WBTC]: {
+      address: '0xf4423F4152966eBb106261740da907662A3569C5',
+      cruizeAddress: '0x35ad01FbCfD635C40ebb1aAa59096eB5597c4358',
+      decimals: 8,
+    },
+    [AssetDropdownOptions.ETH]: {
+      address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      cruizeAddress: '0xB2424eb7a1c7607A5B2731a8F454D8D80b6E261B',
+      decimals: 18,
+    }, // dummy value
   },
   [chain.mainnet.id]: {
-    CRUIZE_CONTRACT: '',
-    WETH_CONTRACT_ADDRESS: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
-    WBTC_CONTRACT_ADDRESS: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
-    ETH_CONTRACT_ADDRESS: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE', // dummy value
+    CRUIZE: { address: '', cruizeAddress: '', decimals: 0 },
+    [AssetDropdownOptions.WETH]: {
+      address: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+      cruizeAddress: '',
+      decimals: 18,
+    },
+    [AssetDropdownOptions.WBTC]: {
+      address: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
+      cruizeAddress: '',
+      decimals: 8,
+    },
+    [AssetDropdownOptions.ETH]: {
+      address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
+      cruizeAddress: '',
+      decimals: 18,
+    }, // dummy value
   },
 }
 

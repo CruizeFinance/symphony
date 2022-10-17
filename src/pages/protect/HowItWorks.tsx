@@ -31,7 +31,7 @@ const CardContainer = styled.div`
 const HowItWorksHeader = styled.div`
   position: sticky;
   top: ${rem(120)};
-  margin-bottom: ${rem(20)};
+  margin-bottom ${rem(30)};
 `
 const Card = styled.div<CardStyleProps>`
   padding: ${rem(40)};
@@ -45,14 +45,11 @@ const Card = styled.div<CardStyleProps>`
   position: sticky;
   top: ${(props) => rem(172 + props.cardId * 30)};
   margin-bottom: ${rem(30)};
+  box-shadow: 0px -10px 10px -10px rgba(255, 255, 255, 0.3);
 
   img {
     padding-right: ${rem(30)};
     border-right: ${rem(1)} solid ${STYLES.palette.colors.dividerStroke};
-    height: ${(props) =>
-      rem(props.cardId === 0 ? '320' : props.cardId === 1 ? '280' : '260')};
-    width: ${(props) =>
-      rem(props.cardId === 0 ? '275' : props.cardId === 1 ? '245' : '250')};
   }
 
   @media only screen and (max-width: 1024px) {
@@ -91,6 +88,8 @@ const CardComponent = ({ title, description, number }: CardComponentProps) => {
       <img
         src={`assets/HowItWorks-${number}.png`}
         alt={`how-it-works-${number}-icon`}
+        height={300}
+        width={275}
       />
       <CardContent>
         <Typography
@@ -120,10 +119,10 @@ const CardComponent = ({ title, description, number }: CardComponentProps) => {
             0{number}
           </Typography>
         </Typography>
-        <Typography fontFamily="semiBold" style={{ fontSize: rem(28) }}>
+        <Typography fontFamily="semiBold" style={{ fontSize: rem(28), marginBottom: rem(8) }}>
           {title}
         </Typography>
-        <Typography fontFamily="regular" color={STYLES.palette.colors.white60}>
+        <Typography fontFamily="regular" color={STYLES.palette.colors.white60} style={{ lineHeight: rem(20) }}>
           {description}
         </Typography>
       </CardContent>
@@ -137,7 +136,6 @@ const CardComponent = ({ title, description, number }: CardComponentProps) => {
  * explains the users how the protocol works in steps
  */
 const HowItWorks = () => {
-
   // context hook
   const [state] = useContext(AppContext)
 
