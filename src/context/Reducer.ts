@@ -9,7 +9,7 @@ const reducer = (state: State, action: Action): State => {
     case Actions.STORE_ETH_PRICE:
       return {
         ...state,
-        ethPrice: action.payload
+        ethPrice: action.payload,
       }
     case Actions.STORE_ASSET_PRICE:
       return {
@@ -40,6 +40,11 @@ const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         assetBalance: action.payload,
+      }
+    case Actions.STORE_TAB:
+      return {
+        ...state,
+        tab: action.payload,
       }
     default:
       return state

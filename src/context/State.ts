@@ -17,6 +17,7 @@ const initialState: State = {
     WETH: 0,
     LINK: 0,
   },
+  tab: 'protect'
 }
 
 export default initialState

@@ -1,5 +1,4 @@
 import { RefObject, useEffect } from 'react'
-
 /*
  * a hook written to detect click outside an element
  */

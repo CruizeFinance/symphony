@@ -66,7 +66,7 @@ export const storeTransaction = async (
     return data
   } catch (e) {
     return {
-      message: null,
+      message: 'failure',
       error: e,
     }
   }
@@ -83,7 +83,7 @@ export const fetchRecentOrders = async (user_address: string) => {
     return data
   } catch (e) {
     return {
-      message: null,
+      message: [],
       error: e,
     }
   }

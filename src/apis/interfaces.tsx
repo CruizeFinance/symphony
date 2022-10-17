@@ -1,6 +1,6 @@
 // return type of asset price
 export interface AssetPrice {
-  price: number
+  price: number | null
   error: unknown
 }
 
@@ -20,7 +20,7 @@ export interface DepositToDyDx {
     clientId: string
     fromAddress: string | null
     toAddress: string | null
-  }
+  } | null
   error: unknown
 }
 
@@ -33,7 +33,7 @@ export interface FetchTransactions {
     timestamp: number
     asset_name: string
     user_address: string
-  }[]
+  }[] | string
   error: unknown
 }
 
@@ -48,16 +48,15 @@ export interface PriceFloors {
   result: {
     ethereum: number
     bitcoin: number
-  }
+  } | null
   error: unknown
 }
 
 // return type of apys
 export interface APYs {
   result: {
-    WBTC: number
-    LINK: number
-    WETH: number
-  }
+    bitcoin: number
+    ethereum: number
+  } | null
   error: unknown
 }

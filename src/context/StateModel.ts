@@ -16,4 +16,5 @@ export default interface State {
     WETH: number
     LINK: number
   }
+  tab: 'protect' | 'withdraw'
 }

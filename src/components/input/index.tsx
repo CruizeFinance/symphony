@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { DROPDOWN_OPTIONS, rem } from '../../utils'
+import { CONTRACTS_CONFIG, DROPDOWN_OPTIONS, rem } from '../../utils'
 import { AssetDropdown, Typography } from '..'
-import { useContext, useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { memo, useContext, useEffect, useState } from 'react'
+import { useAccount, useBalance } from 'wagmi'
 import { AppContext } from '../../context'
 
 const InputArea = styled.div`
@@ -63,12 +63,19 @@ interface InputFieldProps
   variant?: 'default' | 'asset'
   label?: string
   error?: string
-  onInputChange?: (val: string) => void
+  onInputChange: (val: string) => void
   onAssetChange?: (val: string) => void
   inputValue?: string
   showBalance?: boolean
   onMaxClick?: (val: string) => void
+  cruizeBalanceData?: string
 }
+
+function escapeRegExp(string: string): string {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+}
+
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`)
 
 /*
  * Input
@@ -83,8 +90,8 @@ const Input = ({
   inputValue,
   onInputChange,
   onAssetChange,
-  showBalance,
   onMaxClick,
+  cruizeBalanceData,
   ...props
 }: InputFieldProps) => {
   // context
@@ -94,8 +101,7 @@ const Input = ({
   const { isConnected } = useAccount()
 
   // state hook
-  const [input, setInputValue] = useState<string>('0.0')
-  const [selectedAsset, setSelectedAsset] = useState<string>('ethereum')
+  const [input, setInputValue] = useState<string | undefined>('')
 
   /*
    * function to handle asset changes
@@ -104,17 +110,21 @@ const Input = ({
   const handleAssetChange = (val: string) => {
     switch (val) {
       case 'WBTC':
-        setSelectedAsset('wrapped-bitcoin')
         onAssetChange && onAssetChange('wrapped-bitcoin')
         break
       case 'WETH':
-        setSelectedAsset('weth')
         onAssetChange && onAssetChange('weth')
         break
       default:
-        setSelectedAsset('ethereum')
         onAssetChange && onAssetChange('ethereum')
         break
+    }
+  }
+
+  const enforcer = (nextUserInput: string) => {
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      onInputChange(nextUserInput)
+      setInputValue(nextUserInput)
     }
   }
 
@@ -122,7 +132,7 @@ const Input = ({
    * effect to set the input value on change
    */
   useEffect(() => {
-    setInputValue(inputValue || '0.0')
+    setInputValue(inputValue)
   }, [inputValue])
 
   return (
@@ -142,15 +152,18 @@ const Input = ({
       <InputContainer>
         <InputSection>
           <InputField
-            pattern="\d*"
+            inputMode="decimal"
+            autoComplete="off"
+            autoCorrect="off"
+            pattern="^[0-9]*[.,]?[0-9]*$"
             maxLength={10}
             size={10}
             type={'text'}
-            value={input}
+            value={input || ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setInputValue(e.target.value)
-              onInputChange && onInputChange(e.target.value)
+              enforcer(e.target.value)
             }}
+            placeholder='0'
           />
           <Typography
             tag="p"
@@ -178,7 +191,7 @@ const Input = ({
               textOverflow: 'ellipsis',
             }}
           />
-          {isConnected && showBalance ? (
+          {isConnected ? (
             <Typography
               tag="p"
               fontFamily="medium"
@@ -187,17 +200,34 @@ const Input = ({
                 color: STYLES.palette.colors.inputLabel,
               }}
             >
-              <>Balance: {state.assetBalance?.slice(0, 10) || '-'}</>
+              <>
+                {state.tab === 'withdraw' ? 'Limit' : 'Balance'}:{' '}
+                {state.tab === 'withdraw'
+                  ? cruizeBalanceData?.slice(0, 10)
+                  : state.assetBalance?.slice(0, 10) || '-'}
+              </>
               <MaxButton
                 onClick={() => {
                   onMaxClick &&
                     onMaxClick(
-                      (Number(state.assetBalance || 0) * 0.9)
+                      (
+                        Number(
+                          state.tab === 'withdraw'
+                            ? cruizeBalanceData
+                            : state.assetBalance || 0,
+                        ) * (state.tab === 'withdraw' ? 1 : 0.9)
+                      )
                         .toString()
                         ?.slice(0, 10) ?? '0.0',
                     )
                   setInputValue(
-                    (Number(state.assetBalance || 0) * 0.9)
+                    (
+                      Number(
+                        state.tab === 'withdraw'
+                          ? cruizeBalanceData
+                          : state.assetBalance || 0,
+                      ) * (state.tab === 'withdraw' ? 1 : 0.9)
+                    )
                       .toString()
                       ?.slice(0, 10) ?? '0.0',
                   )
@@ -222,4 +252,4 @@ const Input = ({
   )
 }
 
-export default Input
+export default memo(Input)
