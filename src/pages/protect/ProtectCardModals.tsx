@@ -128,20 +128,8 @@ const ProtectCardModals = ({
             {transactionModalOptions.transactionDetails.transactionLoading
               ? 'Transaction Pending'
               : transactionModalOptions.transactionDetails.status === 1
-              ? `${
-                  state.tab === 'protect'
-                    ? 'Deposit'
-                    : state.tab === 'withdraw'
-                    ? 'Withdraw'
-                    : 'Transaction'
-                } Successful`
-              : `${
-                  state.tab === 'protect'
-                    ? 'Deposit'
-                    : state.tab === 'withdraw'
-                    ? 'Withdraw'
-                    : 'Transaction'
-                } Failed`}
+              ? `Transaction Successful`
+              : `Transaction Failed`}
           </Typography>
           {transactionModalOptions.transactionDetails.hash ? (
             <Typography
