@@ -117,12 +117,12 @@ const ProtectCard = () => {
    */
   const priceFloor = useMemo(
     () =>
-      state.priceFloors[
+    state.priceFloors ? state.priceFloors[
         PRICE_FLOORS_RESPONSE_MAPPING[
           state.selectedAsset
             .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
         ] as keyof typeof state.priceFloors
-      ] || 0,
+      ] : 0,
     [state.selectedAsset, state.priceFloors],
   )
 
@@ -390,7 +390,7 @@ const ProtectCard = () => {
           label={`1 cr${state.selectedAsset.label} = ${
             priceFloor > state.assetPrice
               ? priceFloor.toFixed(4)
-              : state.assetPrice.toFixed(4) || '-'
+              : state.assetPrice?.toFixed(4) || '-'
           } USDC`}
           value={
             <Typography

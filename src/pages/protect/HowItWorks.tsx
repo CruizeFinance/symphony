@@ -179,12 +179,12 @@ const HowItWorks = () => {
         current cr{state.selectedAsset.label.toUpperCase()} price floor is&nbsp;
         <Typography tag="span" color={STYLES.palette.colors.white}>
           $
-          {state.priceFloors[
+          {state.priceFloors ? state.priceFloors[
             PRICE_FLOORS_RESPONSE_MAPPING[
               state.selectedAsset
                 .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
             ] as keyof typeof state.priceFloors
-          ] || '-'}
+          ] : '-'}
         </Typography>
       </Typography>
       <Divider style={{ marginBottom: rem(32) }} />
