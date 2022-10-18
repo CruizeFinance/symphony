@@ -1,14 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Sprite, Typography } from '../../components'
+import { Button, Sprite, Typography } from '../../components'
 import { Modal } from '../../components'
 import STYLES from '../../style/styles.json'
-import { useAccount } from 'wagmi'
+import { chain, useAccount, useSwitchNetwork } from 'wagmi'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { PAGE_LINKS, rem } from '../../utils'
 import RecentOrdersDropdown from './RecentOrdersDropdown'
 import NetworkDropdown from './NetworkDropdown'
 import ConnectButtonDropdown from './ConnectButtonDropdown'
+import { AppContext } from '../../context'
 
 // mobile interface
 interface MobileProps {
@@ -97,6 +98,13 @@ const MobileHeaderContent = styled.div`
   width: 100%;
   overflow-y: auto;
 `
+const NetworkModalHeader = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: ${rem(16)};
+`
 
 /*
  * App Header
@@ -104,8 +112,12 @@ const MobileHeaderContent = styled.div`
  * Enables wallet connection and navigation
  */
 const Header = () => {
+  // context hook
+  const [state] = useContext(AppContext)
+
   //web3 hook
   const { isConnected } = useAccount()
+  const { switchNetwork } = useSwitchNetwork()
 
   // react router dom hooks
   const navigate = useNavigate()
@@ -114,6 +126,7 @@ const Header = () => {
   // state hooks
   const [openConnectedModal, setOpenConnectedModal] = useState(false)
   const [openMobileHeader, setOpenMobileHeader] = useState(false)
+  const [wrongNetworkModal, setWrongNetworkModal] = useState(false)
 
   /*
    * a function to hide the connected modal after 2 seconds
@@ -134,6 +147,13 @@ const Header = () => {
       hideModal()
     }
   }, [isConnected])
+
+  /*
+   * an effect to set the wrong network boolean
+   */
+  useEffect(() => {
+      setWrongNetworkModal(isConnected && !state.supportedChains.includes(state.chainId))
+  }, [state.chainId])
 
   return (
     <>
@@ -168,7 +188,7 @@ const Header = () => {
         <DesktopArea>
           {isConnected ? (
             <>
-              <RecentOrdersDropdown />
+              {state.supportedChains.includes(state.chainId) ? <RecentOrdersDropdown /> : null}
               <NetworkDropdown />
             </>
           ) : null}
@@ -204,7 +224,7 @@ const Header = () => {
             </MobileLinks>
             {isConnected ? (
               <>
-                <RecentOrdersDropdown />
+                {state.supportedChains.includes(state.chainId) ? <RecentOrdersDropdown /> : null}
                 <NetworkDropdown />
               </>
             ) : null}
@@ -223,6 +243,48 @@ const Header = () => {
             Connected
           </Typography>
         </ModalContent>
+      </Modal>
+      <Modal
+        open={wrongNetworkModal}
+        modalContentStyle={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+          maxWidth: rem(400),
+        }}
+      >
+        <NetworkModalHeader>
+          <Sprite id="wrong-network-icon" width={56} height={56} />
+          <Typography
+            fontFamily="medium"
+            style={{ filter: 'brightness(40%)', cursor: 'pointer' }}
+            onClick={() => setWrongNetworkModal(false)}
+          >
+            &#x2715;
+          </Typography>
+        </NetworkModalHeader>
+        <Typography
+          style={{ fontSize: rem(24), marginBottom: rem(4) }}
+          fontFamily="bold"
+        >
+          Oops, your wallet is not on the right network.
+        </Typography>
+        <Typography
+          style={{
+            fontSize: rem(14),
+            marginBottom: rem(32),
+            filter: 'brightness(60%)',
+          }}
+          fontFamily="regular"
+        >
+          It seems your wallet is running on a different network. Please
+          manually change the network in your wallet. or click on the wallet
+          below.
+        </Typography>
+        <Button onClick={() => switchNetwork?.(chain.goerli.id)} style={{ width: '100%' }}>
+          Switch Network
+          <Sprite id="switch-network-icon" width={16} height={16} />
+        </Button>
       </Modal>
     </>
   )

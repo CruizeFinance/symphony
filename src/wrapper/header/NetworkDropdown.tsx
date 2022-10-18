@@ -1,6 +1,8 @@
-import { useRef, useState } from 'react'
-import { chain, useFeeData } from 'wagmi'
-import { Sprite, Typography } from '../../components'
+import { useContext, useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
+import { chain, useFeeData, useSwitchNetwork } from 'wagmi'
+import { Button, Modal, Sprite, Typography } from '../../components'
+import { AppContext } from '../../context'
 import { useOutsideAlerter } from '../../hooks'
 import { rem } from '../../utils'
 import {
@@ -20,12 +22,16 @@ import {
  * Is displayed only when the user is connected on the app
  */
 const NetworkDropdown = () => {
+  // context hook
+  const [state] = useContext(AppContext)
+
   // web3 hook
   const { data: gasData } = useFeeData({
     chainId: chain.goerli.id,
     formatUnits: 'gwei',
     watch: true,
   })
+  const { switchNetwork } = useSwitchNetwork()
 
   // state hook
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false)
@@ -35,32 +41,24 @@ const NetworkDropdown = () => {
   useOutsideAlerter(networkRef, () => setShowNetworkDropdown(false))
 
   return (
-    <DropdownArea ref={networkRef}>
-      <MobileHeaderTab
-        onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
-      >
-        <Typography
-          fontFamily="medium"
-          style={{ display: 'flex', gap: rem(10) }}
-        >
-          <Sprite id="eth-asset-icon" width={20} height={20} />
-          Goerli
-        </Typography>
-        <Sprite
-          id="chevron-down"
-          width={12}
-          height={12}
-          {...(showNetworkDropdown
-            ? { style: { transform: 'rotate(180deg)' } }
-            : undefined)}
-        />
-      </MobileHeaderTab>
-      <DesktopHeaderTab>
-        <ConnectedButton
+    <>
+      <DropdownArea ref={networkRef}>
+        <MobileHeaderTab
           onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
         >
-          <Sprite id="eth-asset-icon" width={20} height={20} />
-          <Typography>Goerli</Typography>
+          <Typography
+            fontFamily="medium"
+            style={{ display: 'flex', gap: rem(10) }}
+          >
+            {state.supportedChains.includes(state.chainId) ? (
+              <>
+                <Sprite id="eth-asset-icon" width={20} height={20} />
+                Goerli
+              </>
+            ) : (
+              'Unsupported Network'
+            )}
+          </Typography>
           <Sprite
             id="chevron-down"
             width={12}
@@ -69,40 +67,73 @@ const NetworkDropdown = () => {
               ? { style: { transform: 'rotate(180deg)' } }
               : undefined)}
           />
-        </ConnectedButton>
-      </DesktopHeaderTab>
-      {showNetworkDropdown ? (
-        <HeaderDropdown style={{ gap: rem(2) }} dropdownWidth={250}>
-          <Section>
-            <DropdownContent>
-              <DropdownLabel>
-                <Typography fontFamily="medium">Goerli</Typography>
+        </MobileHeaderTab>
+        <DesktopHeaderTab>
+          <ConnectedButton
+            onClick={() => setShowNetworkDropdown(!showNetworkDropdown)}
+          >
+            {state.supportedChains.includes(state.chainId) ? (
+              <>
                 <Sprite id="eth-asset-icon" width={20} height={20} />
-              </DropdownLabel>
-              <DropdownLabel>
-                <Typography
-                  style={{
-                    fontSize: rem(14),
-                    filter: 'brightness(80%)',
-                    display: 'flex',
-                  }}
-                >
-                  <>
-                    <Sprite
-                      id="gas-icon"
-                      width={16}
-                      height={16}
-                      style={{ marginRight: rem(8) }}
-                    />
-                    {gasData?.formatted.gasPrice} gwei
-                  </>
-                </Typography>
-              </DropdownLabel>
-            </DropdownContent>
-          </Section>
-        </HeaderDropdown>
-      ) : null}
-    </DropdownArea>
+                <Typography>Goerli</Typography>
+              </>
+            ) : (
+              <Typography>Unsupported Network</Typography>
+            )}
+            <Sprite
+              id="chevron-down"
+              width={12}
+              height={12}
+              {...(showNetworkDropdown
+                ? { style: { transform: 'rotate(180deg)' } }
+                : undefined)}
+            />
+          </ConnectedButton>
+        </DesktopHeaderTab>
+        {showNetworkDropdown ? (
+          <HeaderDropdown style={{ gap: rem(2) }} dropdownWidth={250}>
+            {state.supportedChains.includes(state.chainId) ? (
+              <Section>
+                <DropdownContent>
+                  <DropdownLabel>
+                    <Typography fontFamily="medium">Goerli</Typography>
+                    <Sprite id="eth-asset-icon" width={20} height={20} />
+                  </DropdownLabel>
+                  <DropdownLabel>
+                    <Typography
+                      style={{
+                        fontSize: rem(14),
+                        filter: 'brightness(80%)',
+                        display: 'flex',
+                      }}
+                    >
+                      <>
+                        <Sprite
+                          id="gas-icon"
+                          width={16}
+                          height={16}
+                          style={{ marginRight: rem(8) }}
+                        />
+                        {gasData?.formatted.gasPrice} gwei
+                      </>
+                    </Typography>
+                  </DropdownLabel>
+                </DropdownContent>
+              </Section>
+            ) : (
+              <Button
+                borderRadius={8}
+                style={{ padding: `${rem(8)} ${rem(16)}` }}
+                onClick={() => switchNetwork?.(chain.goerli.id)}
+              >
+                Switch Network
+                <Sprite id="switch-network-icon" width={16} height={16} />
+              </Button>
+            )}
+          </HeaderDropdown>
+        ) : null}
+      </DropdownArea>
+    </>
   )
 }
 

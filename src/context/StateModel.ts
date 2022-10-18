@@ -17,4 +17,5 @@ export default interface State {
     LINK: number
   }
   tab: 'protect' | 'withdraw'
+  supportedChains: number[]
 }
