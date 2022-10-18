@@ -13,9 +13,8 @@ const initialState: State = {
     bitcoin: 0,
   },
   apys: {
-    WBTC: 0,
-    WETH: 0,
-    LINK: 0,
+    ethereum: 0,
+    bitcoin: 0,
   },
   tab: 'protect',
   supportedChains: [5]

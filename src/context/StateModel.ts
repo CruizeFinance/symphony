@@ -12,9 +12,8 @@ export default interface State {
   chainId: number
   assetBalance: string
   apys: {
-    WBTC: number
-    WETH: number
-    LINK: number
+    ethereum: number,
+    bitcoin: number
   }
   tab: 'protect' | 'withdraw'
   supportedChains: number[]

@@ -377,12 +377,12 @@ const ProtectCard = () => {
           <DetailComponent
             label="APY"
             value={`${
-              state.apys[
+              state.apys ? state.apys[
                 APYS_RESPONSE_MAPPING[
                   state.selectedAsset
                     .label as keyof typeof APYS_RESPONSE_MAPPING
                 ] as keyof typeof state.apys
-              ]?.toFixed(8) || '-'
+              ]?.toFixed(8) : '-'
             } %`}
           />
         </DetailArea>
