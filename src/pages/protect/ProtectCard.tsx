@@ -414,7 +414,7 @@ const ProtectCard = () => {
         />
         <Button
           buttonType="protect"
-          onClick={() => onButtonClick(!tokenApproved ? 'approve' : 'interact')}
+          onClick={() => onButtonClick(!(allowed || tokenApproved) ? 'approve' : 'interact')}
           disabled={
             !isConnected ||
             setError() !== '' ||
