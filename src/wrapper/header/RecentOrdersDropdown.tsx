@@ -121,6 +121,7 @@ const RecentOrdersDropdown = () => {
               typeof transactions !== 'string' &&
               transactions.length ? (
                 transactions
+                  .sort((a,b) => b.timestamp - a.timestamp)
                   .slice(0, 3)
                   .map((transaction) => (
                     <Section key={transaction.transaction_hash}>

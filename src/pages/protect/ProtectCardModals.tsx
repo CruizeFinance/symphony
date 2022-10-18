@@ -1,5 +1,7 @@
+import { useContext } from 'react'
 import styled from 'styled-components'
 import { Button, Loader, Modal, Sprite, Typography } from '../../components'
+import { AppContext } from '../../context'
 import STYLES from '../../style/styles.json'
 import { rem } from '../../utils'
 
@@ -37,6 +39,10 @@ const ProtectCardModals = ({
   tutorialModalOptions,
   transactionModalOptions,
 }: ProtectCardModalsInterface) => {
+  /*
+   * context hook
+   */
+  const [state] = useContext(AppContext)
 
   switch (type) {
     case 'tutorial':
@@ -122,8 +128,20 @@ const ProtectCardModals = ({
             {transactionModalOptions.transactionDetails.transactionLoading
               ? 'Transaction Pending'
               : transactionModalOptions.transactionDetails.status === 1
-              ? 'Transaction Successful'
-              : 'Transaction Failed'}
+              ? `${
+                  state.tab === 'protect'
+                    ? 'Deposit'
+                    : state.tab === 'withdraw'
+                    ? 'Withdraw'
+                    : 'Transaction'
+                } Successful`
+              : `${
+                  state.tab === 'protect'
+                    ? 'Deposit'
+                    : state.tab === 'withdraw'
+                    ? 'Withdraw'
+                    : 'Transaction'
+                } Failed`}
           </Typography>
           {transactionModalOptions.transactionDetails.hash ? (
             <Typography

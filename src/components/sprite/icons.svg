@@ -1157,5 +1157,18 @@
       </defs>
     </symbol>
 
+    <symbol viewBox="0 0 16 16" fill="none" id="switch-network-icon">
+      <path d="M4.98828 6.23145H1.98828V3.23145" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11.8883 4.11289C11.378 3.6019 10.7721 3.19652 10.105 2.91993C9.43794 2.64334 8.7229 2.50098 8.00078 2.50098C7.27866 2.50098 6.56362 2.64334 5.89656 2.91993C5.22951 3.19652 4.62353 3.6019 4.11328 4.11289L1.98828 6.23164" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M11.0117 9.76855H14.0117V12.7686" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M4.11328 11.8873C4.62353 12.3983 5.22951 12.8037 5.89656 13.0803C6.56362 13.3569 7.27866 13.4992 8.00078 13.4992C8.7229 13.4992 9.43794 13.3569 10.105 13.0803C10.7721 12.8037 11.378 12.3983 11.8883 11.8873L14.0133 9.76855" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+
+    <symbol viewBox="0 0 56 56" fill="none" id="wrong-network-icon">
+      <rect x="4" y="4" width="48" height="48" rx="24" fill="#FEF0C7"/>
+      <path d="M27.9988 24.0002V28.0002M27.9988 32.0002H28.0088M26.2888 18.8602L17.8188 33.0002C17.6442 33.3026 17.5518 33.6455 17.5508 33.9947C17.5498 34.3439 17.6403 34.6873 17.8132 34.9907C17.9862 35.2941 18.2355 35.547 18.5365 35.7241C18.8375 35.9012 19.1796 35.9964 19.5288 36.0002H36.4688C36.818 35.9964 37.1601 35.9012 37.4611 35.7241C37.7621 35.547 38.0114 35.2941 38.1844 34.9907C38.3573 34.6873 38.4478 34.3439 38.4468 33.9947C38.4458 33.6455 38.3534 33.3026 38.1788 33.0002L29.7088 18.8602C29.5305 18.5663 29.2795 18.3233 28.98 18.1547C28.6805 17.9861 28.3425 17.8975 27.9988 17.8975C27.6551 17.8975 27.3171 17.9861 27.0176 18.1547C26.7181 18.3233 26.4671 18.5663 26.2888 18.8602Z" stroke="#DC6803" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="4" y="4" width="48" height="48" rx="24" stroke="#FFFAEB" stroke-opacity="0.21" stroke-width="8"/>
+    </symbol>
+
 
 </svg>

@@ -17,7 +17,8 @@ const initialState: State = {
     WETH: 0,
     LINK: 0,
   },
-  tab: 'protect'
+  tab: 'protect',
+  supportedChains: [5]
 }
 
 export default initialState

@@ -1,6 +1,12 @@
 import { createContext, useEffect, useReducer } from 'react'
-import { useAccount, useBalance, useNetwork } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  useNetwork,
+  chain as allChains,
+} from 'wagmi'
 import { fetchAPYs, fetchPriceFloors, getAssetPrice } from '../apis'
+import { useOnceCall } from '../hooks'
 import { ASSET_PRICE_API_PARAMS, CONTRACTS_CONFIG } from '../utils'
 import { Action, Actions } from './Action'
 import reducer from './Reducer'
@@ -27,7 +33,7 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   // object for fetching token contracts per chain
-  const contractsConfig = CONTRACTS_CONFIG[state.chainId]
+  const contractsConfig = CONTRACTS_CONFIG[state.chainId || allChains.goerli.id]
 
   // web3 hooks
   const { address } = useAccount()
@@ -59,21 +65,22 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
   }
 
   /*
-   * effect to make initial api calls
-   */
-  useEffect(() => {
-    initialAPICalls()
-  }, [])
-
-  /*
    * initial api calls to fetch price floors and apys for all supported assets
    */
   const initialAPICalls = async () => {
     const priceFloors = await fetchPriceFloors()
-    dispatch({ type: Actions.STORE_PRICE_FLOORS, payload: priceFloors.result })
+    dispatch({
+      type: Actions.STORE_PRICE_FLOORS,
+      payload: priceFloors.result,
+    })
     const apys = await fetchAPYs()
     dispatch({ type: Actions.STORE_APYS, payload: apys.result })
   }
+
+  /*
+   * hook to make initial api calls just once
+   */
+  useOnceCall(initialAPICalls)
 
   /*
    * effect to call the set asset price function

@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
-import { CONTRACTS_CONFIG, DROPDOWN_OPTIONS, rem } from '../../utils'
+import { DROPDOWN_OPTIONS, rem } from '../../utils'
 import { AssetDropdown, Typography } from '..'
 import { memo, useContext, useEffect, useState } from 'react'
-import { useAccount, useBalance } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { AppContext } from '../../context'
 
 const InputArea = styled.div`
@@ -163,7 +163,7 @@ const Input = ({
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               enforcer(e.target.value)
             }}
-            placeholder='0'
+            placeholder="0"
           />
           <Typography
             tag="p"
@@ -215,7 +215,11 @@ const Input = ({
                           state.tab === 'withdraw'
                             ? cruizeBalanceData
                             : state.assetBalance || 0,
-                        ) * (state.tab === 'withdraw' ? 1 : 0.9)
+                        ) *
+                        (state.selectedAsset.label === 'ETH' &&
+                        state.tab === 'protect'
+                          ? 0.9
+                          : 1)
                       )
                         .toString()
                         ?.slice(0, 10) ?? '0.0',
@@ -226,7 +230,11 @@ const Input = ({
                         state.tab === 'withdraw'
                           ? cruizeBalanceData
                           : state.assetBalance || 0,
-                      ) * (state.tab === 'withdraw' ? 1 : 0.9)
+                      ) *
+                      (state.selectedAsset.label === 'ETH' &&
+                      state.tab === 'protect'
+                        ? 0.9
+                        : 1)
                     )
                       .toString()
                       ?.slice(0, 10) ?? '0.0',

@@ -122,7 +122,7 @@ const ProtectCard = () => {
           state.selectedAsset
             .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
         ] as keyof typeof state.priceFloors
-      ],
+      ] || 0,
     [state.selectedAsset, state.priceFloors],
   )
 
@@ -173,7 +173,12 @@ const ProtectCard = () => {
             contractsConfig[
               state.selectedAsset.label as keyof typeof contractsConfig
             ]?.address || '',
-            priceFloor * Math.pow(10, 8),
+            ethers.utils.parseUnits(
+              priceFloor.toString(),
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.decimals || '',
+            ),
           ],
         }),
     overrides: {
@@ -226,7 +231,7 @@ const ProtectCard = () => {
     addressOrName: address,
     token:
       contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.cruizeAddress,
+        ?.cruizeAddress || '',
     watch: true,
   })
 
@@ -263,13 +268,13 @@ const ProtectCard = () => {
    * function to protect or withdraw the asset based on the user's choice
    * also enables token approval in case the asset is not approved for depositing in contract
    */
-  const onButtonClick = async () => {
+  const onButtonClick = async (type = 'interact') => {
     try {
       setModalType('transaction')
       // interacting with the contract
       const tx =
-        allowed || tokenApproved ? await writeAsync?.() : await approveAsync?.()
-      if (!allowed) setTokenApproved(true)
+        type === 'interact' ? await writeAsync?.() : await approveAsync?.()
+      if (type !== 'interact') setTokenApproved(true)
       setOpenTransactionModal(true)
       setTransactionLoading(true)
       setTransactionDetails({
@@ -294,7 +299,7 @@ const ProtectCard = () => {
       }, 1500)
       // functions to execute after the transaction has been executed
       // store the record for type of transaction in the DB
-      if (allowed)
+      if (type === 'interact')
         await storeTransaction(
           address ?? '',
           data.transactionHash,
@@ -303,8 +308,9 @@ const ProtectCard = () => {
           state.tab === 'withdraw' ? 'Withdraw' : 'Protect',
         )
       // deposit assets to dydx in case of protect
-      if (allowed && state.tab === 'protect') await depositToDyDx()
+      if (type === 'interact' && state.tab === 'protect') await depositToDyDx()
     } catch (e) {
+      console.log(e)
       setTransactionDetails({
         hash: '',
         status: 0,
@@ -366,6 +372,7 @@ const ProtectCard = () => {
           <DetailComponent
             label="Price Floor"
             value={`${priceFloor || '-'} USDC`}
+            tooltipContent={`cr${state.selectedAsset.label} is hedged with this minimum value.`}
           />
           <DetailComponent
             label="APY"
@@ -386,7 +393,15 @@ const ProtectCard = () => {
               : state.assetPrice.toFixed(4) || '-'
           } USDC`}
           value={
-            <>
+            <Typography
+              tag="span"
+              style={{
+                background: STYLES.palette.colors.inputBackground,
+                padding: `${rem(6)} ${rem(3)}`,
+                display: 'flex',
+                gap: rem(4),
+              }}
+            >
               <Sprite id="gas-icon" width={16} height={16} />
               <Typography tag="span" color={STYLES.palette.colors.white60}>
                 $
@@ -394,28 +409,31 @@ const ProtectCard = () => {
                   Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
                 ).toFixed(10) || '-'}
               </Typography>
-            </>
+            </Typography>
           }
         />
         <Button
           buttonType="protect"
-          onClick={onButtonClick}
+          onClick={() => onButtonClick(!tokenApproved ? 'approve' : 'interact')}
           disabled={
             !isConnected ||
             setError() !== '' ||
             !inputValue ||
-            allowanceStatus === 'loading'
+            allowanceStatus === 'loading' ||
+            !state.supportedChains.includes(state.chainId)
           }
           borderRadius={32}
         >
           {isConnected ? (
             <>
-              {allowanceStatus === 'loading'
+              {!state.supportedChains.includes(state.chainId)
+                ? 'Unsupported Network'
+                : allowanceStatus === 'loading'
                 ? 'Please wait...'
+                : !(allowed || tokenApproved)
+                ? 'Approve'
                 : state.tab === 'protect'
-                ? allowed || tokenApproved
-                  ? 'Protect'
-                  : 'Approve'
+                ? 'Protect'
                 : 'Withdraw'}
             </>
           ) : (

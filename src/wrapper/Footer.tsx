@@ -197,7 +197,7 @@ const Footer = () => {
             <Typography
               tag="a"
               fontFamily="regular"
-              href="https://discord.gg/uM5BGUZpFb"
+              href="https://discord.gg/cruize"
               openInNewTab={true}
             >
               <Sprite id="discord-icon" width={24} height={24} />
