@@ -117,12 +117,14 @@ const ProtectCard = () => {
    */
   const priceFloor = useMemo(
     () =>
-    state.priceFloors ? state.priceFloors[
-        PRICE_FLOORS_RESPONSE_MAPPING[
-          state.selectedAsset
-            .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
-        ] as keyof typeof state.priceFloors
-      ] : 0,
+      state.priceFloors
+        ? state.priceFloors[
+            PRICE_FLOORS_RESPONSE_MAPPING[
+              state.selectedAsset
+                .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
+            ] as keyof typeof state.priceFloors
+          ]
+        : 0,
     [state.selectedAsset, state.priceFloors],
   )
 
@@ -288,15 +290,6 @@ const ProtectCard = () => {
         status: data.status || 0,
       })
       setTransactionLoading(false)
-      const timer = setTimeout(() => {
-        setTransactionDetails({
-          hash: '',
-          status: 0,
-        })
-        setOpenTransactionModal(false)
-        setInputValue('')
-        clearTimeout(timer)
-      }, 1500)
       // functions to execute after the transaction has been executed
       // store the record for type of transaction in the DB
       if (type === 'interact')
@@ -311,19 +304,29 @@ const ProtectCard = () => {
       if (type === 'interact' && state.tab === 'protect') await depositToDyDx()
     } catch (e) {
       console.log(e)
-      setTransactionDetails({
-        hash: '',
-        status: 0,
-      })
-      setTransactionLoading(false)
-      const timer = setTimeout(() => {
-        setOpenTransactionModal(false)
-        setInputValue('')
-        setTokenApproved(false)
-        clearTimeout(timer)
-      }, 1500)
+      resetTransactionDetails()
+      setTokenApproved(false)
     }
   }
+
+  /*
+   * a function to reset transaction details
+   */
+  const resetTransactionDetails = () => {
+    setTransactionDetails({
+      hash: '',
+      status: 0,
+    })
+    setTransactionLoading(false)
+    setInputValue('')
+  }
+
+  /*
+   * an effect to reset transaction details on closing the modal
+   */
+  useEffect(() => {
+    if (!openTransactionModal) resetTransactionDetails()
+  }, [openTransactionModal])
 
   /*
    * an effect to call the set default values function
@@ -371,18 +374,20 @@ const ProtectCard = () => {
           </Typography>
           <DetailComponent
             label="Price Floor"
-            value={`${priceFloor || '-'} USDC`}
+            value={`${priceFloor.toFixed(4) || '-'} USDC`}
             tooltipContent={`cr${state.selectedAsset.label} is hedged with this minimum value.`}
           />
           <DetailComponent
             label="APY"
             value={`${
-              state.apys ? state.apys[
-                APYS_RESPONSE_MAPPING[
-                  state.selectedAsset
-                    .label as keyof typeof APYS_RESPONSE_MAPPING
-                ] as keyof typeof state.apys
-              ]?.toFixed(8) : '-'
+              state.apys
+                ? state.apys[
+                    APYS_RESPONSE_MAPPING[
+                      state.selectedAsset
+                        .label as keyof typeof APYS_RESPONSE_MAPPING
+                    ] as keyof typeof state.apys
+                  ]?.toFixed(8)
+                : '-'
             } %`}
           />
         </DetailArea>
@@ -414,7 +419,9 @@ const ProtectCard = () => {
         />
         <Button
           buttonType="protect"
-          onClick={() => onButtonClick(!(allowed || tokenApproved) ? 'approve' : 'interact')}
+          onClick={() =>
+            onButtonClick(!(allowed || tokenApproved) ? 'approve' : 'interact')
+          }
           disabled={
             !isConnected ||
             setError() !== '' ||
