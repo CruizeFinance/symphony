@@ -176,7 +176,6 @@ const ProtectCard = () => {
               state.selectedAsset.label as keyof typeof contractsConfig
             ]?.address || '',
             Number((priceFloor * Math.pow(10, 8)).toFixed(0)),
-            ),
           ],
         }),
     overrides: {
