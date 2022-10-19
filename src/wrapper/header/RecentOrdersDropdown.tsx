@@ -136,13 +136,13 @@ const RecentOrdersDropdown = () => {
                             fontFamily="medium"
                             style={{ fontSize: rem(14) }}
                           >
-                            {transaction.type} {state.selectedAsset.label}
+                            {transaction.type} {transaction.asset_name}
                           </Typography>
                           <Typography
                             fontFamily="medium"
                             style={{ fontSize: rem(14) }}
                           >
-                            {transaction.amount} {state.selectedAsset.label}
+                            {transaction.amount} {transaction.asset_name}
                           </Typography>
                         </DropdownLabel>
                         <DropdownLabel>
