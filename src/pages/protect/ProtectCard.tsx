@@ -175,11 +175,7 @@ const ProtectCard = () => {
             contractsConfig[
               state.selectedAsset.label as keyof typeof contractsConfig
             ]?.address || '',
-            ethers.utils.parseUnits(
-              priceFloor.toString(),
-              contractsConfig[
-                state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.decimals || '',
+            Number((priceFloor * Math.pow(10, 8)).toFixed(0)),
             ),
           ],
         }),
