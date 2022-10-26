@@ -1,7 +1,6 @@
-import { useContext } from 'react'
 import styled from 'styled-components'
+import { ErrorModal } from '../../common'
 import { Button, Loader, Modal, Sprite, Typography } from '../../components'
-import { AppContext } from '../../context'
 import STYLES from '../../style/styles.json'
 import { rem } from '../../utils'
 
@@ -13,7 +12,7 @@ const ButtonContainer = styled.div`
 `
 // protect card modals interface
 interface ProtectCardModalsInterface {
-  type: 'tutorial' | 'transaction'
+  type: 'tutorial' | 'transaction' | 'error'
   tutorialModalOptions: {
     openTutorialVideo: boolean
     setOpenTutorialVideo: (val: boolean) => void
@@ -27,6 +26,10 @@ interface ProtectCardModalsInterface {
       hash: string
     }
   }
+  errorModalOptions: {
+    openErrorModal: boolean
+    setOpenErrorModal: (val: boolean) => void
+  }
 }
 
 /*
@@ -38,12 +41,8 @@ const ProtectCardModals = ({
   type,
   tutorialModalOptions,
   transactionModalOptions,
+  errorModalOptions,
 }: ProtectCardModalsInterface) => {
-  /*
-   * context hook
-   */
-  const [state] = useContext(AppContext)
-
   switch (type) {
     case 'tutorial':
       return (
@@ -59,10 +58,18 @@ const ProtectCardModals = ({
             background: STYLES.palette.colors.notificationBackground,
           }}
         >
-          <Typography tag="h2" fontFamily="extraBold">
+          <Typography
+            tag="h2"
+            fontFamily="extraBold"
+            style={{ lineHeight: '36px' }}
+          >
             Need any help?
           </Typography>
-          <Typography tag="h4" fontFamily="regular">
+          <Typography
+            tag="h4"
+            fontFamily="regular"
+            style={{ lineHeight: '28.8px' }}
+          >
             To help you get started, we recorded a set of tutorials and a hand
             on guide that can be viewed on youtube.
           </Typography>
@@ -71,7 +78,7 @@ const ProtectCardModals = ({
             <Button
               buttonType="protect-small"
               borderRadius={100}
-              style={{ width: 'auto', padding: rem(16) }}
+              style={{ width: 'auto', padding: rem(16), lineHeight: '24px' }}
               onClick={() =>
                 window.open(
                   'https://docs.cruize.org',
@@ -90,6 +97,7 @@ const ProtectCardModals = ({
                 filter: 'brightness(70%)',
                 padding: rem(16),
                 borderColor: STYLES.palette.colors.modalBackground,
+                lineHeight: '24px',
               }}
               onClick={() => tutorialModalOptions.setOpenTutorialVideo(false)}
             >
@@ -124,7 +132,10 @@ const ProtectCardModals = ({
               height={40}
             />
           )}
-          <Typography fontFamily="extraBold" style={{ fontSize: rem(20) }}>
+          <Typography
+            fontFamily="extraBold"
+            style={{ fontSize: rem(20), lineHeight: '28.8px' }}
+          >
             {transactionModalOptions.transactionDetails.transactionLoading
               ? 'Transaction Pending'
               : transactionModalOptions.transactionDetails.status === 1
@@ -133,7 +144,7 @@ const ProtectCardModals = ({
           </Typography>
           {transactionModalOptions.transactionDetails.hash ? (
             <Typography
-              style={{ display: 'flex', gap: rem(10) }}
+              style={{ display: 'flex', alignItems: 'center', gap: rem(10), lineHeight: '24px' }}
               tag="a"
               href={`https://goerli.etherscan.io/tx/${transactionModalOptions.transactionDetails.hash}`}
               openInNewTab={true}
@@ -152,6 +163,16 @@ const ProtectCardModals = ({
             Close
           </Button>
         </Modal>
+      )
+    default:
+      return (
+        <ErrorModal
+          open={errorModalOptions.openErrorModal}
+          hide={() => errorModalOptions.setOpenErrorModal(false)}
+          title="Oops, something went wrong."
+          description="Our engineers are working on it. 
+    Please try again soon."
+        />
       )
   }
 }

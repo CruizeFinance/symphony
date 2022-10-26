@@ -26,11 +26,6 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         priceFloors: action.payload,
       }
-    case Actions.STORE_APYS:
-      return {
-        ...state,
-        apys: action.payload,
-      }
     case Actions.STORE_CHAIN_ID:
       return {
         ...state,
@@ -41,10 +36,20 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         assetBalance: action.payload,
       }
+    case Actions.STORE_INITIAL_APIS_LOADING_STATUS:
+      return {
+        ...state,
+        loadingInitialAPIs: action.payload,
+      }
     case Actions.STORE_TAB:
       return {
         ...state,
         tab: action.payload,
+      }
+    case Actions.STORE_HOLDER_BOOLEAN:
+      return {
+        ...state,
+        isHolder: action.payload,
       }
     default:
       return state

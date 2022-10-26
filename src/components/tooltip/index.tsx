@@ -11,6 +11,7 @@ interface StyleProps {
 const Container = styled.span`
   display: inline-block;
   position: relative;
+  top: ${rem(2)};
 `
 
 const TooltipArea = styled.span<StyleProps>`

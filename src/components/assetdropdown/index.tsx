@@ -2,11 +2,12 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { Sprite, Typography } from '..'
-import { rem } from '../../utils'
+import { ASSET_PRICE_API_PARAMS, rem } from '../../utils'
 import { AssetDropdownOptions, Option } from './SelectInterfaces'
 import { AppContext } from '../../context'
 import { Actions } from '../../context/Action'
 import { useOutsideAlerter } from '../../hooks'
+import { getAssetPrice } from '../../apis'
 
 const AssetDetails = styled.div`
   position: relative;
@@ -24,7 +25,7 @@ const Options = styled.div`
   min-width: ${rem(180)}
   max-width: ${rem(300)};
   padding: ${rem(16)};
-  background: ${STYLES.palette.colors.black};
+  background: ${STYLES.palette.colors.modalBackground};
   position: absolute;
   max-height: ${rem(250)};
   overflow-y: scroll;
@@ -38,14 +39,18 @@ const OptionComponent = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding: ${rem(4)} ${rem(8)};
+  padding-bottom: ${rem(4)};
   display: flex;
   align-items: center;
   gap: ${rem(10)};
   filter: brightness(60%);
   cursor: pointer;
+  line-height: 28.8px;
   &:hover {
     filter: brightness(100%);
+  }
+  &:last-child {
+    padding-bottom: 0;
   }
 `
 const IconContainer = styled.div`
@@ -90,19 +95,36 @@ const AssetDropdown = ({
     setShowOptions(false)
     // storing the selected asset in context
     dispatch({ type: Actions.STORE_SELECTED_ASSET, payload: val })
+    setAssetPrice(val.label)
   }
 
+  /*
+   * function to set the asset price for a selected asset
+   */
+  async function setAssetPrice(asset: string) {
+    const { price } = await getAssetPrice(
+      ASSET_PRICE_API_PARAMS[asset as keyof typeof ASSET_PRICE_API_PARAMS],
+    )
+    if (asset === 'ETH')
+      dispatch({ type: Actions.STORE_ETH_PRICE, payload: price })
+    // storing the asset price in context
+    dispatch({ type: Actions.STORE_ASSET_PRICE, payload: price })
+  }
+
+  /*
+   * an effect to set the selected option in local state on asset change
+   */
   useEffect(() => {
     if (state.selectedAsset) {
-    setSelectedOption({
-      icon: options.filter((o) => o.label === state.selectedAsset.label)[0]
-        .icon,
-      label: options.filter((o) => o.label === state.selectedAsset.label)[0]
-        .label,
-      pickerLabel: options.filter(
-        (o) => o.label === state.selectedAsset.label,
-      )[0].pickerLabel,
-    })
+      setSelectedOption({
+        icon: options.filter((o) => o.label === state.selectedAsset.label)[0]
+          .icon,
+        label: options.filter((o) => o.label === state.selectedAsset.label)[0]
+          .label,
+        pickerLabel: options.filter(
+          (o) => o.label === state.selectedAsset.label,
+        )[0].pickerLabel,
+      })
     }
   }, [state.selectedAsset])
 
@@ -114,15 +136,20 @@ const AssetDropdown = ({
       >
         {!hidePickerIcon && selectedOption.icon ? (
           <IconContainer>
-          <Sprite
-            id={selectedOption.icon}
-            width={pickerStyle?.iconWidth || 25}
-            height={pickerStyle?.iconHeight || 25}
-          /></IconContainer>
+            <Sprite
+              id={selectedOption.icon}
+              width={pickerStyle?.iconWidth || 25}
+              height={pickerStyle?.iconHeight || 25}
+            />
+          </IconContainer>
         ) : null}
         <Typography
           fontFamily="semiBold"
-          style={{ ...labelStyle, fontSize: rem(labelStyle?.fontSize || 24) }}
+          style={{
+            ...labelStyle,
+            fontSize: rem(labelStyle?.fontSize || 24),
+            lineHeight: '24px',
+          }}
         >
           {selectedOption.pickerLabel || selectedOption.label}
         </Typography>

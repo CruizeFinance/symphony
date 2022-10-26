@@ -3,7 +3,10 @@ import styled from 'styled-components'
 import ProtectCard from './ProtectCard'
 import { rem } from '../../utils'
 import HowItWorks from './HowItWorks'
-import { useEffect } from 'react'
+import { useContext, useEffect } from 'react'
+import { AppContext } from '../../context'
+import { useNavigate } from 'react-router-dom'
+import { useAccount } from 'wagmi'
 
 const Container = styled.div`
   display: flex;
@@ -33,22 +36,32 @@ const ProtectArea = styled.div`
  * This is where the protection and withdrawals happen
  */
 const Protect = () => {
-  /*
-   * an effect to set a padding bottom on the container for card stacking effect
-   */
-  useEffect(() => {
-    const firstCard = document.getElementById('how-it-works-1')
-    const lastCard = document.getElementById('how-it-works-3')
-    const container = document.getElementById('protect-container')
+  //context hook
+  const [state] = useContext(AppContext)
 
-    container!.style.paddingBottom = rem(
-      Math.abs(
-        firstCard!.offsetTop -
-          lastCard!.offsetTop +
-          (firstCard!.offsetHeight + lastCard!.offsetHeight),
-      ) + 'px',
-    )
-  }, [])
+  // react router dom hook
+  const navigate = useNavigate()
+
+  //web3 hook
+  const { isConnected } = useAccount()
+  
+  /* 
+  * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
+  */
+ useEffect(() => {
+   if (isConnected) {
+     switch (state.isHolder) {
+       case 'loading':
+         break
+       case 'holder':
+         break
+       default:
+         navigate('/')
+     }
+   } else {
+      navigate('/')
+   }
+ }, [state.isHolder, isConnected])
 
   return (
     <Container id="protect-container">

@@ -12,12 +12,10 @@ const initialState: State = {
     ethereum: 0,
     bitcoin: 0,
   },
-  apys: {
-    ethereum: 0,
-    bitcoin: 0,
-  },
   tab: 'protect',
-  supportedChains: [5]
+  supportedChains: [5],
+  loadingInitialAPIs: true,
+  isHolder: 'loading'
 }
 
 export default initialState

@@ -7,7 +7,7 @@
     {
       "name": "Karan Parsnani",
       "email": "karan.parsnani@cruize.org",
-      "url": "https://www.cruize.org/about"
+      "url": "https://www.cruize.finance/about"
     }
   ],
   "repository": "https://github.com/CruizeFinance/symphony",
@@ -23,11 +23,11 @@
     "@types/styled-components": "^5.1.26",
     "connectkit": "^0.0.2",
     "ethers": "^5.7.0",
+    "jquery": "^3.6.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "recharts": "^2.1.13",
     "typescript": "^4.4.2",
     "wagmi": "^0.6.4",
     "web-vitals": "^2.1.0"
