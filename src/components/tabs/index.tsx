@@ -155,7 +155,7 @@ const Tabs = ({
               <Typography
                 tag="label"
                 fontFamily={fontFamily || 'bold'}
-                style={{ fontSize: rem(22) }}
+                style={{ fontSize: rem(22), lineHeight: '24px' }}
               >
                 {tab.label}
                 {tab.icon}

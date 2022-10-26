@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { AssetDropdown, Divider, Typography } from '../../components'
+import { AssetDropdown, Sprite, Typography } from '../../components'
 import {
   DROPDOWN_OPTIONS,
   HOW_IT_WORKS_CARDS,
@@ -8,12 +8,14 @@ import {
 } from '../../utils'
 import STYLES from '../../style/styles.json'
 import { AssetDropdownOptions } from '../../enums'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context'
+import $ from 'jquery'
 
-// interface for card styling
-interface CardStyleProps {
-  cardId: number
+// interface for a particular timeline item props
+interface TimelineItemProps {
+  activeCard: number
+  cardKey: number
 }
 
 const Container = styled.div`
@@ -23,112 +25,103 @@ const Container = styled.div`
   align-items: flex-start;
   max-width: ${rem(864)};
 `
-const CardContainer = styled.div`
-  background: inherit;
-  width: 100%;
-  height: 100%;
-`
 const HowItWorksHeader = styled.div`
-  position: sticky;
-  top: ${rem(120)};
   margin-bottom ${rem(30)};
 `
-const Card = styled.div<CardStyleProps>`
-  padding: ${rem(40)};
+const TimelineContainer = styled.div`
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: ${rem(1)} solid ${STYLES.palette.colors.dividerStroke};
-  border-radius: ${rem(20)};
-  background: ${STYLES.palette.colors.black};
-  position: sticky;
-  top: ${(props) => rem(172 + props.cardId * 30)};
-  margin-bottom: ${rem(30)};
-  box-shadow: 0px -10px 10px -10px rgba(255, 255, 255, 0.3);
-
-  img {
-    padding-right: ${rem(30)};
-    border-right: ${rem(1)} solid ${STYLES.palette.colors.dividerStroke};
+  justify-content: center;
+`
+const VerticalTimeline = styled.ul`
+  list-style-type: none;
+  width: 100%;
+`
+const TimeLineItem = styled.li<TimelineItemProps>`
+  position: relative;
+  padding: ${rem(30)} 0 ${rem(90)} ${rem(150)};
+  opacity: ${(props) => (props.activeCard === props.cardKey ? '1' : '0.4')};
+  &:last-child {
+    margin-bottom: 0;
+    &::before {
+      content: unset;
+    }
+  }
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  svg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: ${rem(75)};
+    height: ${rem(75)};
+    transition: 0.7s all;
+    background: ${STYLES.palette.colors.black};
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    height: 0;
+    width: ${rem(2)};
+    background-color: ${STYLES.palette.colors.white};
+    left: ${rem(38)};
+    top: ${rem(34)};
+    z-index: 0;
+    transition: 0.7s all;
+  }
+  &::before {
+    content: '';
+    position: absolute;
+    height: 92%;
+    width: ${rem(2)};
+    background-color: ${STYLES.palette.colors.white};
+    left: ${rem(38)};
+    z-index: 0;
   }
 
   @media only screen and (max-width: 1024px) {
-    img {
-      display: none;
+    padding: ${rem(15)} 0 ${rem(60)} ${rem(90)};
+    &::before {
+      height: 97.5%;
     }
-    padding: ${rem(20)};
+  }
+
+  @media only screen and (min-height: 1000px) {
+    opacity: 1 !important;
   }
 `
+const ListItemContent = styled.div`
+  display: flex;
+  align-items; center;
+  justify-content: center;
+  gap: ${rem(84)};
+  img {
+    width: ${rem(200)};
+    height: ${rem(250)};
+  }
 
-const CardContent = styled.div`
-  padding-left: ${rem(30)};
+  @media only screen and (max-width: 1024px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${rem(20)};
+    img {
+      width: ${95};
+      height: ${120};
+    }
+    p {
+      font-size: 16px !important;
+    }
+  }
+`
+const ListItemInfo = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-
-  @media only screen and (max-width: 1024px) {
-    padding-left: 0;
-  }
+  align-items; flex-start;
+  gap: ${rem(8)};
 `
-
-// interface for card component
-interface CardComponentProps {
-  title: string
-  description: string
-  number: number
-}
-
-/*
- * Card Component
- * a single card component that will be looped over
- */
-const CardComponent = ({ title, description, number }: CardComponentProps) => {
-  return (
-    <Card id={`how-it-works-${number}`} cardId={number - 1}>
-      <img
-        src={`assets/HowItWorks-${number}.png`}
-        alt={`how-it-works-${number}-icon`}
-        height={300}
-        width={275}
-      />
-      <CardContent>
-        <Typography
-          tag="h3"
-          color={STYLES.palette.colors.logoBlue}
-          fontFamily="bold"
-          style={{
-            background: STYLES.palette.colors.tagBlue,
-            padding: `${rem(8)} ${rem(8)} ${rem(8)} ${rem(16)}`,
-            display: 'flex',
-            alignItems: 'center',
-            gap: rem(8),
-            borderRadius: rem(20),
-            marginBottom: rem(32),
-          }}
-        >
-          Step
-          <Typography
-            color={STYLES.palette.colors.logoBlue}
-            fontFamily="bold"
-            style={{
-              background: STYLES.palette.colors.stepNumberBlue,
-              padding: `${rem(5)} ${rem(20)}`,
-              borderRadius: rem(40),
-            }}
-          >
-            0{number}
-          </Typography>
-        </Typography>
-        <Typography fontFamily="semiBold" style={{ fontSize: rem(28), marginBottom: rem(8) }}>
-          {title}
-        </Typography>
-        <Typography fontFamily="regular" color={STYLES.palette.colors.white60} style={{ lineHeight: rem(20) }}>
-          {description}
-        </Typography>
-      </CardContent>
-    </Card>
-  )
-}
 
 /*
  * How It Works
@@ -138,6 +131,34 @@ const CardComponent = ({ title, description, number }: CardComponentProps) => {
 const HowItWorks = () => {
   // context hook
   const [state] = useContext(AppContext)
+
+  // state hook
+  const [activeCard, setActiveCard] = useState<number>(1)
+
+  /*
+   * an effect to highlight the time line item on scroll
+   */
+  useEffect(() => {
+    window.addEventListener(
+      'scroll',
+      function () {
+        function isScrollIntoView(elem: HTMLLIElement, index: number) {
+          const docViewTop = $(window).scrollTop()!
+          const docViewBottom = docViewTop + $(window).height()!
+          const elemTop = $(elem).offset()!.top
+          const elemBottom = elemTop + $(window).height()! * 0.5
+          if (elemBottom <= docViewBottom && elemTop >= docViewTop) {
+            setActiveCard(index + 1)
+          }
+        }
+        const timeline: NodeListOf<HTMLLIElement> = document.querySelectorAll(
+          '#timeline-item-1, #timeline-item-2, #timeline-item-3',
+        )
+        Array.from(timeline).forEach(isScrollIntoView)
+      },
+      true,
+    )
+  }, [])
 
   return (
     <Container>
@@ -156,6 +177,8 @@ const HowItWorks = () => {
         pickerStyle={{
           background: 'inherit',
           paddingLeft: '0',
+          paddingBottom: '0',
+          marginBottom: rem(18),
         }}
         labelStyle={{
           fontSize: '32px',
@@ -169,7 +192,7 @@ const HowItWorks = () => {
       <Typography
         tag="p"
         color={STYLES.palette.colors.white60}
-        style={{ marginBottom: rem(16) }}
+        style={{ marginBottom: rem(60), fontSize: rem(20), lineHeight: '24px' }}
       >
         Stake your {state.selectedAsset.label.toUpperCase()} to receive cr
         {state.selectedAsset.label.toUpperCase()} that never falls below the
@@ -177,32 +200,66 @@ const HowItWorks = () => {
         the price floor, you can still sell your cr
         {state.selectedAsset.label.toUpperCase()} at the price floor. The
         current cr{state.selectedAsset.label.toUpperCase()} price floor is&nbsp;
-        <Typography tag="span" color={STYLES.palette.colors.white}>
+        <Typography
+          tag="span"
+          color={STYLES.palette.colors.white}
+          style={{ fontSize: rem(20), lineHeight: '24px' }}
+        >
           $
-          {state.priceFloors ? state.priceFloors[
-            PRICE_FLOORS_RESPONSE_MAPPING[
-              state.selectedAsset
-                .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
-            ] as keyof typeof state.priceFloors || 0
-          ].toFixed(4) : '-'}
+          {state.priceFloors
+            ? state.priceFloors[
+                (PRICE_FLOORS_RESPONSE_MAPPING[
+                  state.selectedAsset
+                    .label as keyof typeof PRICE_FLOORS_RESPONSE_MAPPING
+                ] as keyof typeof state.priceFloors) || 0
+              ].toFixed(2)
+            : '0.00'}
         </Typography>
       </Typography>
-      <Divider style={{ marginBottom: rem(32) }} />
       <HowItWorksHeader id="how-it-works-header">
         <Typography tag="h1" fontFamily="bold">
           How does it work?
         </Typography>
       </HowItWorksHeader>
-      <CardContainer id="card-container">
-        {HOW_IT_WORKS_CARDS.map((card) => (
-          <CardComponent
-            key={card.key}
-            number={card.key}
-            title={card.title}
-            description={card.description}
-          />
-        ))}
-      </CardContainer>
+      <TimelineContainer>
+        <VerticalTimeline>
+          {HOW_IT_WORKS_CARDS.map((card) => (
+            <TimeLineItem
+              key={card.key}
+              activeCard={activeCard}
+              cardKey={card.key}
+              id={`timeline-item-${card.key}`}
+            >
+              <Sprite id={`timeline-${card.key}-icon`} width={75} height={75} />
+              <ListItemContent>
+                <img src={`assets/HowItWorks-${card.key}.png`} />
+                <ListItemInfo>
+                  <Typography
+                    tag="h2"
+                    style={{ fontSize: rem(28), lineHeight: '28px' }}
+                    fontFamily="semiBold"
+                  >
+                    {card.title}
+                  </Typography>
+                  <Typography
+                    style={{
+                      fontSize: rem(18),
+                      lineHeight: '20px',
+                      maxWidth: rem(382),
+                    }}
+                    color={STYLES.palette.colors.white60}
+                  >
+                    {card.description.replaceAll(
+                      'ETH',
+                      state.selectedAsset.label,
+                    )}
+                  </Typography>
+                </ListItemInfo>
+              </ListItemContent>
+            </TimeLineItem>
+          ))}
+        </VerticalTimeline>
+      </TimelineContainer>
     </Container>
   )
 }

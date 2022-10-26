@@ -1,10 +1,5 @@
 import { createContext, useEffect, useReducer } from 'react'
-import {
-  useAccount,
-  useBalance,
-  useNetwork,
-  chain as allChains,
-} from 'wagmi'
+import { useAccount, useBalance, useNetwork, chain as allChains } from 'wagmi'
 import { fetchAPYs, fetchPriceFloors, getAssetPrice } from '../apis'
 import { useOnceCall } from '../hooks'
 import { ASSET_PRICE_API_PARAMS, CONTRACTS_CONFIG } from '../utils'
@@ -68,6 +63,7 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
    * initial api calls to fetch price floors and apys for all supported assets
    */
   const initialAPICalls = async () => {
+    dispatch({ type: Actions.STORE_INITIAL_APIS_LOADING_STATUS, payload: true })
     const priceFloors = await fetchPriceFloors()
     dispatch({
       type: Actions.STORE_PRICE_FLOORS,
@@ -75,6 +71,10 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
     })
     const apys = await fetchAPYs()
     dispatch({ type: Actions.STORE_APYS, payload: apys.result })
+    dispatch({
+      type: Actions.STORE_INITIAL_APIS_LOADING_STATUS,
+      payload: false,
+    })
   }
 
   /*

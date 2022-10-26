@@ -75,10 +75,10 @@ const NetworkDropdown = () => {
             {state.supportedChains.includes(state.chainId) ? (
               <>
                 <Sprite id="eth-asset-icon" width={20} height={20} />
-                <Typography>Goerli</Typography>
+                <Typography style={{ lineHeight: '24px' }}>Goerli</Typography>
               </>
             ) : (
-              <Typography>Unsupported Network</Typography>
+              <Typography style={{ lineHeight: '24px' }}>Unsupported Network</Typography>
             )}
             <Sprite
               id="chevron-down"

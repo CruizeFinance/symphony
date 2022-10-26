@@ -138,7 +138,7 @@ const Footer = () => {
             <Typography
               tag="label"
               fontFamily="semiBold"
-              style={{ fontSize: rem(14) }}
+              style={{ fontSize: rem(14), lineHeight: '20px' }}
               id={'mobile-section-header'}
             >
               Product
@@ -148,6 +148,7 @@ const Footer = () => {
               fontFamily="regular"
               href="https://www.cruize.finance/"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               Home
             </Typography>
@@ -156,6 +157,7 @@ const Footer = () => {
               fontFamily="regular"
               href="https://www.cruize.finance/about"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               About
             </Typography>
@@ -164,6 +166,7 @@ const Footer = () => {
               fontFamily="regular"
               href="https://docs.cruize.org"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               Guide
             </Typography>
@@ -172,6 +175,7 @@ const Footer = () => {
               fontFamily="regular"
               href=" https://www.cruize.finance/terms"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               Terms
             </Typography>
@@ -180,7 +184,7 @@ const Footer = () => {
             <Typography
               tag="label"
               fontFamily="semiBold"
-              style={{ fontSize: rem(14) }}
+              style={{ fontSize: rem(14), lineHeight: '20px' }}
               id={'mobile-section-header'}
             >
               Socials
@@ -190,27 +194,36 @@ const Footer = () => {
               fontFamily="regular"
               href="https://github.com/CruizeFinance"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               <Sprite id="github-icon" width={24} height={24} />
-              <Typography tag="span">GitHub</Typography>
+              <Typography tag="span" style={{ lineHeight: '24px' }}>
+                GitHub
+              </Typography>
             </Typography>
             <Typography
               tag="a"
               fontFamily="regular"
               href="https://discord.gg/cruize"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               <Sprite id="discord-icon" width={24} height={24} />
-              <Typography tag="span">Discord</Typography>
+              <Typography tag="span" style={{ lineHeight: '24px' }}>
+                Discord
+              </Typography>
             </Typography>
             <Typography
               tag="a"
               fontFamily="regular"
               href="https://twitter.com/CruizeFinance"
               openInNewTab={true}
+              style={{ lineHeight: '24px' }}
             >
               <Sprite id="twitter-icon" width={24} height={24} />
-              <Typography tag="span">Twitter</Typography>
+              <Typography tag="span" style={{ lineHeight: '24px' }}>
+                Twitter
+              </Typography>
             </Typography>
           </Section>
         </Links>
@@ -220,16 +233,21 @@ const Footer = () => {
             fontFamily="extraBold"
             tag="h1"
             color={STYLES.palette.colors.logoBlue}
+            style={{ lineHeight: '32px' }}
           >
             Cruize
           </Typography>
-          <Typography fontFamily="regular" tag="label">
+          <Typography
+            fontFamily="regular"
+            tag="label"
+            style={{ lineHeight: '24px' }}
+          >
             © 2022 Cruize Inc. All rights reserved.
           </Typography>
         </MobileArea>
-        {location.pathname.includes('protect') ? <FakeFooter /> : null}
+        {location.pathname === '/' ? <FakeFooter /> : null}
       </Container>
-      {location.pathname.includes('protect') ? (
+      {location.pathname === '/' ? (
         <ProtectArea>
           <ProtectPad>
             <Typography

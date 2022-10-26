@@ -34,23 +34,23 @@ export const ASSET_PRICE_API_PARAMS = {
 export const CONTRACTS_CONFIG = {
   [chain.goerli.id]: {
     CRUIZE: {
-      address: '0x19d27BCdCcA7584bf5f10a9fE0cF00C76abB03c2',
+      address: '0xd9E758140992192F558620928b6745512c747700',
       cruizeAddress: '',
       decimals: 0,
     },
     [AssetDropdownOptions.WETH]: {
       address: '0xCCa7d1416518D095E729904aAeA087dBA749A4dC',
-      cruizeAddress: '0x7610126F923E7b88f717B1170e477f6867af9100',
+      cruizeAddress: '0x182410CFD75A9b3219F9f3b9b397b88d6960609C',
       decimals: 18,
     },
     [AssetDropdownOptions.WBTC]: {
       address: '0xf4423F4152966eBb106261740da907662A3569C5',
-      cruizeAddress: '0xC67599c74C3Bb76ed0A98c03fDA71B762a0d2514',
+      cruizeAddress: '0xD304ec8304573a58d118e766BD7042BeC54eee25',
       decimals: 8,
     },
     [AssetDropdownOptions.ETH]: {
       address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      cruizeAddress: '0x334AD29958E8976Db4Dd3bFF5612C4c785A76709',
+      cruizeAddress: '0x2266D6BD43865BAA1C07aCBd77aA990277440153',
       decimals: 18,
     }, // dummy value
   },
@@ -84,38 +84,20 @@ export const GAS_LIMIT = 1000000
 export const HOW_IT_WORKS_CARDS = [
   {
     key: 1,
-    title: 'Stake',
-    description:
-      'Start by staking your ETH to receive crETH, a downside protected derivative of ETH that remains protected with a permanent price floor. Capture the upside of the market while completely limiting the downside.',
+    title: 'Debt',
+    description: `Your staked ETH is added to Aave to collateralise USDC debt needed to hedge your assets using short perps. Using USDC debt provides the collateral needed to execute a short hedge while enabling capital efficient exposure to the upside of ETH.`,
   },
   {
     key: 2,
-    title: 'Use across DeFi',
-    description:
-      'Use your crETH as volatility protected assets across DeFi. Wanna borrow or go long on an asset? Using crETH as the collateral means it will never get liquidated as it never falls below the floor.',
+    title: 'Short Hedge',
+    description: `The USDC debt is used as collateral on DyDx to buy a short perpetual contract on your asset at the price floor. This enables the hedge against price drops below the floor. The algorithm dynamically manages the position against price fluctuations and prevents liquidation.`,
   },
   {
     key: 3,
-    title: 'Withdrawal',
+    title: 'Exercise',
     description:
-      'If ETH rises, your crETH rises with it and can be redeemed for ETH above the floor. If ETH falls below the floor, you can exercise your protection and receive the notional value of the floor in USDC',
+      'Because of the long exposure as well as the short hedge, if ETH rises, your crETH rises with it and can be redeemed for ETH above the floor. If ETH falls below the floor, you can exercise your protection and receive the notional value of the floor in USDC',
   },
-]
-
-// page links for navigation
-export const PAGE_LINKS = [
-  {
-    label: 'Home',
-    url: '/',
-  },
-  {
-    label: 'Protect',
-    url: '/protect',
-  },
-  /* {
-    label: 'Portfolio',
-    url: '/portfolio',
-  }, */
 ]
 
 // price floors mapping to set the floor dynamically on asset change

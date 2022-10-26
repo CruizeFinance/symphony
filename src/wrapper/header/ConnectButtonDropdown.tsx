@@ -56,7 +56,7 @@ const ConnectButtonDropdown = () => {
         <ConnectedButton
           onClick={() => setShowButtonDropdown(!showButtonDropdown)}
         >
-          <Typography>
+          <Typography style={{ lineHeight: '24px' }}>
             {address?.slice(0, 7)}...{address?.slice(-7)}
           </Typography>
           <Sprite
