@@ -24,7 +24,7 @@ const Options = styled.div`
   min-width: ${rem(180)}
   max-width: ${rem(300)};
   padding: ${rem(16)};
-  background: ${STYLES.palette.colors.black};
+  background: ${STYLES.palette.colors.modalBackground};
   position: absolute;
   max-height: ${rem(250)};
   overflow-y: scroll;
@@ -38,14 +38,18 @@ const OptionComponent = styled.div`
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding: ${rem(4)} ${rem(8)};
+  padding-bottom: ${rem(4)};
   display: flex;
   align-items: center;
   gap: ${rem(10)};
   filter: brightness(60%);
   cursor: pointer;
+  line-height: 28.8px;
   &:hover {
     filter: brightness(100%);
+  }
+  &:last-child {
+    padding-bottom: 0;
   }
 `
 const IconContainer = styled.div`
