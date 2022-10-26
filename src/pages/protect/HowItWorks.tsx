@@ -48,6 +48,7 @@ const TimeLineItem = styled.li<TimelineItemProps>`
     }
   }
   p {
+    max-width: ${rem(382)};
     &:last-child {
       margin-bottom: 0;
     }
@@ -84,6 +85,9 @@ const TimeLineItem = styled.li<TimelineItemProps>`
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(15)} 0 ${rem(60)} ${rem(90)};
+    p {
+      max-width: 100%;
+    }
     &::before {
       height: 97.5%;
     }
@@ -245,7 +249,6 @@ const HowItWorks = () => {
                     style={{
                       fontSize: rem(18),
                       lineHeight: '20px',
-                      maxWidth: rem(382),
                     }}
                     color={STYLES.palette.colors.white60}
                   >
