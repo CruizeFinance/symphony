@@ -18,7 +18,7 @@ const Content = styled.div`
   justify-content: center;
 `
 const FakeDiv = styled.div`
-  height: ${rem(120)};
+  height: ${rem(100)};
 
   @media only screen and (max-width: 1024px) {
     height: ${rem(80)};

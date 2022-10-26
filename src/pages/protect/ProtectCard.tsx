@@ -1,5 +1,5 @@
 import Tabs from '../../components/tabs'
-import { Button, Input, Sprite, Tooltip, Typography } from '../../components'
+import { Button, Input, Sprite, Typography } from '../../components'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { useContext, useEffect, useMemo, useState } from 'react'
@@ -26,6 +26,9 @@ import { depositToDyDx, storeTransaction } from '../../apis'
 import { AppContext } from '../../context'
 import ProtectCardModals from './ProtectCardModals'
 import { Actions } from '../../context/Action'
+import ProtectCardConfirm from './ProtectCardConfirm'
+import { ConnectKitButton } from 'connectkit'
+import { DetailComponent } from '../../common'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -49,48 +52,6 @@ const DetailArea = styled.div`
   gap: ${rem(8)};
   width: 100%;
 `
-const Detail = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-
-  p {
-    display: flex;
-    align-items: center;
-    gap: ${rem(4)};
-  }
-`
-
-// props that can be passed to the detail component
-interface DetailComponentProps {
-  label: string
-  value: React.ReactNode
-  tooltipContent?: string
-}
-
-/*
- * Pure component created to display the protection details
- */
-const DetailComponent = ({
-  label,
-  value,
-  tooltipContent,
-}: DetailComponentProps) => (
-  <Detail>
-    <Typography fontFamily="regular" color={STYLES.palette.colors.white60}>
-      {label}
-      {tooltipContent ? (
-        <Tooltip content={tooltipContent}>
-          <Sprite id="info-icon" width={20} height={20} />
-        </Tooltip>
-      ) : null}
-    </Typography>
-    <Typography fontFamily="regular" color={STYLES.palette.colors.white60}>
-      {value}
-    </Typography>
-  </Detail>
-)
 
 /*
  * Protect Card
@@ -128,19 +89,36 @@ const ProtectCard = () => {
     [state.selectedAsset, state.priceFloors],
   )
 
+  /*
+   * a memoised value to set a local apy state instead of rewriting the same code multiple times
+   */
+  const apy = useMemo(
+    () =>
+      state.apys
+        ? state.apys[
+            APYS_RESPONSE_MAPPING[
+              state.selectedAsset.label as keyof typeof APYS_RESPONSE_MAPPING
+            ] as keyof typeof state.apys
+          ]
+        : 0,
+    [state.selectedAsset, state.apys],
+  )
+
   // state hooks
+  const [openConfirmSection, setOpenConfirmSection] = useState(false)
   const [tokenApproved, setTokenApproved] = useState(false)
   const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const [openTransactionModal, setOpenTransactionModal] = useState(false)
+  const [openErrorModal, setOpenErrorModal] = useState(false)
   const [transactionLoading, setTransactionLoading] = useState(false)
   const [transactionDetails, setTransactionDetails] = useState<{
     hash: string
     status: number
   }>({ hash: '', status: 0 })
-  const [modalType, setModalType] = useState<'tutorial' | 'transaction'>(
-    'tutorial',
-  )
+  const [modalType, setModalType] = useState<
+    'tutorial' | 'transaction' | 'error'
+  >('tutorial')
 
   // web3 hooks to interact with the contract
   /*
@@ -150,34 +128,16 @@ const ProtectCard = () => {
     addressOrName: contractsConfig?.CRUIZE?.address || '',
     contractInterface: testnet_abi,
     functionName: state.tab === 'protect' ? 'deposit' : 'withdrawTest',
-    ...(state.tab === 'protect'
-      ? {
-          args: [
-            ethers.utils.parseUnits(
-              inputValue || '0',
-              contractsConfig[
-                state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.decimals || '',
-            ),
-            contractsConfig[
-              state.selectedAsset.label as keyof typeof contractsConfig
-            ]?.address || '',
-          ],
-        }
-      : {
-          args: [
-            ethers.utils.parseUnits(
-              inputValue || '0',
-              contractsConfig[
-                state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.decimals || '',
-            ),
-            contractsConfig[
-              state.selectedAsset.label as keyof typeof contractsConfig
-            ]?.address || '',
-            Number((priceFloor * Math.pow(10, 8)).toFixed(0)),
-          ],
-        }),
+    args: [
+      ethers.utils.parseUnits(
+        inputValue || '0',
+        contractsConfig[
+          state.selectedAsset.label as keyof typeof contractsConfig
+        ]?.decimals || '',
+      ),
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.address || '',
+    ],
     overrides: {
       ...(state.tab === 'protect' && state.selectedAsset.label === 'ETH'
         ? {
@@ -256,7 +216,7 @@ const ProtectCard = () => {
               : cruizeBalanceData?.formatted!,
           )
       ? 'Amount exceeds balance.'
-      : state.assetPrice < priceFloor
+      : state.tab === 'protect' && state.assetPrice < priceFloor
       ? 'Cannot protect. Asset price lower than the price floor.'
       : ''
   }
@@ -285,6 +245,7 @@ const ProtectCard = () => {
         status: data.status || 0,
       })
       setTransactionLoading(false)
+      setOpenConfirmSection(false)
       // functions to execute after the transaction has been executed
       // store the record for type of transaction in the DB
       if (type === 'interact')
@@ -314,6 +275,7 @@ const ProtectCard = () => {
     })
     setTransactionLoading(false)
     setInputValue('')
+    setOpenConfirmSection(false)
   }
 
   /*
@@ -355,12 +317,20 @@ const ProtectCard = () => {
           error={setError()}
           cruizeBalanceData={cruizeBalanceData?.formatted}
         />
-        {state.tab === 'protect' ? (
-          <DetailComponent
-            label="You will receive"
-            value={`${inputValue || 0} cr${state.selectedAsset.label}`}
-          />
-        ) : null}
+        <DetailComponent
+          label="You will receive"
+          value={`${
+            state.assetPrice > priceFloor
+              ? inputValue
+              : (Number(inputValue || 0) * state.assetPrice).toString()
+          } ${
+            state.assetPrice > priceFloor
+              ? state.tab === 'protect'
+                ? `cr${state.selectedAsset.label}`
+                : `${state.selectedAsset.label}`
+              : 'USDC'
+          }`}
+        />
         <DetailArea>
           <Typography
             style={{ width: '100%', textAlign: 'left', marginBottom: rem(8) }}
@@ -369,28 +339,19 @@ const ProtectCard = () => {
           </Typography>
           <DetailComponent
             label="Price Floor"
-            value={`${priceFloor.toFixed(4) || '-'} USDC`}
+            value={`${priceFloor.toFixed(2) || '-'} USDC`}
             tooltipContent={`cr${state.selectedAsset.label} is hedged with this minimum value.`}
           />
           <DetailComponent
             label="APY"
-            value={`${
-              state.apys
-                ? state.apys[
-                    APYS_RESPONSE_MAPPING[
-                      state.selectedAsset
-                        .label as keyof typeof APYS_RESPONSE_MAPPING
-                    ] as keyof typeof state.apys
-                  ]?.toFixed(8)
-                : '-'
-            } %`}
+            value={`${state.apys ? apy.toFixed(8) : '-'} %`}
           />
         </DetailArea>
         <DetailComponent
           label={`1 cr${state.selectedAsset.label} = ${
             priceFloor > state.assetPrice
-              ? priceFloor.toFixed(4)
-              : state.assetPrice?.toFixed(4) || '-'
+              ? priceFloor.toFixed(2)
+              : state.assetPrice?.toFixed(2) || '0.00'
           } USDC`}
           value={
             <Typography
@@ -412,40 +373,55 @@ const ProtectCard = () => {
             </Typography>
           }
         />
-        <Button
-          buttonType="protect"
-          onClick={() =>
-            onButtonClick(!(allowed || tokenApproved) ? 'approve' : 'interact')
-          }
-          disabled={
-            !isConnected ||
-            setError() !== '' ||
-            !inputValue ||
-            allowanceStatus === 'loading' ||
-            !state.supportedChains.includes(state.chainId)
-          }
-          borderRadius={32}
-        >
-          {isConnected ? (
-            <>
-              {!state.supportedChains.includes(state.chainId)
-                ? 'Unsupported Network'
-                : allowanceStatus === 'loading'
-                ? 'Please wait...'
+        {!isConnected ? (
+          <ConnectKitButton.Custom>
+            {({ show }) => {
+              return (
+                <Button onClick={show} buttonType="protect" borderRadius={32}>
+                  <>
+                    Connect Wallet
+                    <Sprite id="connect-wallet-black" width={20} height={20} />
+                  </>
+                </Button>
+              )
+            }}
+          </ConnectKitButton.Custom>
+        ) : (
+          <Button
+            buttonType="protect"
+            onClick={
+              state.assetPrice === 0 || priceFloor === 0 || apy === 0
+                ? () => {
+                    setModalType('error')
+                    setOpenErrorModal(true)
+                  }
                 : !(allowed || tokenApproved)
-                ? 'Approve'
-                : state.tab === 'protect'
-                ? 'Protect'
-                : 'Withdraw'}
-            </>
-          ) : (
-            <>
-              Connect Wallet
-              <Sprite id="connect-wallet-black" width={20} height={20} />
-            </>
-          )}
-        </Button>
-        <Typography tag="label">
+                ? () => onButtonClick('approve')
+                : () => setOpenConfirmSection(true)
+            }
+            disabled={
+              setError() !== '' ||
+              !inputValue ||
+              allowanceStatus === 'loading' ||
+              !state.supportedChains.includes(state.chainId)
+            }
+            borderRadius={32}
+          >
+            {!state.supportedChains.includes(state.chainId)
+              ? 'Unsupported Network'
+              : allowanceStatus === 'loading'
+              ? 'Please wait...'
+              : !(allowed || tokenApproved)
+              ? 'Approve'
+              : state.tab === 'protect'
+              ? 'Protect'
+              : 'Withdraw'}
+          </Button>
+        )}
+        <Typography
+          tag="label"
+          style={{ fontSize: rem(14), lineHeight: '16.48px' }}
+        >
           Need help?&nbsp;
           <Typography
             tag="label"
@@ -454,11 +430,41 @@ const ProtectCard = () => {
               setModalType('tutorial')
               setOpenTutorialVideo(true)
             }}
-            style={{ cursor: 'pointer' }}
+            style={{
+              fontSize: rem(14),
+              lineHeight: '16.48px',
+              cursor: 'pointer',
+            }}
           >
             Learn from video tutorials/docs
           </Typography>
         </Typography>
+        <ProtectCardConfirm
+          open={openConfirmSection}
+          hide={() => setOpenConfirmSection(false)}
+          onConfirm={() => onButtonClick('interact')}
+          inputValue={inputValue || '-'}
+          totalCost={
+            (
+              Number(inputValue || 0) + Number(gasData?.formatted.gasPrice || 0)
+            ).toFixed(10) + ' ETH'
+          }
+          priceFloor={`$${priceFloor.toFixed(2)}`}
+          usdValue={`${(Number(inputValue || 0) * state.assetPrice).toFixed(
+            4,
+          )} USDC`}
+          receiveValue={`${
+            state.assetPrice > priceFloor
+              ? inputValue
+              : (Number(inputValue || 0) * state.assetPrice).toString()
+          } ${
+            state.assetPrice > priceFloor
+              ? state.tab === 'protect'
+                ? `cr${state.selectedAsset.label}`
+                : `${state.selectedAsset.label}`
+              : 'USDC'
+          }`}
+        />
       </ProtectArea>
       <ProtectCardModals
         tutorialModalOptions={{
@@ -473,6 +479,10 @@ const ProtectCard = () => {
             hash: transactionDetails.hash,
             status: transactionDetails.status,
           },
+        }}
+        errorModalOptions={{
+          openErrorModal: openErrorModal,
+          setOpenErrorModal: (val) => setOpenErrorModal(val),
         }}
         type={modalType}
       />

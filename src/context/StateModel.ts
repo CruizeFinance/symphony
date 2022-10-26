@@ -17,4 +17,5 @@ export default interface State {
   }
   tab: 'protect' | 'withdraw'
   supportedChains: number[]
+  loadingInitialAPIs: boolean
 }

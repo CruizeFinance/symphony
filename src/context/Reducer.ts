@@ -41,6 +41,11 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         assetBalance: action.payload,
       }
+    case Actions.STORE_INITIAL_APIS_LOADING_STATUS:
+      return {
+        ...state,
+        loadingInitialAPIs: action.payload,
+      }
     case Actions.STORE_TAB:
       return {
         ...state,

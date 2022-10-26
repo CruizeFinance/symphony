@@ -17,7 +17,8 @@ const initialState: State = {
     bitcoin: 0,
   },
   tab: 'protect',
-  supportedChains: [5]
+  supportedChains: [5],
+  loadingInitialAPIs: true,
 }
 
 export default initialState

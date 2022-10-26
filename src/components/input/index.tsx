@@ -143,6 +143,7 @@ const Input = ({
           fontFamily="bold"
           style={{
             fontSize: rem(16),
+            lineHeight: '20.8px',
             color: STYLES.palette.colors.inputLabel,
           }}
         >
@@ -184,12 +185,6 @@ const Input = ({
           <AssetDropdown
             options={DROPDOWN_OPTIONS}
             onChange={(val) => handleAssetChange(val)}
-            labelStyle={{
-              width: '5ch',
-              overflow: 'hidden',
-              whiteSpace: 'nowrap',
-              textOverflow: 'ellipsis',
-            }}
           />
           {isConnected ? (
             <Typography
@@ -197,6 +192,7 @@ const Input = ({
               fontFamily="medium"
               style={{
                 fontSize: rem(12),
+                lineHeight: '12px',
                 color: STYLES.palette.colors.inputLabel,
               }}
             >

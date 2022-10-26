@@ -5,11 +5,12 @@ import { Modal } from '../../components'
 import STYLES from '../../style/styles.json'
 import { chain, useAccount, useSwitchNetwork } from 'wagmi'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { PAGE_LINKS, rem } from '../../utils'
+import { rem } from '../../utils'
 import RecentOrdersDropdown from './RecentOrdersDropdown'
 import NetworkDropdown from './NetworkDropdown'
 import ConnectButtonDropdown from './ConnectButtonDropdown'
 import { AppContext } from '../../context'
+import { ErrorModal } from '../../common'
 
 // mobile interface
 interface MobileProps {
@@ -18,13 +19,14 @@ interface MobileProps {
 
 const Container = styled.div`
   position: fixed;
-  padding: ${rem(30)} ${rem(60)};
+  padding: ${rem(20)} ${rem(66)};
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: -webkit-fill-available;
   backdrop-filter: blur(${rem(8)});
   z-index: 9999;
+  border-bottom: 1px solid ${STYLES.palette.colors.dividerStroke};
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(16)};
@@ -40,29 +42,6 @@ const DesktopArea = styled(LogoArea)`
 
   @media only screen and (max-width: 1024px) {
     display: none;
-  }
-`
-export const DesktopLinks = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${rem(36)};
-
-  @media only screen and (max-width: 1024px) {
-    display: none;
-  }
-`
-export const MobileLinks = styled.div`
-  display: none;
-  @media only screen and (max-width: 1024px) {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    p {
-      width: 100%;
-      padding: ${rem(20)};
-      border-top: ${rem(1)} solid ${STYLES.palette.colors.dividerStroke};
-    }
   }
 `
 const ModalContent = styled(LogoArea)`
@@ -97,13 +76,6 @@ const MobileHeaderContent = styled.div`
   flex-direction: column;
   width: 100%;
   overflow-y: auto;
-`
-const NetworkModalHeader = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: ${rem(16)};
 `
 
 /*
@@ -152,7 +124,9 @@ const Header = () => {
    * an effect to set the wrong network boolean
    */
   useEffect(() => {
-      setWrongNetworkModal(isConnected && !state.supportedChains.includes(state.chainId))
+    setWrongNetworkModal(
+      isConnected && !state.supportedChains.includes(state.chainId),
+    )
   }, [state.chainId])
 
   return (
@@ -168,27 +142,13 @@ const Header = () => {
           >
             Cruize
           </Typography> */}
-          <DesktopLinks>
-            {PAGE_LINKS.map((link, index) => (
-              <Typography
-                onClick={() => navigate(link.url)}
-                key={`${link.label} - ${index}`}
-                style={{ fontSize: '20px', cursor: 'pointer' }}
-                color={
-                  location.pathname === link.url
-                    ? STYLES.palette.colors.white
-                    : STYLES.palette.colors.white60
-                }
-              >
-                {link.label}
-              </Typography>
-            ))}
-          </DesktopLinks>
         </LogoArea>
         <DesktopArea>
           {isConnected ? (
             <>
-              {state.supportedChains.includes(state.chainId) ? <RecentOrdersDropdown /> : null}
+              {state.supportedChains.includes(state.chainId) ? (
+                <RecentOrdersDropdown />
+              ) : null}
               <NetworkDropdown />
             </>
           ) : null}
@@ -203,28 +163,11 @@ const Header = () => {
         </Hamburger>
         <MobileHeader open={openMobileHeader}>
           <MobileHeaderContent>
-            <MobileLinks>
-              {PAGE_LINKS.map((link, index) => (
-                <Typography
-                  onClick={() => {
-                    navigate(link.url)
-                    setOpenMobileHeader(!openMobileHeader)
-                  }}
-                  key={`${link.label} - ${index}`}
-                  style={{ fontSize: '20px', cursor: 'pointer' }}
-                  color={
-                    location.pathname === link.url
-                      ? STYLES.palette.colors.white
-                      : STYLES.palette.colors.white60
-                  }
-                >
-                  {link.label}
-                </Typography>
-              ))}
-            </MobileLinks>
             {isConnected ? (
               <>
-                {state.supportedChains.includes(state.chainId) ? <RecentOrdersDropdown /> : null}
+                {state.supportedChains.includes(state.chainId) ? (
+                  <RecentOrdersDropdown />
+                ) : null}
                 <NetworkDropdown />
               </>
             ) : null}
@@ -238,54 +181,23 @@ const Header = () => {
           <Typography
             tag="label"
             fontFamily="medium"
-            style={{ fontSize: rem(18) }}
+            style={{ fontSize: rem(18), lineHeight: '22px' }}
           >
             Connected
           </Typography>
         </ModalContent>
       </Modal>
-      <Modal
+      <ErrorModal
         open={wrongNetworkModal}
-        modalContentStyle={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'flex-start',
-          maxWidth: rem(400),
-        }}
-      >
-        <NetworkModalHeader>
-          <Sprite id="wrong-network-icon" width={56} height={56} />
-          <Typography
-            fontFamily="medium"
-            style={{ filter: 'brightness(40%)', cursor: 'pointer' }}
-            onClick={() => setWrongNetworkModal(false)}
-          >
-            &#x2715;
-          </Typography>
-        </NetworkModalHeader>
-        <Typography
-          style={{ fontSize: rem(24), marginBottom: rem(4) }}
-          fontFamily="bold"
-        >
-          Oops, your wallet is not on the right network.
-        </Typography>
-        <Typography
-          style={{
-            fontSize: rem(14),
-            marginBottom: rem(32),
-            filter: 'brightness(60%)',
-          }}
-          fontFamily="regular"
-        >
-          It seems your wallet is running on a different network. Please
-          manually change the network in your wallet. or click on the wallet
-          below.
-        </Typography>
-        <Button onClick={() => switchNetwork?.(chain.goerli.id)} style={{ width: '100%' }}>
-          Switch Network
-          <Sprite id="switch-network-icon" width={16} height={16} />
-        </Button>
-      </Modal>
+        hide={() => setWrongNetworkModal(false)}
+        title={'Oops, your wallet is not on the right network.'}
+        description={`It seems your wallet is running on a different network. Please
+        manually change the network in your wallet. or click on the wallet
+        below.`}
+        action={() => switchNetwork?.(chain.goerli.id)}
+        labelIcon={'switch-network-icon'}
+        actionLabel={'Switch Network'}
+      />
     </>
   )
 }

@@ -94,15 +94,15 @@ const AssetDropdown = ({
 
   useEffect(() => {
     if (state.selectedAsset) {
-    setSelectedOption({
-      icon: options.filter((o) => o.label === state.selectedAsset.label)[0]
-        .icon,
-      label: options.filter((o) => o.label === state.selectedAsset.label)[0]
-        .label,
-      pickerLabel: options.filter(
-        (o) => o.label === state.selectedAsset.label,
-      )[0].pickerLabel,
-    })
+      setSelectedOption({
+        icon: options.filter((o) => o.label === state.selectedAsset.label)[0]
+          .icon,
+        label: options.filter((o) => o.label === state.selectedAsset.label)[0]
+          .label,
+        pickerLabel: options.filter(
+          (o) => o.label === state.selectedAsset.label,
+        )[0].pickerLabel,
+      })
     }
   }, [state.selectedAsset])
 
@@ -114,15 +114,20 @@ const AssetDropdown = ({
       >
         {!hidePickerIcon && selectedOption.icon ? (
           <IconContainer>
-          <Sprite
-            id={selectedOption.icon}
-            width={pickerStyle?.iconWidth || 25}
-            height={pickerStyle?.iconHeight || 25}
-          /></IconContainer>
+            <Sprite
+              id={selectedOption.icon}
+              width={pickerStyle?.iconWidth || 25}
+              height={pickerStyle?.iconHeight || 25}
+            />
+          </IconContainer>
         ) : null}
         <Typography
           fontFamily="semiBold"
-          style={{ ...labelStyle, fontSize: rem(labelStyle?.fontSize || 24) }}
+          style={{
+            ...labelStyle,
+            fontSize: rem(labelStyle?.fontSize || 24),
+            lineHeight: '24px',
+          }}
         >
           {selectedOption.pickerLabel || selectedOption.label}
         </Typography>
