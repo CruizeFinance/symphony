@@ -2,11 +2,12 @@ import { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import STYLES from '../../style/styles.json'
 import { Sprite, Typography } from '..'
-import { rem } from '../../utils'
+import { ASSET_PRICE_API_PARAMS, rem } from '../../utils'
 import { AssetDropdownOptions, Option } from './SelectInterfaces'
 import { AppContext } from '../../context'
 import { Actions } from '../../context/Action'
 import { useOutsideAlerter } from '../../hooks'
+import { getAssetPrice } from '../../apis'
 
 const AssetDetails = styled.div`
   position: relative;
@@ -94,8 +95,25 @@ const AssetDropdown = ({
     setShowOptions(false)
     // storing the selected asset in context
     dispatch({ type: Actions.STORE_SELECTED_ASSET, payload: val })
+    setAssetPrice(val.label)
   }
 
+  /*
+   * function to set the asset price for a selected asset
+   */
+  async function setAssetPrice(asset: string) {
+    const { price } = await getAssetPrice(
+      ASSET_PRICE_API_PARAMS[asset as keyof typeof ASSET_PRICE_API_PARAMS],
+    )
+    if (asset === 'ETH')
+      dispatch({ type: Actions.STORE_ETH_PRICE, payload: price })
+    // storing the asset price in context
+    dispatch({ type: Actions.STORE_ASSET_PRICE, payload: price })
+  }
+
+  /*
+   * an effect to set the selected option in local state on asset change
+   */
   useEffect(() => {
     if (state.selectedAsset) {
       setSelectedOption({

@@ -1,6 +1,5 @@
 import { BASE_URL, fetchWrapper } from '../utils'
 import {
-  APYs,
   AssetPrice,
   DepositToDyDx,
   FetchTransactions,
@@ -96,23 +95,6 @@ export const fetchPriceFloors = async () => {
   try {
     const data: PriceFloors = await fetchWrapper.get(
       `${BASE_URL}/cruize_operations/price_floor`,
-    )
-    return data
-  } catch (e) {
-    return {
-      result: null,
-      error: e,
-    }
-  }
-}
-
-/*
- * Used to fetch all assets AAVE APYs
- */
-export const fetchAPYs = async () => {
-  try {
-    const data: APYs = await fetchWrapper.get(
-      `${BASE_URL}/cruize_operations/apy`,
     )
     return data
   } catch (e) {
