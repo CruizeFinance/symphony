@@ -51,12 +51,3 @@ export interface PriceFloors {
   } | null
   error: unknown
 }
-
-// return type of apys
-export interface APYs {
-  result: {
-    bitcoin: number
-    ethereum: number
-  } | null
-  error: unknown
-}

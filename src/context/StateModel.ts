@@ -6,15 +6,11 @@ export default interface State {
   assetPrice: number
   selectedAsset: Option
   priceFloors: {
-    ethereum: number,
+    ethereum: number
     bitcoin: number
   }
   chainId: number
   assetBalance: string
-  apys: {
-    ethereum: number,
-    bitcoin: number
-  }
   tab: 'protect' | 'withdraw'
   supportedChains: number[]
   loadingInitialAPIs: boolean

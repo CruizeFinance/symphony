@@ -270,7 +270,7 @@ const Footer = () => {
       <Modal
         open={openProtectModal}
         hide={() => setOpenProtectModal(false)}
-        modalContentStyle={{ padding: rem(0) }}
+        modalContentStyle={{ padding: rem(0), position: 'relative' }}
       >
         <ProtectCard />
       </Modal>

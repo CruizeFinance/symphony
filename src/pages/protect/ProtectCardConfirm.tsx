@@ -19,13 +19,16 @@ interface ArrowStyleProps {
 const Container = styled.div<ConfirmStyleProps>`
   position: absolute;
   width: ${(props) => (props.open ? '100%' : '0px')};
-  height: 100%;
+  height: auto;
   overflow: hidden;
   background: ${STYLES.palette.colors.cardBackground};
-  top: 0;
   right: 0;
   transition: width ease 0.3s;
   border-radius: ${rem(20)};
+  
+  @media only screen and (min-width: 1024px) {
+    top: 0;
+  }
 `
 const Content = styled.div`
   padding: ${rem(9.5)} ${rem(20)};
@@ -221,7 +224,7 @@ const ProtectCardConfirm = ({
             <DetailComponent label="You will receive" value={receiveValue} />
             <DetailComponent label="USD value" value={usdValue} />
             <DetailComponent label="Price floor" value={priceFloor} />
-            <DetailComponent label="Transaction Cost" value={totalCost} />
+            <DetailComponent label="Network Fee" value={totalCost} />
           </DetailArea>
           <Button
             buttonType="protect"

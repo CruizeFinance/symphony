@@ -5,7 +5,6 @@ import STYLES from '../../style/styles.json'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import {
   CONTRACTS_CONFIG,
-  APYS_RESPONSE_MAPPING,
   PRICE_FLOORS_RESPONSE_MAPPING,
   rem,
   GAS_LIMIT,
@@ -87,21 +86,6 @@ const ProtectCard = () => {
           ]
         : 0,
     [state.selectedAsset, state.priceFloors],
-  )
-
-  /*
-   * a memoised value to set a local apy state instead of rewriting the same code multiple times
-   */
-  const apy = useMemo(
-    () =>
-      state.apys
-        ? state.apys[
-            APYS_RESPONSE_MAPPING[
-              state.selectedAsset.label as keyof typeof APYS_RESPONSE_MAPPING
-            ] as keyof typeof state.apys
-          ]
-        : 0,
-    [state.selectedAsset, state.apys],
   )
 
   // state hooks
@@ -269,10 +253,6 @@ const ProtectCard = () => {
    * a function to reset transaction details
    */
   const resetTransactionDetails = () => {
-    setTransactionDetails({
-      hash: '',
-      status: 0,
-    })
     setTransactionLoading(false)
     setInputValue('')
     setOpenConfirmSection(false)
@@ -282,7 +262,13 @@ const ProtectCard = () => {
    * an effect to reset transaction details on closing the modal
    */
   useEffect(() => {
-    if (!openTransactionModal) resetTransactionDetails()
+    if (!openTransactionModal) {
+      setTransactionDetails({
+        hash: '',
+        status: 0,
+      })
+      resetTransactionDetails()
+    }
   }, [openTransactionModal])
 
   /*
@@ -340,10 +326,6 @@ const ProtectCard = () => {
             value={`${priceFloor.toFixed(2) || '-'} USDC`}
             tooltipContent={`cr${state.selectedAsset.label} is hedged with this minimum value.`}
           />
-          <DetailComponent
-            label="APY"
-            value={`${state.apys ? apy.toFixed(8) : '-'} %`}
-          />
         </DetailArea>
         <DetailComponent
           label={`1 cr${state.selectedAsset.label} = ${
@@ -388,7 +370,7 @@ const ProtectCard = () => {
           <Button
             buttonType="protect"
             onClick={
-              state.assetPrice === 0 || priceFloor === 0 || apy === 0
+              state.assetPrice === 0 || priceFloor === 0
                 ? () => {
                     setModalType('error')
                     setOpenErrorModal(true)
@@ -443,9 +425,7 @@ const ProtectCard = () => {
           onConfirm={() => onButtonClick('interact')}
           inputValue={inputValue || '-'}
           totalCost={
-            (
-              Number(inputValue || 0) + Number(gasData?.formatted.gasPrice || 0)
-            ).toFixed(10) + ' ETH'
+            Number(gasData?.formatted.gasPrice || 0).toFixed(10) + ' ETH'
           }
           priceFloor={`$${priceFloor.toFixed(2)}`}
           usdValue={`${(Number(inputValue || 0) * state.assetPrice).toFixed(

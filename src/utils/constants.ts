@@ -106,10 +106,3 @@ export const PRICE_FLOORS_RESPONSE_MAPPING = {
   [AssetDropdownOptions.WETH]: 'ethereum',
   [AssetDropdownOptions.WBTC]: 'bitcoin',
 }
-
-// apys mapping to set the floor dynamically on asset change
-export const APYS_RESPONSE_MAPPING = {
-  [AssetDropdownOptions.ETH]: 'ethereum',
-  [AssetDropdownOptions.WETH]: 'ethereum',
-  [AssetDropdownOptions.WBTC]: 'bitcoin',
-}

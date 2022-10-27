@@ -26,11 +26,6 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         priceFloors: action.payload,
       }
-    case Actions.STORE_APYS:
-      return {
-        ...state,
-        apys: action.payload,
-      }
     case Actions.STORE_CHAIN_ID:
       return {
         ...state,
