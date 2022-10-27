@@ -320,15 +320,13 @@ const ProtectCard = () => {
         <DetailComponent
           label="You will receive"
           value={`${
-            state.assetPrice > priceFloor
-              ? inputValue
-              : (Number(inputValue || 0) * state.assetPrice).toString()
-          } ${
-            state.assetPrice > priceFloor
-              ? state.tab === 'protect'
-                ? `cr${state.selectedAsset.label}`
-                : `${state.selectedAsset.label}`
-              : 'USDC'
+            state.tab === 'protect'
+              ? `${inputValue} cr${state.selectedAsset.label}`
+              : state.assetPrice > priceFloor
+              ? `${inputValue} ${state.selectedAsset.label}`
+              : `${(
+                  Number(inputValue || 0) * state.assetPrice
+                ).toString()} USDC`
           }`}
         />
         <DetailArea>
@@ -454,15 +452,13 @@ const ProtectCard = () => {
             4,
           )} USDC`}
           receiveValue={`${
-            state.assetPrice > priceFloor
-              ? inputValue
-              : (Number(inputValue || 0) * state.assetPrice).toString()
-          } ${
-            state.assetPrice > priceFloor
-              ? state.tab === 'protect'
-                ? `cr${state.selectedAsset.label}`
-                : `${state.selectedAsset.label}`
-              : 'USDC'
+            state.tab === 'protect'
+              ? `${inputValue} cr${state.selectedAsset.label}`
+              : state.assetPrice > priceFloor
+              ? `${inputValue} ${state.selectedAsset.label}`
+              : `${(
+                  Number(inputValue || 0) * state.assetPrice
+                ).toString()} USDC`
           }`}
         />
       </ProtectArea>
