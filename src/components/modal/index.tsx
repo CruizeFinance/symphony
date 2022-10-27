@@ -38,11 +38,17 @@ interface ModalProps {
  * Modal
  * Displays contract activity or any other additional info
  */
-const Modal = ({ open, hide, children, modalContentStyle }: ModalProps) => {
+const Modal = ({
+  open,
+  hide,
+  children,
+  modalContentStyle,
+  modalStyle,
+}: ModalProps) => {
   if (!open) return null
 
   return (
-    <ModalContainer onClick={hide}>
+    <ModalContainer onClick={hide} style={{ ...modalStyle }}>
       <ModalContent
         onClick={(e) => e.stopPropagation()}
         style={{ ...modalContentStyle }}
