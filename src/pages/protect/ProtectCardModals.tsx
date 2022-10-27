@@ -144,7 +144,7 @@ const ProtectCardModals = ({
           </Typography>
           {transactionModalOptions.transactionDetails.hash ? (
             <Typography
-              style={{ display: 'flex', gap: rem(10), lineHeight: '24px' }}
+              style={{ display: 'flex', alignItems: 'center', gap: rem(10), lineHeight: '24px' }}
               tag="a"
               href={`https://goerli.etherscan.io/tx/${transactionModalOptions.transactionDetails.hash}`}
               openInNewTab={true}

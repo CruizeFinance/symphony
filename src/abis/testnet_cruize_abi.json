@@ -12,7 +12,7 @@
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "_ratio",
+        "name": "ratio",
         "type": "uint256"
       }
     ],
@@ -25,7 +25,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "reserve",
+        "name": "asset",
         "type": "address"
       },
       {
@@ -62,7 +62,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "reserve",
+        "name": "asset",
         "type": "address"
       },
       {
@@ -119,7 +119,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "reserve",
+        "name": "asset",
         "type": "address"
       },
       {
@@ -162,6 +162,13 @@
   },
   {
     "inputs": [],
+    "name": "ORACLE",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "POOL",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
@@ -192,6 +199,13 @@
     "inputs": [],
     "name": "USDC_TEST",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "USD_DECIMALS",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -356,15 +370,17 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "priceFloor",
+    "inputs": [
+      { "internalType": "address", "name": "asset", "type": "address" }
+    ],
+    "name": "priceFloorOf",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_asset", "type": "address" }
+      { "internalType": "address", "name": "asset", "type": "address" }
     ],
     "name": "priceOf",
     "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }],
@@ -383,15 +399,6 @@
       { "internalType": "uint256", "name": "_amount", "type": "uint256" }
     ],
     "name": "repay",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "_floor", "type": "uint256" }
-    ],
-    "name": "setPriceFloor",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -425,8 +432,7 @@
   {
     "inputs": [
       { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_token", "type": "address" },
-      { "internalType": "uint256", "name": "_priceFloor", "type": "uint256" }
+      { "internalType": "address", "name": "_token", "type": "address" }
     ],
     "name": "withdrawTest",
     "outputs": [],
