@@ -43,6 +43,7 @@ const ErrorModal = ({
         alignItems: 'flex-start',
         maxWidth: rem(400),
       }}
+      modalStyle={{ zIndex: 99999 }}
     >
       <ErrorModalHeader>
         <Sprite id="wrong-network-icon" width={56} height={56} />
