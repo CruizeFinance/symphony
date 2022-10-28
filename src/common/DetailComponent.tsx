@@ -1,7 +1,7 @@
-import { Sprite, Tooltip, Typography } from "../components"
-import { rem } from "../utils"
+import { Sprite, Tooltip, Typography } from '../components'
+import { rem } from '../utils'
 import STYLES from '../style/styles.json'
-import styled from "styled-components"
+import styled from 'styled-components'
 
 const Detail = styled.div`
   display: flex;
@@ -21,6 +21,7 @@ interface DetailComponentProps {
   label: string
   value: React.ReactNode
   tooltipContent?: string
+  style?: React.CSSProperties
 }
 
 /*
@@ -30,8 +31,9 @@ const DetailComponent = ({
   label,
   value,
   tooltipContent,
+  style
 }: DetailComponentProps) => (
-  <Detail>
+  <Detail style={{ ...style }}>
     <Typography
       fontFamily="regular"
       color={STYLES.palette.colors.white60}
@@ -47,7 +49,12 @@ const DetailComponent = ({
     <Typography
       fontFamily="regular"
       color={STYLES.palette.colors.white60}
-      style={{ fontSize: rem(12), lineHeight: '15.6px' }}
+      style={{
+        fontSize: rem(12),
+        lineHeight: '15.6px',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+      }}
     >
       {value}
     </Typography>
