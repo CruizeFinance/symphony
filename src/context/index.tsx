@@ -1,12 +1,19 @@
 import { createContext, useEffect, useReducer } from 'react'
-import { useAccount, useBalance, useNetwork, chain as allChains } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  useNetwork,
+  chain as allChains,
+  useContractRead,
+} from 'wagmi'
 import { fetchPriceFloors, getAssetPrice } from '../apis'
 import { useOnceCall } from '../hooks'
-import { ASSET_PRICE_API_PARAMS, CONTRACTS_CONFIG } from '../utils'
+import { BETA_ACCESS_NFT_CONTRACT, CONTRACTS_CONFIG } from '../utils'
 import { Action, Actions } from './Action'
 import reducer from './Reducer'
 import initialState from './State'
 import State from './StateModel'
+import BETAACESSABI from '../abis/beta_access_nft.json'
 
 // Context props
 interface ProviderProps {
@@ -31,7 +38,7 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
   const contractsConfig = CONTRACTS_CONFIG[state.chainId || allChains.goerli.id]
 
   // web3 hooks
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { chain } = useNetwork()
   const { data: balanceData } = useBalance({
     addressOrName: address,
@@ -44,6 +51,16 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
         }
       : undefined),
     watch: true,
+  })
+  const {
+    data: holderData,
+    isLoading: checkingHolder,
+    isError: holderError,
+  } = useContractRead({
+    addressOrName: BETA_ACCESS_NFT_CONTRACT,
+    contractInterface: BETAACESSABI,
+    functionName: 'balanceOf',
+    args: [address],
   })
 
   /*
@@ -86,6 +103,25 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
       payload: balanceData?.formatted,
     })
   }, [balanceData])
+
+  /*
+   * an effect to set the value for isHolder boolean
+   */
+  useEffect(() => {
+    if (isConnected && !checkingHolder) {
+      const holder = holderData?.toNumber() > 0 || false
+      dispatch({
+        type: Actions.STORE_HOLDER_BOOLEAN,
+        payload: checkingHolder
+          ? 'loading'
+          : holderError
+          ? 'error'
+          : holder
+          ? 'holder'
+          : 'error',
+      })
+    }
+  }, [isConnected, address, holderData])
 
   return (
     <AppContext.Provider value={[state, dispatch]}>

@@ -8,7 +8,6 @@ import { AppContextProvider } from './context'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet'
 
 const AppContainer = styled.div`
   height: 100%;
@@ -35,12 +34,6 @@ function App(): JSX.Element {
     connectors: [
       new MetaMaskConnector({
         chains,
-      }),
-      new CoinbaseWalletConnector({
-        chains,
-        options: {
-          appName: 'Cruize',
-        },
       }),
       new WalletConnectConnector({
         chains,

@@ -26,8 +26,7 @@ import { AppContext } from '../../context'
 import ProtectCardModals from './ProtectCardModals'
 import { Actions } from '../../context/Action'
 import ProtectCardConfirm from './ProtectCardConfirm'
-import { ConnectKitButton } from 'connectkit'
-import { DetailComponent } from '../../common'
+import { ConnectWalletButton, DetailComponent } from '../../common'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -354,18 +353,7 @@ const ProtectCard = () => {
           }
         />
         {!isConnected ? (
-          <ConnectKitButton.Custom>
-            {({ show }) => {
-              return (
-                <Button onClick={show} buttonType="protect" borderRadius={32}>
-                  <>
-                    Connect Wallet
-                    <Sprite id="connect-wallet-black" width={20} height={20} />
-                  </>
-                </Button>
-              )
-            }}
-          </ConnectKitButton.Custom>
+          <ConnectWalletButton buttonLabel='Connect Wallet' showIcon={true} />
         ) : (
           <Button
             buttonType="protect"

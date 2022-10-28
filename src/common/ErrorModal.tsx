@@ -80,7 +80,7 @@ const ErrorModal = ({
       ) : null}
       {actionLabel ? (
         <Button onClick={() => action?.()} style={{ width: '100%' }}>
-          Switch Network
+          {actionLabel}
           {labelIcon ? <Sprite id={labelIcon} width={16} height={16} /> : null}
         </Button>
       ) : null}

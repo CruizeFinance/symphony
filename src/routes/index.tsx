@@ -1,5 +1,5 @@
 import { Routes as Switch, Route } from 'react-router-dom'
-import { Protect, NotFound } from '../pages'
+import { Protect, NotFound, Home } from '../pages'
 
 /*
  * Application Routes
@@ -7,7 +7,8 @@ import { Protect, NotFound } from '../pages'
 const Routes = () => {
   return (
     <Switch>
-      <Route path="/" element={<Protect />} />
+      <Route path="/" element={<Home />} />
+      <Route path="/protect" element={<Protect />} />
       <Route path="*" element={<NotFound />} />
     </Switch>
   )

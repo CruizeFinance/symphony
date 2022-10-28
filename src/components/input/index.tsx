@@ -186,7 +186,7 @@ const Input = ({
             options={DROPDOWN_OPTIONS}
             onChange={(val) => handleAssetChange(val)}
           />
-          {isConnected ? (
+          {isConnected && state.supportedChains.includes(state.chainId) ? (
             <Typography
               tag="p"
               fontFamily="medium"
