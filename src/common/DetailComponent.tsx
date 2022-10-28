@@ -50,7 +50,11 @@ const DetailComponent = ({
       fontFamily="regular"
       color={STYLES.palette.colors.white60}
       style={{
+<<<<<<< HEAD
         fontSize: rem(13.6),
+=======
+        fontSize: rem(12),
+>>>>>>> 0c48620 ([TESTNET-50] Letting user add cr tokens to metamask)
         lineHeight: '15.6px',
         flexDirection: 'column',
         alignItems: 'flex-end',
