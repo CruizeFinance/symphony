@@ -65,7 +65,7 @@ const ProtectCard = () => {
   const [state, dispatch] = useContext(AppContext)
 
   // web3 hooks
-  const { isConnected, address } = useAccount()
+  const { connector, isConnected, address } = useAccount()
   const { data: gasData } = useFeeData({
     chainId: state.chainId,
     formatUnits: 'ether',
@@ -253,6 +253,38 @@ const ProtectCard = () => {
   }
 
   /*
+   * add token
+   * a function written to add wrapped cruize token to metamask against the selected asset
+   */
+  const addToken = async () => {
+    try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+      await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+          options: {
+            address:
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.cruizeAddress || '', // The address that the token is at.
+            symbol: `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
+            decimals:
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.decimals || '', // The number of decimals in the token
+          },
+        },
+      })
+    } catch (error: any) {
+      if (error.code !== 4001) {
+        setModalType('error')
+        setOpenErrorModal(true)
+      }
+    }
+  }
+
+  /*
    * a function to reset transaction details
    */
   const resetTransactionDetails = () => {
@@ -308,15 +340,44 @@ const ProtectCard = () => {
         />
         <DetailComponent
           label="You will receive"
-          value={`${
-            state.tab === 'protect'
-              ? `${inputValue} cr${state.selectedAsset.label}`
-              : state.assetPrice > priceFloor
-              ? `${inputValue} ${state.selectedAsset.label}`
-              : `${(
-                  Number(inputValue || 0) * state.assetPrice
-                ).toString()} USDC`
-          }`}
+          value={
+            <>
+              <Typography
+                style={{
+                  fontSize: rem(12),
+                  lineHeight: '15.6px',
+                  display: 'block',
+                }}
+                tag='label'
+                color={STYLES.palette.colors.white60}
+              >
+                {state.tab === 'protect'
+                  ? `${inputValue} cr${state.selectedAsset.label}`
+                  : state.assetPrice > priceFloor
+                  ? `${inputValue} ${state.selectedAsset.label}`
+                  : `${(
+                      Number(inputValue || 0) * state.assetPrice
+                    ).toString()} USDC`}
+              </Typography>
+              {state.tab === 'protect' &&
+              connector?.id?.toLowerCase() === 'metamask' ? (
+                <Typography
+                  style={{
+                    fontSize: rem(12),
+                    lineHeight: '15.6px',
+                    cursor: 'pointer',
+                  }}
+                  tag='span'
+                  onClick={addToken}
+                  color={STYLES.palette.colors.white60}
+                >
+                  Add cr{state.selectedAsset.label} to{' '}
+                  <Sprite id={`metamask-icon`} width={12} height={12} />
+                </Typography>
+              ) : null}
+            </>
+          }
+          style={{ alignItems: 'flex-start' }}
         />
         <DetailArea>
           <Typography
@@ -359,7 +420,9 @@ const ProtectCard = () => {
         {!isConnected ? (
           <ConnectWalletButton buttonLabel="Connect Wallet" showIcon={true} />
         ) : !state.supportedChains.includes(state.chainId) ? (
-          <SwitchNetworkButton style={{ padding: `${rem(16)} ${rem(32)}`, borderRadius: rem(100) }} />
+          <SwitchNetworkButton
+            style={{ padding: `${rem(16)} ${rem(32)}`, borderRadius: rem(100) }}
+          />
         ) : (
           <Button
             buttonType="protect"
