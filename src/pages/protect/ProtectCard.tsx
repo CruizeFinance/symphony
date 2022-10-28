@@ -253,6 +253,38 @@ const ProtectCard = () => {
   }
 
   /*
+   * add token
+   * a function written to add wrapped cruize token to metamask against the selected asset
+   */
+  const addToken = async () => {
+    try {
+      // wasAdded is a boolean. Like any RPC method, an error may be thrown.
+      await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20', // Initially only supports ERC20, but eventually more!
+          options: {
+            address:
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.cruizeAddress || '', // The address that the token is at.
+            symbol: `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
+            decimals:
+              contractsConfig[
+                state.selectedAsset.label as keyof typeof contractsConfig
+              ]?.decimals || '', // The number of decimals in the token
+          },
+        },
+      })
+    } catch (error: any) {
+      if (error.code !== 4001) {
+        setModalType('error')
+        setOpenErrorModal(true)
+      }
+    }
+  }
+
+  /*
    * a function to reset transaction details
    */
   const resetTransactionDetails = () => {
