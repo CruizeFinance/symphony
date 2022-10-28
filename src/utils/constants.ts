@@ -106,3 +106,7 @@ export const PRICE_FLOORS_RESPONSE_MAPPING = {
   [AssetDropdownOptions.WETH]: 'ethereum',
   [AssetDropdownOptions.WBTC]: 'bitcoin',
 }
+
+// nft contract for airdropping entry passes to access CRUIZE BETA
+export const BETA_ACCESS_NFT_CONTRACT =
+  '0x2FFCdD8a057b121e44f9Fe7A1A9C714e987b1c53'

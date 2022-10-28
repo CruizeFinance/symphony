@@ -1,6 +1,6 @@
 import { Sprite, Typography } from '../../components'
 import { rem } from '../../utils'
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fetchRecentOrders } from '../../apis'
 import { useAccount } from 'wagmi'
 import {
@@ -14,7 +14,6 @@ import {
 } from './DropdownStyledComponents'
 import { useOutsideAlerter } from '../../hooks'
 import STYLES from '../../style/styles.json'
-import { AppContext } from '../../context'
 
 /*
  * Recent Orders Dropdown
@@ -22,9 +21,6 @@ import { AppContext } from '../../context'
  * Is displayed only when the user is connected on the app
  */
 const RecentOrdersDropdown = () => {
-  // context hook
-  const [state] = useContext(AppContext)
-
   // web3 hook
   const { address } = useAccount()
 
@@ -121,7 +117,7 @@ const RecentOrdersDropdown = () => {
               typeof transactions !== 'string' &&
               transactions.length ? (
                 transactions
-                  .sort((a,b) => b.timestamp - a.timestamp)
+                  .sort((a, b) => b.timestamp - a.timestamp)
                   .slice(0, 3)
                   .map((transaction) => (
                     <Section key={transaction.transaction_hash}>

@@ -1,6 +1,6 @@
-import { ConnectKitButton } from 'connectkit'
 import { useRef, useState } from 'react'
 import { useAccount, useDisconnect } from 'wagmi'
+import { ConnectWalletButton } from '../../common'
 import { Button, Sprite, Typography } from '../../components'
 import { useOutsideAlerter } from '../../hooks'
 import { rem } from '../../utils'
@@ -138,27 +138,7 @@ const ConnectButtonDropdown = () => {
       ) : null}
     </DropdownArea>
   ) : (
-    <ConnectKitButton.Custom>
-      {({ show }) => {
-        return (
-          <Button
-            onClick={show}
-            {...(window.innerWidth <= 1024
-              ? {
-                  style: {
-                    width: '80%',
-                    borderRadius: rem(8),
-                  },
-                }
-              : undefined)}
-            style={{ padding: `${rem(8)} ${rem(16)}` }}
-          >
-            <Sprite id="connect-wallet-black" width={16} height={16} />
-            Connect
-          </Button>
-        )
-      }}
-    </ConnectKitButton.Custom>
+    <ConnectWalletButton showIcon={true} />
   )
 }
 

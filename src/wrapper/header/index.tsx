@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Sprite, Typography } from '../../components'
+import { Sprite, Typography } from '../../components'
 import { Modal } from '../../components'
 import STYLES from '../../style/styles.json'
 import { chain, useAccount, useSwitchNetwork } from 'wagmi'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { rem } from '../../utils'
 import RecentOrdersDropdown from './RecentOrdersDropdown'
 import NetworkDropdown from './NetworkDropdown'
@@ -90,10 +89,6 @@ const Header = () => {
   //web3 hook
   const { isConnected } = useAccount()
   const { switchNetwork } = useSwitchNetwork()
-
-  // react router dom hooks
-  const navigate = useNavigate()
-  const location = useLocation()
 
   // state hooks
   const [openConnectedModal, setOpenConnectedModal] = useState(false)
@@ -192,7 +187,7 @@ const Header = () => {
         hide={() => setWrongNetworkModal(false)}
         title={'Oops, your wallet is not on the right network.'}
         description={`It seems your wallet is running on a different network. Please
-        manually change the network in your wallet. or click on the wallet
+        manually change the network in your wallet or click on the button
         below.`}
         action={() => switchNetwork?.(chain.goerli.id)}
         labelIcon={'switch-network-icon'}

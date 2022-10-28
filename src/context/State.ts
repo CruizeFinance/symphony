@@ -14,7 +14,8 @@ const initialState: State = {
   },
   tab: 'protect',
   supportedChains: [5],
-  loadingInitialAPIs: true
+  loadingInitialAPIs: true,
+  isHolder: 'loading'
 }
 
 export default initialState

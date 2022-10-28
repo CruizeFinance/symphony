@@ -245,9 +245,9 @@ const Footer = () => {
             © 2022 Cruize Inc. All rights reserved.
           </Typography>
         </MobileArea>
-        {location.pathname === '/' ? <FakeFooter /> : null}
+        {location.pathname.includes('protect') ? <FakeFooter /> : null}
       </Container>
-      {location.pathname === '/' ? (
+      {location.pathname.includes('protect') ? (
         <ProtectArea>
           <ProtectPad>
             <Typography

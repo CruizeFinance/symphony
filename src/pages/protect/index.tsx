@@ -3,6 +3,9 @@ import styled from 'styled-components'
 import ProtectCard from './ProtectCard'
 import { rem } from '../../utils'
 import HowItWorks from './HowItWorks'
+import { useContext, useEffect } from 'react'
+import { AppContext } from '../../context'
+import { useNavigate } from 'react-router-dom'
 
 const Container = styled.div`
   display: flex;
@@ -32,6 +35,27 @@ const ProtectArea = styled.div`
  * This is where the protection and withdrawals happen
  */
 const Protect = () => {
+  //context hook
+  const [state] = useContext(AppContext)
+
+  // react router dom hook
+  const navigate = useNavigate()
+
+  /*
+   * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
+   */
+  useEffect(() => {
+    if (state.isHolder) {
+      switch (state.isHolder) {
+        case 'loading':
+          break
+        case 'holder':
+          break
+        default:
+          navigate('/')
+      }
+    }
+  }, [state.isHolder])
 
   return (
     <Container id="protect-container">
