@@ -7,95 +7,55 @@ import { Typography } from '../../components'
 const graphData = [
   {
     time: '2022-09-30',
-    signUps: 2,
+    signUps: 1,
   },
   {
     time: '2022-10-02',
-    signUps: 3,
+    signUps: 2,
   },
   {
     time: '2022-10-07',
-    signUps: 89,
+    signUps: 88,
   },
   {
     time: '2022-10-08',
-    signUps: 422,
+    signUps: 412,
   },
   {
     time: '2022-10-09',
-    signUps: 1335,
+    signUps: 1319,
   },
   {
     time: '2022-10-10',
-    signUps: 3499,
+    signUps: 3284,
   },
   {
     time: '2022-10-11',
-    signUps: 21264,
+    signUps: 16662,
   },
   {
     time: '2022-10-12',
-    signUps: 22190,
+    signUps: 17025,
   },
   {
     time: '2022-10-13',
-    signUps: 22526,
-  },
-  {
-    time: '2022-10-14',
-    signUps: 22763,
-  },
-  {
-    time: '2022-10-15',
-    signUps: 22859,
-  },
-  {
-    time: '2022-10-16',
-    signUps: 23078,
-  },
-  {
-    time: '2022-10-17',
-    signUps: 24556,
+    signUps: 17044,
   },
   {
     time: '2022-10-18',
-    signUps: 24599,
-  },
-  {
-    time: '2022-10-19',
-    signUps: 24628,
-  },
-  {
-    time: '2022-10-20',
-    signUps: 50198,
+    signUps: 17045,
   },
   {
     time: '2022-10-21',
-    signUps: 50943,
-  },
-  {
-    time: '2022-10-22',
-    signUps: 50954,
-  },
-  {
-    time: '2022-10-23',
-    signUps: 50973,
-  },
-  {
-    time: '2022-10-24',
-    signUps: 50979,
-  },
-  {
-    time: '2022-10-25',
-    signUps: 50989,
+    signUps: 17047,
   },
   {
     time: '2022-10-26',
-    signUps: 51017,
+    signUps: 17050,
   },
   {
     time: '2022-10-27',
-    signUps: 51020,
+    signUps: 17051,
   },
 ]
 
