@@ -1,7 +1,7 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
-import { chain, useFeeData, useSwitchNetwork } from 'wagmi'
-import { Button, Modal, Sprite, Typography } from '../../components'
+import { useContext, useRef, useState } from 'react'
+import { chain, useFeeData } from 'wagmi'
+import { SwitchNetworkButton } from '../../common'
+import { Sprite, Typography } from '../../components'
 import { AppContext } from '../../context'
 import { useOutsideAlerter } from '../../hooks'
 import { rem } from '../../utils'
@@ -31,7 +31,6 @@ const NetworkDropdown = () => {
     formatUnits: 'gwei',
     watch: true,
   })
-  const { switchNetwork } = useSwitchNetwork()
 
   // state hook
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false)
@@ -121,14 +120,7 @@ const NetworkDropdown = () => {
                 </DropdownContent>
               </Section>
             ) : (
-              <Button
-                borderRadius={8}
-                style={{ padding: `${rem(8)} ${rem(16)}` }}
-                onClick={() => switchNetwork?.(chain.goerli.id)}
-              >
-                Switch Network
-                <Sprite id="switch-network-icon" width={16} height={16} />
-              </Button>
+              <SwitchNetworkButton />
             )}
           </HeaderDropdown>
         ) : null}

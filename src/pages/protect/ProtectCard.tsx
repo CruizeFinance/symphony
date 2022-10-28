@@ -26,7 +26,11 @@ import { AppContext } from '../../context'
 import ProtectCardModals from './ProtectCardModals'
 import { Actions } from '../../context/Action'
 import ProtectCardConfirm from './ProtectCardConfirm'
-import { ConnectWalletButton, DetailComponent } from '../../common'
+import {
+  ConnectWalletButton,
+  DetailComponent,
+  SwitchNetworkButton,
+} from '../../common'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -353,7 +357,9 @@ const ProtectCard = () => {
           }
         />
         {!isConnected ? (
-          <ConnectWalletButton buttonLabel='Connect Wallet' showIcon={true} />
+          <ConnectWalletButton buttonLabel="Connect Wallet" showIcon={true} />
+        ) : !state.supportedChains.includes(state.chainId) ? (
+          <SwitchNetworkButton style={{ padding: `${rem(16)} ${rem(32)}`, borderRadius: rem(100) }} />
         ) : (
           <Button
             buttonType="protect"
@@ -375,9 +381,7 @@ const ProtectCard = () => {
             }
             borderRadius={32}
           >
-            {!state.supportedChains.includes(state.chainId)
-              ? 'Unsupported Network'
-              : allowanceStatus === 'loading'
+            {allowanceStatus === 'loading'
               ? 'Please wait...'
               : !(allowed || tokenApproved)
               ? 'Approve'
