@@ -6,6 +6,7 @@ import { rem } from '../utils'
 interface ConnectWalletButtonProps {
   buttonLabel?: string
   showIcon?: boolean
+  style?: React.CSSProperties
 }
 
 /*
@@ -15,11 +16,12 @@ interface ConnectWalletButtonProps {
 const ConnectWalletButton = ({
   buttonLabel,
   showIcon,
+  style
 }: ConnectWalletButtonProps) => (
   <ConnectKitButton.Custom>
     {({ show }) => {
       return (
-        <Button onClick={show} style={{ padding: `${rem(8)} ${rem(16)}` }}>
+        <Button onClick={show} style={{ padding: `${rem(8)} ${rem(16)}`, ...style }}>
           {showIcon ? (
             <Sprite id="connect-wallet-black" width={16} height={16} />
           ) : null}

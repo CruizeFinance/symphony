@@ -65,7 +65,7 @@ const ProtectCard = () => {
   const [state, dispatch] = useContext(AppContext)
 
   // web3 hooks
-  const { isConnected, address } = useAccount()
+  const { connector, isConnected, address } = useAccount()
   const { data: gasData } = useFeeData({
     chainId: state.chainId,
     formatUnits: 'ether',
@@ -317,6 +317,7 @@ const ProtectCard = () => {
                   Number(inputValue || 0) * state.assetPrice
                 ).toString()} USDC`
           }`}
+          style={{ alignItems: 'flex-start' }}
         />
         <DetailArea>
           <Typography
@@ -357,9 +358,15 @@ const ProtectCard = () => {
           }
         />
         {!isConnected ? (
-          <ConnectWalletButton buttonLabel="Connect Wallet" showIcon={true} />
+          <ConnectWalletButton
+            buttonLabel="Connect Wallet"
+            showIcon={true}
+            style={{ padding: `${rem(16)} ${rem(32)}`, width: '100%' }}
+          />
         ) : !state.supportedChains.includes(state.chainId) ? (
-          <SwitchNetworkButton style={{ padding: `${rem(16)} ${rem(32)}`, borderRadius: rem(100) }} />
+          <SwitchNetworkButton
+            style={{ padding: `${rem(16)} ${rem(32)}`, borderRadius: rem(100) }}
+          />
         ) : (
           <Button
             buttonType="protect"
@@ -390,6 +397,25 @@ const ProtectCard = () => {
               : 'Withdraw'}
           </Button>
         )}
+        <Typography
+          tag="label"
+          style={{ fontSize: rem(14), lineHeight: '16.48px' }}
+        >
+          Need to add GoerliETH to your wallet?&nbsp;
+          <Typography
+            tag="a"
+            color={STYLES.palette.colors.linkBlue}
+            href="https://faucetlink.to/goerli"
+            openInNewTab={true}
+            style={{
+              fontSize: rem(14),
+              lineHeight: '16.48px',
+              cursor: 'pointer',
+            }}
+          >
+            Click here
+          </Typography>
+        </Typography>
         <Typography
           tag="label"
           style={{ fontSize: rem(14), lineHeight: '16.48px' }}
