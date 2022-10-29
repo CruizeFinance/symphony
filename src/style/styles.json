@@ -1,0 +1,36 @@
+{
+  "typography": {
+    "fonts": {
+      "extraBold": "GilroyExtraBold",
+      "bold": "GilroyBold",
+      "semiBold": "GilroySemiBold",
+      "medium": "GilroyMedium",
+      "regular": "GilroyRegular"
+    }
+  },
+  "palette": {
+    "colors": {
+      "green": "#30C952",
+      "unfilledTabFont": "#6B7280",
+      "black": "#000000",
+      "white": "#FFFFFF",
+      "white60": "#ffffff99",
+      "logoBlue": "#396AF4",
+      "maxButtonBackground": "#246ef06e",
+      "tagBlue": "#396af438",
+      "stepNumberBlue": "#516bb524",
+      "maxButtonFont": "#246ef0",
+      "linkBlue": "#0059F7",
+      "modalBackdrop": "#00000080",
+      "modalBackground": "#232529",
+      "cardBackground": "#141416",
+      "inputLabel": "#454545",
+      "inputBackground": "#0F0F10",
+      "assetBackground": "#191721",
+      "dividerStroke": "#333537",
+      "notificationBackground": "#131416",
+      "red": "#FF0000",
+      "pickerIconBackground": "#FFFFFF0A"
+    }
+  }
+}
