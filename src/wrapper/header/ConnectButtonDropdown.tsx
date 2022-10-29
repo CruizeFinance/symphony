@@ -138,7 +138,7 @@ const ConnectButtonDropdown = () => {
       ) : null}
     </DropdownArea>
   ) : (
-    <ConnectWalletButton showIcon={true} />
+    <ConnectWalletButton buttonLabel='Connect' showIcon={true} />
   )
 }
 
