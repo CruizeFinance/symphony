@@ -407,6 +407,11 @@ const ProtectCard = () => {
             color={STYLES.palette.colors.linkBlue}
             href="https://faucetlink.to/goerli"
             openInNewTab={true}
+            style={{
+              fontSize: rem(14),
+              lineHeight: '16.48px',
+              cursor: 'pointer',
+            }}
           >
             Click here
           </Typography>
