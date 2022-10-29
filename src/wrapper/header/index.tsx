@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Sprite, Typography } from '../../components'
+import { Button, Sprite, Typography } from '../../components'
 import { Modal } from '../../components'
 import STYLES from '../../style/styles.json'
 import { chain, useAccount, useSwitchNetwork } from 'wagmi'
