@@ -407,14 +407,11 @@ const ProtectCard = () => {
             color={STYLES.palette.colors.linkBlue}
             href="https://faucetlink.to/goerli"
             openInNewTab={true}
-<<<<<<< HEAD
             style={{
               fontSize: rem(14),
               lineHeight: '16.48px',
               cursor: 'pointer',
             }}
-=======
->>>>>>> 8dd2d64 ([TESTNET-52] Enabling an option to redirect user to Goerli faucet)
           >
             Click here
           </Typography>
