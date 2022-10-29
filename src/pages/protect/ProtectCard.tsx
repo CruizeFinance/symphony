@@ -401,6 +401,25 @@ const ProtectCard = () => {
           tag="label"
           style={{ fontSize: rem(14), lineHeight: '16.48px' }}
         >
+          Need to add GoerliETH to your wallet?&nbsp;
+          <Typography
+            tag="a"
+            color={STYLES.palette.colors.linkBlue}
+            href="https://faucetlink.to/goerli"
+            openInNewTab={true}
+            style={{
+              fontSize: rem(14),
+              lineHeight: '16.48px',
+              cursor: 'pointer',
+            }}
+          >
+            Click here
+          </Typography>
+        </Typography>
+        <Typography
+          tag="label"
+          style={{ fontSize: rem(14), lineHeight: '16.48px' }}
+        >
           Need help?&nbsp;
           <Typography
             tag="label"
