@@ -317,7 +317,6 @@ const ProtectCard = () => {
                   Number(inputValue || 0) * state.assetPrice
                 ).toString()} USDC`
           }`}
-          style={{ alignItems: 'flex-start' }}
         />
         <DetailArea>
           <Typography

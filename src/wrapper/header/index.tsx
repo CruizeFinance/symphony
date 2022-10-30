@@ -188,7 +188,8 @@ const Header = () => {
                       fontSize: rem(16),
                       lineHeight: '24px',
                       padding: `${rem(8)} ${rem(16)}`,
-                      fontFamily: STYLES.typography.fonts.regular
+                      fontFamily: STYLES.typography.fonts.regular,
+                      minHeight: '-webkit-fill-available'
                     }}
                     borderRadius={100}
                   >
