@@ -72,7 +72,11 @@ const Home = () => {
             tag="p"
             fontFamily="regular"
             color={STYLES.palette.colors.white60}
-            style={{ textAlign: 'center', maxWidth: rem(800), marginBottom: rem(8) }}
+            style={{
+              textAlign: 'center',
+              maxWidth: rem(800),
+              marginBottom: rem(16),
+            }}
           >
             Currently, only holders of our Cruize Entry Pass NFT holders can
             access our private beta.
@@ -85,11 +89,14 @@ const Home = () => {
             >
               {!isConnected
                 ? 'Connect wallet to continue.'
-                : 'You can ask get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server.'}
+                : 'Currently, only holders of our Cruize Entry Pass NFT holders can access our private beta. You can get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server.'}
             </Typography>
           </Typography>
           {!isConnected ? (
-            <ConnectWalletButton buttonLabel="Connect Wallet" />
+            <ConnectWalletButton
+              style={{ padding: `${rem(16)} ${rem(32)}` }}
+              buttonLabel="Connect Wallet"
+            />
           ) : (
             <Button
               onClick={() =>
@@ -109,7 +116,7 @@ const Home = () => {
         open={openErrorModal}
         hide={() => setOpenErrorModal(false)}
         title="Oops! You Don’t Hold the Cruize Entry Pass"
-        description="Only the Cruize Entry Pass NFT holders can access the private beta of Cruize. You can ask get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server."
+        description="Currently, only holders of our Cruize Entry Pass NFT holders can access our private beta. You can get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server."
         actionLabel="Join our Discord"
         action={() =>
           window.open(
