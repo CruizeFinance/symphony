@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 const Detail = styled.div`
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   width: 100%;
 
@@ -50,7 +50,7 @@ const DetailComponent = ({
       fontFamily="regular"
       color={STYLES.palette.colors.white60}
       style={{
-        fontSize: rem(12),
+        fontSize: rem(13.6),
         lineHeight: '15.6px',
         flexDirection: 'column',
         alignItems: 'flex-end',

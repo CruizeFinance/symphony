@@ -43,11 +43,11 @@ const Home = () => {
   //state hook
   const [openErrorModal, setOpenErrorModal] = useState(false)
 
-  /*
+  /* 
    * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
    */
   useEffect(() => {
-    if (state.isHolder) {
+    if (isConnected) {
       switch (state.isHolder) {
         case 'loading':
           break
@@ -58,7 +58,7 @@ const Home = () => {
           setOpenErrorModal(true)
       }
     }
-  }, [state.isHolder])
+  }, [state.isHolder, isConnected])
 
   return (
     <>
