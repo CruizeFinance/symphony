@@ -110,14 +110,6 @@ const AddTokensToWallet = () => {
         </HeaderButton>
         <Collapsible open={openButtons}>
           <CollapsibleArea>
-            <Typography
-              fontFamily="regular"
-              style={{ fontSize: rem(14) }}
-              color={STYLES.palette.colors.logoBlue}
-            >
-              To check the balances of respective tokens in your wallet, add
-              their individual contracts to your wallet
-            </Typography>
             <Buttons>
               <Button
                 buttonType="button-light-blue"
