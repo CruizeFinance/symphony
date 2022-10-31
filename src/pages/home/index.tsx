@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { Sprite, Typography } from '../../components'
+import { Button, Sprite, Typography } from '../../components'
 import { rem } from '../../utils'
 import STYLES from '../../style/styles.json'
 import { ConnectWalletButton, ErrorModal } from '../../common'
@@ -43,11 +43,11 @@ const Home = () => {
   //state hook
   const [openErrorModal, setOpenErrorModal] = useState(false)
 
-  /*
+  /* 
    * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
    */
   useEffect(() => {
-    if (state.isHolder) {
+    if (isConnected) {
       switch (state.isHolder) {
         case 'loading':
           break
@@ -58,7 +58,7 @@ const Home = () => {
           setOpenErrorModal(true)
       }
     }
-  }, [state.isHolder])
+  }, [state.isHolder, isConnected])
 
   return (
     <>
@@ -72,31 +72,52 @@ const Home = () => {
             tag="p"
             fontFamily="regular"
             color={STYLES.palette.colors.white60}
+            style={{
+              textAlign: 'center',
+              maxWidth: rem(800),
+              marginBottom: rem(16),
+            }}
           >
-            Currently, only holders of our Cruize Entry Pass NFT can access our
-            private beta.{' '}
-            {!isConnected ? (
-              <Typography
-                tag="span"
-                fontFamily="regular"
-                style={{ fontSize: 'inherit' }}
-                color={STYLES.palette.colors.white60}
-              >
-                Connect wallet to continue.
-              </Typography>
-            ) : null}
+            Currently, only holders of our Cruize Entry Pass NFT holders can
+            access our private beta.
+            <br />
+            <Typography
+              tag="span"
+              fontFamily="regular"
+              style={{ fontSize: 'inherit' }}
+              color={STYLES.palette.colors.white60}
+            >
+              {!isConnected
+                ? 'Connect wallet to continue.'
+                : 'Currently, only holders of our Cruize Entry Pass NFT holders can access our private beta. You can get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server.'}
+            </Typography>
           </Typography>
           {!isConnected ? (
-            <ConnectWalletButton buttonLabel="Connect Wallet" />
-          ) : null}
+            <ConnectWalletButton
+              style={{ padding: `${rem(16)} ${rem(32)}` }}
+              buttonLabel="Connect Wallet"
+            />
+          ) : (
+            <Button
+              onClick={() =>
+                window.open(
+                  'https://discord.gg/cruize',
+                  '_blank',
+                  'noopener noreferrer',
+                )
+              }
+            >
+              Join Our Discord
+            </Button>
+          )}
         </InfoArea>
       </Container>
       <ErrorModal
         open={openErrorModal}
         hide={() => setOpenErrorModal(false)}
         title="Oops! You Don’t Hold the Cruize Entry Pass"
-        description="Only the Cruize Entry Pass NFT holders can access the private beta of Cruize. You can ask get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server"
-        actionLabel="Get Cruize entry pass"
+        description="Currently, only holders of our Cruize Entry Pass NFT holders can access our private beta. You can get it transferred to your wallet from someone who already holds it or let us know that you’re interested in joining our private beta on the #general channel of our Discord server."
+        actionLabel="Join our Discord"
         action={() =>
           window.open(
             'https://discord.gg/cruize',

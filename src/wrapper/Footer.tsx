@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import styled from 'styled-components'
 import { Button, Divider, Modal, Sprite, Typography } from '../components'
-import ProtectCard from '../pages/protect/ProtectCard'
+import ProtectCard from '../pages/protect/protectcard'
 import STYLES from '../style/styles.json'
 import { rem } from '../utils'
 
@@ -270,7 +270,15 @@ const Footer = () => {
       <Modal
         open={openProtectModal}
         hide={() => setOpenProtectModal(false)}
-        modalContentStyle={{ padding: rem(0), position: 'relative' }}
+        modalContentStyle={{
+          padding: rem(0),
+          position: 'relative',
+          borderRadius: rem(20),
+          background: 'transparent',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
       >
         <ProtectCard />
       </Modal>

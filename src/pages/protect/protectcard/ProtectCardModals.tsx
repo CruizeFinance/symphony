@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { ErrorModal } from '../../common'
-import { Button, Loader, Modal, Sprite, Typography } from '../../components'
-import STYLES from '../../style/styles.json'
-import { rem } from '../../utils'
+import { ErrorModal } from '../../../common'
+import { Button, Loader, Modal, Sprite, Typography } from '../../../components'
+import STYLES from '../../../style/styles.json'
+import { rem } from '../../../utils'
 
 const ButtonContainer = styled.div`
   width: 100%;

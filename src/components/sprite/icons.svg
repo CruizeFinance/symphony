@@ -261,7 +261,7 @@
     <symbol viewBox="0 0 12 7" fill="none" id="chevron-down">
     <path
       d="M10.375 1.25L6 5.625L1.625 1.25"
-      stroke="white"
+      stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
@@ -1258,6 +1258,22 @@
       stroke-width="2"
     />
     </symbol>
-
+    
+    <symbol viewBox="0 0 24 24" fill="none" id="top-right-arrow">
+    <path
+      d="M6 18L18 6"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M8.25 6H18V15.75"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    </symbol>
 
 </svg>

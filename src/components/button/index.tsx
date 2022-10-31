@@ -41,7 +41,17 @@ const ButtonContainer = styled.button<StyleProps>`
   }`
       : ''}
 `
+const ButtonContainerBlue = styled(ButtonContainer)`
+  border: none;
+  background: #396af433;
+  color: #ffffffb3;
 
+  &: hover {
+    background: #396af433;
+    color: #ffffffb3;
+    border: none;
+  }
+`
 const ButtonFlipStyle = styled(ButtonContainer)`
   color: ${STYLES.palette.colors.white};
   background: ${STYLES.palette.colors.black};
@@ -59,6 +69,17 @@ const ButtonFlipStyle = styled(ButtonContainer)`
   }
 }`
       : ''}
+`
+const ButtonFlipStyleBlue = styled(ButtonFlipStyle)`
+  border: 1px solid #396af433;
+  background: inherit;
+  color: #ffffffb3;
+
+  &: hover {
+    background: inherit;
+    color: #ffffffb3;
+    border: 1px solid #396af433;
+  }
 `
 
 const ProtectButton = styled(ButtonContainer)`
@@ -87,7 +108,12 @@ interface ButtonProps extends StyleProps {
   children: React.ReactNode
   onClick?: () => void
   style?: React.CSSProperties
-  buttonType?: 'protect-small' | 'protect' | 'flip-style'
+  buttonType?:
+    | 'protect-small'
+    | 'protect'
+    | 'flip-style'
+    | 'button-light-blue'
+    | 'flip-style-blue'
 }
 
 /*
@@ -124,6 +150,28 @@ const Button = ({
         >
           {children}
         </ButtonFlipStyle>
+      )
+    case 'button-light-blue':
+      return (
+        <ButtonContainerBlue
+          {...(!disabled ? { onClick: onClick } : undefined)}
+          borderRadius={borderRadius}
+          style={{ ...style }}
+          disabled={disabled}
+        >
+          {children}
+        </ButtonContainerBlue>
+      )
+    case 'flip-style-blue':
+      return (
+        <ButtonFlipStyleBlue
+          {...(!disabled ? { onClick: onClick } : undefined)}
+          borderRadius={borderRadius}
+          style={{ ...style }}
+          disabled={disabled}
+        >
+          {children}
+        </ButtonFlipStyleBlue>
       )
     default:
       return (

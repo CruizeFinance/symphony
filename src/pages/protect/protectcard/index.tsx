@@ -1,14 +1,14 @@
-import Tabs from '../../components/tabs'
-import { Button, Input, Sprite, Typography } from '../../components'
+import Tabs from '../../../components/tabs'
+import { Button, Input, Sprite, Typography } from '../../../components'
 import styled from 'styled-components'
-import STYLES from '../../style/styles.json'
+import STYLES from '../../../style/styles.json'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import {
   CONTRACTS_CONFIG,
   PRICE_FLOORS_RESPONSE_MAPPING,
   rem,
   GAS_LIMIT,
-} from '../../utils'
+} from '../../../utils'
 import {
   chain,
   erc20ABI,
@@ -19,18 +19,19 @@ import {
   useFeeData,
   usePrepareContractWrite,
 } from 'wagmi'
-import testnet_abi from '../../abis/testnet_cruize_abi.json'
+import testnet_abi from '../../../abis/testnet_cruize_abi.json'
 import { BigNumber, constants, ethers } from 'ethers'
-import { depositToDyDx, storeTransaction } from '../../apis'
-import { AppContext } from '../../context'
+import { depositToDyDx, storeTransaction } from '../../../apis'
+import { AppContext } from '../../../context'
 import ProtectCardModals from './ProtectCardModals'
-import { Actions } from '../../context/Action'
+import { Actions } from '../../../context/Action'
 import ProtectCardConfirm from './ProtectCardConfirm'
 import {
   ConnectWalletButton,
   DetailComponent,
   SwitchNetworkButton,
-} from '../../common'
+} from '../../../common'
+import AddTokensToWallet from './AddTokensToWallet'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -42,6 +43,7 @@ const ProtectArea = styled.div`
   flex-direction: column;
   gap: ${rem(20)};
   max-width: ${rem(450)};
+  position: relative;
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(20)} ${rem(16)};
@@ -65,7 +67,7 @@ const ProtectCard = () => {
   const [state, dispatch] = useContext(AppContext)
 
   // web3 hooks
-  const { connector, isConnected, address } = useAccount()
+  const { isConnected, address } = useAccount()
   const { data: gasData } = useFeeData({
     chainId: state.chainId,
     formatUnits: 'ether',
@@ -290,6 +292,7 @@ const ProtectCard = () => {
 
   return (
     <>
+      <AddTokensToWallet />
       <ProtectArea>
         <Tabs
           onClick={(val) =>
@@ -317,10 +320,10 @@ const ProtectCard = () => {
                   Number(inputValue || 0) * state.assetPrice
                 ).toString()} USDC`
           }`}
-          style={{ alignItems: 'flex-start' }}
         />
         <DetailArea>
           <Typography
+            fontFamily="semiBold"
             style={{ width: '100%', textAlign: 'left', marginBottom: rem(8) }}
           >
             Protection Details

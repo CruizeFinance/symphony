@@ -1,4 +1,3 @@
-import styled from 'styled-components'
 import { Button, Modal, Sprite, Typography } from '../components'
 import { rem } from '../utils'
 
@@ -12,14 +11,6 @@ interface ErrorModalProps {
   action?: () => void
   labelIcon?: string
 }
-
-const ErrorModalHeader = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: ${rem(16)};
-`
 
 /*
  * Error Modal
@@ -45,22 +36,26 @@ const ErrorModal = ({
       }}
       modalStyle={{ zIndex: 99999 }}
     >
-      <ErrorModalHeader>
-        <Sprite id="wrong-network-icon" width={56} height={56} />
-        <Typography
-          fontFamily="medium"
-          style={{
-            filter: 'brightness(40%)',
-            cursor: 'pointer',
-            lineHeight: '24px',
-          }}
-          onClick={hide}
-        >
-          &#x2715;
-        </Typography>
-      </ErrorModalHeader>
       <Typography
-        style={{ fontSize: rem(24), marginBottom: rem(4), lineHeight: '32px' }}
+        fontFamily="medium"
+        style={{
+          filter: 'brightness(40%)',
+          cursor: 'pointer',
+          lineHeight: '24px',
+          position: 'relative',
+          alignSelf: 'end'
+        }}
+        onClick={hide}
+      >
+        &#x2715;
+      </Typography>
+      <Typography
+        style={{
+          fontSize: rem(24),
+          marginBottom: rem(4),
+          lineHeight: '32px',
+          textAlign: 'center',
+        }}
         fontFamily="bold"
       >
         {title}
@@ -72,6 +67,7 @@ const ErrorModal = ({
             marginBottom: rem(32),
             filter: 'brightness(60%)',
             lineHeight: '16.48px',
+            textAlign: 'center',
           }}
           fontFamily="regular"
         >

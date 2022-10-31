@@ -1,6 +1,6 @@
 import STYLES from '../../style/styles.json'
 import styled from 'styled-components'
-import ProtectCard from './ProtectCard'
+import ProtectCard from './protectcard'
 import { rem } from '../../utils'
 import HowItWorks from './HowItWorks'
 import { useContext, useEffect } from 'react'
@@ -23,9 +23,9 @@ const Container = styled.div`
 `
 const ProtectArea = styled.div`
   display: block;
+  max-width: ${rem(456)};
   position: sticky;
   top: ${rem(120)};
-  max-width: ${rem(456)};
   @media only screen and (max-width: 1024px) {
     display: none;
   }
@@ -44,26 +44,24 @@ const Protect = () => {
 
   //web3 hook
   const { isConnected } = useAccount()
-
-  /*
-   * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
-   */
-  useEffect(() => {
-    if (!isConnected) {
+  
+  /* 
+  * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
+  */
+ useEffect(() => {
+   if (isConnected) {
+     switch (state.isHolder) {
+       case 'loading':
+         break
+       case 'holder':
+         break
+       default:
+         navigate('/')
+     }
+   } else {
       navigate('/')
-      return
-    }
-    if (isConnected && state.isHolder) {
-      switch (state.isHolder) {
-        case 'loading':
-          break
-        case 'holder':
-          break
-        default:
-          navigate('/')
-      }
-    }
-  }, [state.isHolder, isConnected])
+   }
+ }, [state.isHolder, isConnected])
 
   return (
     <Container id="protect-container">

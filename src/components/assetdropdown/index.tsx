@@ -157,9 +157,10 @@ const AssetDropdown = ({
           id="chevron-down"
           width={12}
           height={7}
-          {...(showOptions
-            ? { style: { transform: 'rotate(180deg)' } }
-            : undefined)}
+          style={{ 
+            color: STYLES.palette.colors.white,
+            transform: showOptions ? 'rotate(180deg)' : 'rotate(0deg)'
+           }}
         />
       </Picker>
       {showOptions ? (

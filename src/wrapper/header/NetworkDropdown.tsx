@@ -15,6 +15,7 @@ import {
   MobileHeaderTab,
   Section,
 } from './DropdownStyledComponents'
+import STYLES from '../../style/styles.json'
 
 /*
  * Network Dropdown
@@ -62,9 +63,10 @@ const NetworkDropdown = () => {
             id="chevron-down"
             width={12}
             height={12}
-            {...(showNetworkDropdown
-              ? { style: { transform: 'rotate(180deg)' } }
-              : undefined)}
+            style={{ 
+              color: STYLES.palette.colors.white,
+              transform: showNetworkDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+             }}
           />
         </MobileHeaderTab>
         <DesktopHeaderTab>
@@ -83,9 +85,10 @@ const NetworkDropdown = () => {
               id="chevron-down"
               width={12}
               height={12}
-              {...(showNetworkDropdown
-                ? { style: { transform: 'rotate(180deg)' } }
-                : undefined)}
+              style={{ 
+                color: STYLES.palette.colors.white,
+                transform: showNetworkDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+               }}
             />
           </ConnectedButton>
         </DesktopHeaderTab>

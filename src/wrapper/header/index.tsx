@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { Button, Sprite, Typography } from '../../components'
+import { Sprite, Typography } from '../../components'
 import { Modal } from '../../components'
 import STYLES from '../../style/styles.json'
 import { chain, useAccount, useSwitchNetwork } from 'wagmi'
-import { CONTRACTS_CONFIG, rem } from '../../utils'
+import { rem } from '../../utils'
 import RecentOrdersDropdown from './RecentOrdersDropdown'
 import NetworkDropdown from './NetworkDropdown'
 import ConnectButtonDropdown from './ConnectButtonDropdown'
@@ -60,7 +60,7 @@ const MobileHeader = styled.div<MobileProps>`
   position: fixed;
   overflow: hidden;
   width: 100%;
-  height: ${(props) => (props.open ? '80vh' : rem(0))};
+  height: ${(props) => (props.open ? '85vh' : rem(0))};
   top: ${rem(64)};
   left: 0;
   background: ${STYLES.palette.colors.black};
@@ -86,17 +86,13 @@ const Header = () => {
   // context hook
   const [state] = useContext(AppContext)
 
-  // object for fetching token contracts per chain
-  const contractsConfig = CONTRACTS_CONFIG[state.chainId || chain.goerli.id]
-
-  //web3 hook
+  //web3 hooks
   const { isConnected } = useAccount()
   const { switchNetwork } = useSwitchNetwork()
 
   // state hooks
   const [openConnectedModal, setOpenConnectedModal] = useState(false)
   const [openMobileHeader, setOpenMobileHeader] = useState(false)
-  const [errorType, setErrorType] = useState<'error' | 'network'>('network')
   const [openErrorModal, setOpenErrorModal] = useState(false)
 
   /*
@@ -107,37 +103,6 @@ const Header = () => {
       setOpenConnectedModal(false)
       clearTimeout(timeout)
     }, 2000)
-  }
-
-  /*
-   * add token
-   * a function written to add wrapped cruize token to metamask against the selected asset
-   */
-  const addToken = async () => {
-    try {
-      await window.ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address:
-              contractsConfig[
-                state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.cruizeAddress || '', // The address that the token is at.
-            symbol: `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
-            decimals:
-              contractsConfig[
-                state.selectedAsset.label as keyof typeof contractsConfig
-              ]?.decimals || '', // The number of decimals in the token
-          },
-        },
-      })
-    } catch (error: any) {
-      if (error.code !== 4001) {
-        setErrorType('error')
-        setOpenErrorModal(true)
-      }
-    }
   }
 
   /*
@@ -154,7 +119,6 @@ const Header = () => {
    * an effect to set the wrong network boolean
    */
   useEffect(() => {
-    setErrorType('network')
     setOpenErrorModal(
       isConnected && !state.supportedChains.includes(state.chainId),
     )
@@ -181,20 +145,6 @@ const Header = () => {
               state.isHolder === 'holder' ? (
                 <>
                   <RecentOrdersDropdown />
-                  <Button
-                    buttonType="protect"
-                    onClick={addToken}
-                    style={{
-                      fontSize: rem(16),
-                      lineHeight: '24px',
-                      padding: `${rem(8)} ${rem(16)}`,
-                      fontFamily: STYLES.typography.fonts.regular
-                    }}
-                    borderRadius={100}
-                  >
-                    Add cr{state.selectedAsset.label} to MetaMask{' '}
-                    <Sprite id="metamask-icon" width={20} height={20} />
-                  </Button>
                 </>
               ) : null}
               <NetworkDropdown />
@@ -241,26 +191,13 @@ const Header = () => {
       <ErrorModal
         open={openErrorModal}
         hide={() => setOpenErrorModal(false)}
-        title={
-          errorType === 'error'
-            ? 'Oops, something went wrong.'
-            : 'Oops, your wallet is not on the right network.'
-        }
-        description={
-          errorType === 'error'
-            ? `Our engineers are working on it. 
-        Please try again soon.`
-            : `It seems your wallet is running on a different network. Please
+        title={'Oops, your wallet is not on the right network.'}
+        description={`It seems your wallet is running on a different network. Please
         manually change the network in your wallet or click on the button
-        below.`
-        }
-        {...(errorType === 'network'
-          ? {
-              action: () => switchNetwork?.(chain.goerli.id),
-              labelIcon: 'switch-network-icon',
-              actionLabel: 'Switch Network',
-            }
-          : undefined)}
+        below.`}
+        action={() => switchNetwork?.(chain.goerli.id)}
+        labelIcon="switch-network-icon"
+        actionLabel="Switch Network"
       />
     </>
   )
