@@ -63,9 +63,10 @@ const NetworkDropdown = () => {
             id="chevron-down"
             width={12}
             height={12}
-            {...(showNetworkDropdown
-              ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
-              : undefined)}
+            style={{ 
+              color: STYLES.palette.colors.white,
+              transform: showNetworkDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+             }}
           />
         </MobileHeaderTab>
         <DesktopHeaderTab>
@@ -84,9 +85,10 @@ const NetworkDropdown = () => {
               id="chevron-down"
               width={12}
               height={12}
-              {...(showNetworkDropdown
-                ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
-                : undefined)}
+              style={{ 
+                color: STYLES.palette.colors.white,
+                transform: showNetworkDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+               }}
             />
           </ConnectedButton>
         </DesktopHeaderTab>

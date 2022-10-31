@@ -30,6 +30,7 @@ const CollapsibleArea = styled(HeaderButton)`
   flex-direction: column;
   margin-top: ${rem(12)};
   gap: ${rem(16)};
+  cursor: default;
 `
 const Buttons = styled(HeaderButton)`
   cursor: default;

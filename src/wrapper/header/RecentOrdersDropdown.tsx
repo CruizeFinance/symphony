@@ -86,9 +86,10 @@ const RecentOrdersDropdown = () => {
           id="chevron-down"
           width={16}
           height={16}
-          {...(showRecentOrders
-            ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
-            : undefined)}
+          style={{ 
+            color: STYLES.palette.colors.white,
+            transform: showRecentOrders ? 'rotate(180deg)' : 'rotate(0deg)'
+           }}
         />
       </MobileHeaderTab>
       <DesktopHeaderTab>
