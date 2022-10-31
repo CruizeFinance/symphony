@@ -38,6 +38,11 @@ export const CONTRACTS_CONFIG = {
       cruizeAddress: '',
       decimals: 0,
     },
+    'CRUIZE-USDC': {
+      address: '',
+      cruizeAddress: '0x8D49213C586Dc6D38dC219DC404713336d88d1af',
+      decimals: 6
+    },
     [AssetDropdownOptions.WETH]: {
       address: '0xCCa7d1416518D095E729904aAeA087dBA749A4dC',
       cruizeAddress: '0x182410CFD75A9b3219F9f3b9b397b88d6960609C',
