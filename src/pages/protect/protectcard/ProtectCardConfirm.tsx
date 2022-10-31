@@ -1,10 +1,10 @@
 import { useContext } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { DetailComponent } from '../../common'
-import { Button, Sprite, Tooltip, Typography } from '../../components'
-import { AppContext } from '../../context'
-import STYLES from '../../style/styles.json'
-import { rem } from '../../utils'
+import { DetailComponent } from '../../../common'
+import { Button, Sprite, Typography } from '../../../components'
+import { AppContext } from '../../../context'
+import STYLES from '../../../style/styles.json'
+import { rem } from '../../../utils'
 
 // confirm style props to open the confirm card
 interface ConfirmStyleProps {
@@ -19,7 +19,7 @@ interface ArrowStyleProps {
 const Container = styled.div<ConfirmStyleProps>`
   position: absolute;
   width: ${(props) => (props.open ? '100%' : '0px')};
-  height: auto;
+  height: 100%;
   overflow: hidden;
   background: ${STYLES.palette.colors.cardBackground};
   right: 0;
@@ -154,7 +154,7 @@ const ProtectCardConfirm = ({
               id="chevron-down"
               height={20}
               width={20}
-              style={{ transform: 'rotate(90deg)', cursor: 'pointer' }}
+              style={{ transform: 'rotate(90deg)', cursor: 'pointer', color: STYLES.palette.colors.white }}
               onClick={hide}
             />
             <Typography fontFamily="bold">Summary</Typography>

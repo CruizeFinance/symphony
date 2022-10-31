@@ -99,7 +99,7 @@ const Divider = ({
                 width={12}
                 height={7}
                 {...(labelOptions.dropdownOpen
-                  ? { style: { transform: 'rotate(180deg)' } }
+                  ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
                   : undefined)}
               />
             ) : null}

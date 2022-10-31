@@ -15,6 +15,7 @@ import {
   MobileHeaderTab,
   Section,
 } from './DropdownStyledComponents'
+import STYLES from '../../style/styles.json'
 
 /*
  * Network Dropdown
@@ -63,7 +64,7 @@ const NetworkDropdown = () => {
             width={12}
             height={12}
             {...(showNetworkDropdown
-              ? { style: { transform: 'rotate(180deg)' } }
+              ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
               : undefined)}
           />
         </MobileHeaderTab>
@@ -84,7 +85,7 @@ const NetworkDropdown = () => {
               width={12}
               height={12}
               {...(showNetworkDropdown
-                ? { style: { transform: 'rotate(180deg)' } }
+                ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
                 : undefined)}
             />
           </ConnectedButton>

@@ -14,6 +14,7 @@ import {
   MobileHeaderTab,
   Section,
 } from './DropdownStyledComponents'
+import STYLES from '../../style/styles.json'
 
 /*
  * Connect Button Dropdown
@@ -48,7 +49,7 @@ const ConnectButtonDropdown = () => {
           width={12}
           height={12}
           {...(showButtonDropdown
-            ? { style: { transform: 'rotate(180deg)' } }
+            ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
             : undefined)}
         />
       </MobileHeaderTab>
@@ -64,7 +65,7 @@ const ConnectButtonDropdown = () => {
             width={12}
             height={12}
             {...(showButtonDropdown
-              ? { style: { transform: 'rotate(180deg)' } }
+              ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
               : undefined)}
           />
         </ConnectedButton>

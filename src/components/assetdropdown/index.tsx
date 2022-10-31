@@ -158,7 +158,7 @@ const AssetDropdown = ({
           width={12}
           height={7}
           {...(showOptions
-            ? { style: { transform: 'rotate(180deg)' } }
+            ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
             : undefined)}
         />
       </Picker>

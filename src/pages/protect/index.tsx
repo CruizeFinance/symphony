@@ -1,6 +1,6 @@
 import STYLES from '../../style/styles.json'
 import styled from 'styled-components'
-import ProtectCard from './ProtectCard'
+import ProtectCard from './protectcard'
 import { rem } from '../../utils'
 import HowItWorks from './HowItWorks'
 import { useContext, useEffect } from 'react'
@@ -23,8 +23,7 @@ const Container = styled.div`
 `
 const ProtectArea = styled.div`
   display: block;
-  position: sticky;
-  top: ${rem(120)};
+  position: relative;
   max-width: ${rem(456)};
   @media only screen and (max-width: 1024px) {
     display: none;
