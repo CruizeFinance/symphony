@@ -48,9 +48,10 @@ const ConnectButtonDropdown = () => {
           id="chevron-down"
           width={12}
           height={12}
-          {...(showButtonDropdown
-            ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
-            : undefined)}
+          style={{ 
+            color: STYLES.palette.colors.white,
+            transform: showButtonDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+           }}
         />
       </MobileHeaderTab>
       <DesktopHeaderTab>
@@ -64,9 +65,10 @@ const ConnectButtonDropdown = () => {
             id="chevron-down"
             width={12}
             height={12}
-            {...(showButtonDropdown
-              ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
-              : undefined)}
+            style={{ 
+              color: STYLES.palette.colors.white,
+              transform: showButtonDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+             }}
           />
         </ConnectedButton>
       </DesktopHeaderTab>

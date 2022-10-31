@@ -98,9 +98,10 @@ const Divider = ({
                 id="chevron-down"
                 width={12}
                 height={7}
-                {...(labelOptions.dropdownOpen
-                  ? { style: { transform: 'rotate(180deg)', color: STYLES.palette.colors.white } }
-                  : undefined)}
+                style={{ 
+                  color: STYLES.palette.colors.white,
+                  transform: labelOptions.dropdown ? 'rotate(180deg)' : 'rotate(0deg)'
+                 }}
               />
             ) : null}
           </Typography>
