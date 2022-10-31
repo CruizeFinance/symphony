@@ -52,7 +52,6 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
       : undefined),
     watch: true,
   })
-  
   const {
     data: holderData,
     isLoading: checkingHolder,
