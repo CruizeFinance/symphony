@@ -23,7 +23,6 @@ const Container = styled.div`
 `
 const ProtectArea = styled.div`
   display: block;
-  position: relative;
   max-width: ${rem(456)};
   @media only screen and (max-width: 1024px) {
     display: none;

@@ -43,6 +43,7 @@ const ProtectArea = styled.div`
   flex-direction: column;
   gap: ${rem(20)};
   max-width: ${rem(450)};
+  position: relative;
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(20)} ${rem(16)};
