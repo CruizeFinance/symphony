@@ -323,6 +323,7 @@ const ProtectCard = () => {
         />
         <DetailArea>
           <Typography
+            fontFamily="semiBold"
             style={{ width: '100%', textAlign: 'left', marginBottom: rem(8) }}
           >
             Protection Details
