@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
-import { Button, Sprite, Typography } from '../../components'
+import { Sprite, Typography } from '../../components'
 import { rem } from '../../utils'
 import STYLES from '../../style/styles.json'
 import { ConnectWalletButton, ErrorModal } from '../../common'
