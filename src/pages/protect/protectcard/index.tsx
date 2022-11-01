@@ -66,6 +66,9 @@ const ProtectCard = () => {
   // context
   const [state, dispatch] = useContext(AppContext)
 
+  // object for fetching token contracts per chain
+  const contractsConfig = CONTRACTS_CONFIG[state.chainId || chain.goerli.id]
+
   // web3 hooks
   const { isConnected, address } = useAccount()
   const { data: gasData } = useFeeData({
@@ -73,9 +76,6 @@ const ProtectCard = () => {
     formatUnits: 'ether',
     watch: true,
   })
-
-  // object for fetching token contracts per chain
-  const contractsConfig = CONTRACTS_CONFIG[state.chainId || chain.goerli.id]
 
   /*
    * memoised value to set a local price floor state instead of rewriting the same code multiple times
@@ -134,7 +134,8 @@ const ProtectCard = () => {
             value: ethers.utils.parseEther(inputValue || '0'),
           }
         : undefined),
-      gasLimit: GAS_LIMIT,
+      gasPrice: gasData?.gasPrice || '',
+      gasLimit: GAS_LIMIT
     },
   })
 

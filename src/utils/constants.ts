@@ -83,7 +83,7 @@ export const CONTRACTS_CONFIG = {
 export const BASE_URL = 'https://test.trident.cruize.finance'
 
 // gas limit for interacting with contracts
-export const GAS_LIMIT = 30000000
+export const GAS_LIMIT = 1000000
 
 // how it works cards content
 export const HOW_IT_WORKS_CARDS = [
