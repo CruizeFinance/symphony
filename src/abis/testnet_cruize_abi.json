@@ -127,6 +127,12 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isPriceFloor",
+        "type": "bool"
       }
     ],
     "name": "WithdrawEvent",
