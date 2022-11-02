@@ -95,13 +95,13 @@ export const HOW_IT_WORKS_CARDS = [
   {
     key: 2,
     title: 'Short Hedge',
-    description: `The USDC debt is used as collateral on DyDx to buy a short perpetual contract on your asset at the price floor. This enables the hedge against price drops below the floor. The algorithm dynamically manages the position against price fluctuations and prevents liquidation.`,
+    description: `The USDC debt is used as collateral on dYdX to buy a short perpetual contract on your asset at the price floor. This enables the hedge against price drops below the floor. The algorithm dynamically manages the position against price fluctuations and prevents liquidation.`,
   },
   {
     key: 3,
     title: 'Exercise',
     description:
-      'Because of the long exposure as well as the short hedge, if ETH rises, your crETH rises with it and can be redeemed for ETH above the floor. If ETH falls below the floor, you can exercise your protection and receive the notional value of the floor in USDC',
+      'Because of the long exposure as well as the short hedge, if ETH rises, your crETH rises with it and can be redeemed for ETH above the floor. If ETH falls below the floor, you can exercise your protection and receive the notional value of the floor in USDC.',
   },
 ]
 
