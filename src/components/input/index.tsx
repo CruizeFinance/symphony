@@ -124,13 +124,13 @@ const Input = ({
   }
 
   const enforcer = (nextUserInput: string) => {
-    if (
-      nextUserInput === '' ||
-      (inputRegex.test(escapeRegExp(nextUserInput)) &&
-      /^(?!\.)-?\d*[.]?\d*$/.test(nextUserInput))
-    ) {
-      onInputChange(nextUserInput)
-      setInputValue(nextUserInput)
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      onInputChange(
+        nextUserInput[0] === '.' ? '0' + nextUserInput : nextUserInput,
+      )
+      setInputValue(
+        nextUserInput[0] === '.' ? '0' + nextUserInput : nextUserInput,
+      )
     }
   }
 
