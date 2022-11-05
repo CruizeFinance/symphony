@@ -69,6 +69,7 @@ interface InputFieldProps
   showBalance?: boolean
   onMaxClick?: (val: string) => void
   cruizeBalanceData?: string
+  prependSymbol?: string
 }
 
 function escapeRegExp(string: string): string {
@@ -92,6 +93,7 @@ const Input = ({
   onAssetChange,
   onMaxClick,
   cruizeBalanceData,
+  prependSymbol,
   ...props
 }: InputFieldProps) => {
   // context
@@ -123,8 +125,12 @@ const Input = ({
 
   const enforcer = (nextUserInput: string) => {
     if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
-      onInputChange(nextUserInput)
-      setInputValue(nextUserInput)
+      onInputChange(
+        nextUserInput[0] === '.' ? '0' + nextUserInput : nextUserInput,
+      )
+      setInputValue(
+        nextUserInput[0] === '.' ? '0' + nextUserInput : nextUserInput,
+      )
     }
   }
 
@@ -160,9 +166,21 @@ const Input = ({
             maxLength={10}
             size={10}
             type={'text'}
-            value={input || ''}
+            value={prependSymbol && input ? prependSymbol + input : input || ''}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              enforcer(e.target.value)
+              if (prependSymbol) {
+                const value = e.target.value
+
+                // cut off prepended symbol
+                const formattedValue = value.toString().includes(prependSymbol)
+                  ? value.toString().slice(1, value.toString().length + 1)
+                  : value
+
+                // replace commas with periods, because uniswap exclusively uses period as the decimal separator
+                enforcer(formattedValue.replace(/,/g, '.'))
+              } else {
+                enforcer(e.target.value.replace(/,/g, '.'))
+              }
             }}
             placeholder="0"
           />
