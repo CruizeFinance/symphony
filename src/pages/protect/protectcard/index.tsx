@@ -284,11 +284,14 @@ const ProtectCard = () => {
               contractsConfig[
                 type === 'usdc'
                   ? 'CRUIZE-USDC'
-                  : type === 'weth'
-                  ? 'WETH'
                   : (state.selectedAsset.label as keyof typeof contractsConfig)
               ]![type === 'weth' ? 'address' : 'cruizeAddress'] || '', // The address that the token is at.
-            symbol: type === 'usdc' ? 'USDC' : type === 'weth' ? 'WETH' : `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
+            symbol:
+              type === 'usdc'
+                ? 'USDC'
+                : type === 'weth'
+                ? state.selectedAsset.label
+                : `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
             decimals:
               contractsConfig[
                 type === 'usdc'
@@ -455,7 +458,7 @@ const ProtectCard = () => {
           tag="label"
           style={{ fontSize: rem(14), lineHeight: '16.48px' }}
         >
-          Need to add WETH to your wallet?&nbsp;
+          Need to add {state.selectedAsset.label} to your wallet?&nbsp;
           <Typography
             tag="label"
             color={STYLES.palette.colors.linkBlue}
