@@ -172,10 +172,16 @@ const ProtectCard = () => {
    * hook to prepare config for minting contract accepted WETH
    */
   const { config: mintConfig } = usePrepareContractWrite({
-    addressOrName: contractsConfig['WETH'].address || '',
+    addressOrName:
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.address || '',
     contractInterface: wethMintAbi,
     functionName: 'mint',
-    args: ethers.utils.parseEther('1'),
+    args: ethers.utils.parseUnits(
+      '1',
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.decimals || '',
+    ),
   })
 
   /*
