@@ -10,10 +10,6 @@ export const ETH_MAINNET_PRICE_FEED =
 // dropdown options for assets
 export const DROPDOWN_OPTIONS = [
   {
-    label: AssetDropdownOptions.ETH,
-    icon: 'eth-asset-icon',
-  },
-  {
     label: AssetDropdownOptions.WETH,
     icon: 'weth-asset-icon',
   },
@@ -25,7 +21,6 @@ export const DROPDOWN_OPTIONS = [
 
 // parameters to pass in the api for fetching price for a selected asset
 export const ASSET_PRICE_API_PARAMS = {
-  [AssetDropdownOptions.ETH]: 'ethereum',
   [AssetDropdownOptions.WETH]: 'ethereum',
   [AssetDropdownOptions.WBTC]: 'bitcoin',
 }
@@ -53,11 +48,6 @@ export const CONTRACTS_CONFIG = {
       cruizeAddress: '0x0CeeF85Ff1F62cb8265Ce056f9Be82d61f9a2314',
       decimals: 8,
     },
-    [AssetDropdownOptions.ETH]: {
-      address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      cruizeAddress: '0xfE75a9CFd8A7b42cc2cc3D76Ab3796bAEd96e642',
-      decimals: 18,
-    }, // dummy value
   },
   [chain.mainnet.id]: {
     CRUIZE: { address: '', cruizeAddress: '', decimals: 0 },
@@ -71,11 +61,6 @@ export const CONTRACTS_CONFIG = {
       cruizeAddress: '',
       decimals: 8,
     },
-    [AssetDropdownOptions.ETH]: {
-      address: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE',
-      cruizeAddress: '',
-      decimals: 18,
-    }, // dummy value
   },
 }
 
@@ -107,7 +92,6 @@ export const HOW_IT_WORKS_CARDS = [
 
 // price floors mapping to set the floor dynamically on asset change
 export const PRICE_FLOORS_RESPONSE_MAPPING = {
-  [AssetDropdownOptions.ETH]: 'ethereum',
   [AssetDropdownOptions.WETH]: 'ethereum',
   [AssetDropdownOptions.WBTC]: 'bitcoin',
 }
