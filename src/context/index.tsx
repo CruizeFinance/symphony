@@ -42,14 +42,9 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
   const { chain } = useNetwork()
   const { data: balanceData } = useBalance({
     addressOrName: address,
-    ...(state.selectedAsset.label !== 'ETH'
-      ? {
-          token:
-            contractsConfig[
-              state.selectedAsset.label as keyof typeof contractsConfig
-            ]?.address,
-        }
-      : undefined),
+    token:
+      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
+        ?.address,
     watch: true,
   })
   const {

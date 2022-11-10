@@ -5,7 +5,7 @@ import State from './StateModel'
 const initialState: State = {
   ethPrice: 0,
   assetPrice: 0,
-  selectedAsset: { label: AssetDropdownOptions.ETH },
+  selectedAsset: { label: AssetDropdownOptions.WETH },
   chainId: 1,
   assetBalance: '',
   priceFloors: {

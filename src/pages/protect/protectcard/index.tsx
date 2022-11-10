@@ -32,6 +32,7 @@ import {
   SwitchNetworkButton,
 } from '../../../common'
 import AddTokensToWallet from './AddTokensToWallet'
+import wethMintAbi from '../../../abis/weth_minting_abi.json'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -128,14 +129,8 @@ const ProtectCard = () => {
         ?.address || '',
     ],
     overrides: {
-      ...(state.tab === 'protect' && state.selectedAsset.label === 'ETH'
-        ? {
-            from: address,
-            value: ethers.utils.parseEther(inputValue || '0'),
-          }
-        : undefined),
       gasPrice: gasData?.gasPrice || '',
-      gasLimit: GAS_LIMIT
+      gasLimit: GAS_LIMIT,
     },
   })
 
@@ -173,6 +168,21 @@ const ProtectCard = () => {
     args: [address, contractsConfig?.CRUIZE?.address || ''],
   })
 
+  /*
+   * hook to prepare config for minting contract accepted WETH
+   */
+  const { config: mintConfig } = usePrepareContractWrite({
+    addressOrName: contractsConfig['WETH'].address || '',
+    contractInterface: wethMintAbi,
+    functionName: 'mint',
+    args: ethers.utils.parseEther('1'),
+  })
+
+  /*
+   * a hook that returns a function to mint contract accepted WETH
+   */
+  const { writeAsync: mintAsync } = useDeprecatedContractWrite(mintConfig)
+
   // balance hook for cruize wrapped assets
   const { data: cruizeBalanceData } = useBalance({
     addressOrName: address,
@@ -186,7 +196,6 @@ const ProtectCard = () => {
    * memoised data to check whether the token is approved or not
    */
   const allowed = useMemo(() => {
-    if (state.selectedAsset.label === 'ETH') return true
     if (allowanceData) {
       return BigNumber.from(allowanceData).gt(BigNumber.from('0'))
     }
@@ -217,11 +226,16 @@ const ProtectCard = () => {
    */
   const onButtonClick = async (type = 'interact') => {
     try {
+      if (type === 'mint') await addToken('weth')
       setModalType('transaction')
       // interacting with the contract
       const tx =
-        type === 'interact' ? await writeAsync?.() : await approveAsync?.()
-      if (type !== 'interact') setTokenApproved(true)
+        type === 'interact'
+          ? await writeAsync?.()
+          : type === 'mint'
+          ? await mintAsync?.()
+          : await approveAsync?.()
+      if (type === 'approve') setTokenApproved(true)
       setOpenTransactionModal(true)
       setTransactionLoading(true)
       setTransactionDetails({
@@ -252,6 +266,42 @@ const ProtectCard = () => {
       console.log(e)
       resetTransactionDetails()
       setTokenApproved(false)
+    }
+  }
+
+  /*
+   * add token
+   * a function written to add wrapped cruize token to metamask against the selected asset
+   */
+  const addToken = async (type = 'asset') => {
+    try {
+      await window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address:
+              contractsConfig[
+                type === 'usdc'
+                  ? 'CRUIZE-USDC'
+                  : type === 'weth'
+                  ? 'WETH'
+                  : (state.selectedAsset.label as keyof typeof contractsConfig)
+              ]![type === 'weth' ? 'address' : 'cruizeAddress'] || '', // The address that the token is at.
+            symbol: type === 'usdc' ? 'USDC' : `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
+            decimals:
+              contractsConfig[
+                type === 'usdc'
+                  ? 'CRUIZE-USDC'
+                  : (state.selectedAsset.label as keyof typeof contractsConfig)
+              ]?.decimals || '', // The number of decimals in the token
+          },
+        },
+      })
+    } catch (error: any) {
+      if (error.code !== 4001) {
+        setOpenErrorModal(true)
+      }
     }
   }
 
@@ -293,7 +343,7 @@ const ProtectCard = () => {
 
   return (
     <>
-      <AddTokensToWallet />
+      <AddTokensToWallet addToken={addToken} />
       <ProtectArea>
         <Tabs
           onClick={(val) =>
@@ -405,12 +455,11 @@ const ProtectCard = () => {
           tag="label"
           style={{ fontSize: rem(14), lineHeight: '16.48px' }}
         >
-          Need to add GoerliETH to your wallet?&nbsp;
+          Need to add WETH to your wallet?&nbsp;
           <Typography
-            tag="a"
+            tag="label"
             color={STYLES.palette.colors.linkBlue}
-            href="https://faucetlink.to/goerli"
-            openInNewTab={true}
+            onClick={() => onButtonClick('mint')}
             style={{
               fontSize: rem(14),
               lineHeight: '16.48px',

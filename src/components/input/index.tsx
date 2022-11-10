@@ -229,11 +229,7 @@ const Input = ({
                           state.tab === 'withdraw'
                             ? cruizeBalanceData
                             : state.assetBalance || 0,
-                        ) *
-                        (state.selectedAsset.label === 'ETH' &&
-                        state.tab === 'protect'
-                          ? 0.9
-                          : 1)
+                        ) * 1
                       )
                         .toString()
                         ?.slice(0, 10) ?? '0.0',
@@ -244,11 +240,7 @@ const Input = ({
                         state.tab === 'withdraw'
                           ? cruizeBalanceData
                           : state.assetBalance || 0,
-                      ) *
-                      (state.selectedAsset.label === 'ETH' &&
-                      state.tab === 'protect'
-                        ? 0.9
-                        : 1)
+                      ) * 1
                     )
                       .toString()
                       ?.slice(0, 10) ?? '0.0',
