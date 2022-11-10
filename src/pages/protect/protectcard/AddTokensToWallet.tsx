@@ -1,9 +1,9 @@
 import styled from 'styled-components'
-import { CONTRACTS_CONFIG, rem } from '../../../utils'
+import { rem } from '../../../utils'
 import STYLES from '../../../style/styles.json'
 import { Button, Collapsible, Sprite, Typography } from '../../../components'
 import { useContext, useState } from 'react'
-import { chain, useAccount } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { AppContext } from '../../../context'
 import { ErrorModal } from '../../../common'
 
@@ -13,6 +13,10 @@ const Container = styled.div`
   background: ${STYLES.palette.colors.tagBlue};
   margin-bottom: ${rem(16)};
   max-width: ${rem(456)};
+
+  @media only screen and (max-width: 1024px) {
+    display: none;
+  }
 `
 const HeaderButton = styled.div`
   display: flex;
@@ -37,7 +41,11 @@ const Buttons = styled(HeaderButton)`
   width: 100%;
 `
 
-const AddTokensToWallet = () => {
+interface AddTokensToWalletProps {
+  addToken: (val?: string) => Promise<void>
+}
+
+const AddTokensToWallet = ({ addToken }: AddTokensToWalletProps) => {
   // context hook
   const [state] = useContext(AppContext)
 
@@ -46,43 +54,6 @@ const AddTokensToWallet = () => {
   // state hooks
   const [openButtons, setOpenButtons] = useState(true)
   const [openErrorModal, setOpenErrorModal] = useState(false)
-
-  // object for fetching token contracts per chain
-  const contractsConfig = CONTRACTS_CONFIG[state.chainId || chain.goerli.id]
-
-  /*
-   * add token
-   * a function written to add wrapped cruize token to metamask against the selected asset
-   */
-  const addToken = async (type = 'asset') => {
-    try {
-      await window.ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address:
-              contractsConfig[
-                type === 'usdc'
-                  ? 'CRUIZE-USDC'
-                  : (state.selectedAsset.label as keyof typeof contractsConfig)
-              ]?.cruizeAddress || '', // The address that the token is at.
-            symbol: type === 'usdc' ? 'USDC' : `cr${state.selectedAsset.label}`, // A ticker symbol or shorthand, up to 5 chars.
-            decimals:
-              contractsConfig[
-                type === 'usdc'
-                  ? 'CRUIZE-USDC'
-                  : (state.selectedAsset.label as keyof typeof contractsConfig)
-              ]?.decimals || '', // The number of decimals in the token
-          },
-        },
-      })
-    } catch (error: any) {
-      if (error.code !== 4001) {
-        setOpenErrorModal(true)
-      }
-    }
-  }
 
   return connector?.id.toLowerCase() === 'metamask' ? (
     <>

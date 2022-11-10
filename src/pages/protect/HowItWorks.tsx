@@ -171,9 +171,7 @@ const HowItWorks = () => {
           return {
             ...option,
             pickerLabel:
-              option.label === AssetDropdownOptions.ETH
-                ? 'Protect ETH'
-                : option.label === AssetDropdownOptions.WETH
+              option.label === AssetDropdownOptions.WETH
                 ? 'Protect WETH'
                 : 'Protect WBTC',
           }
