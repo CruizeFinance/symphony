@@ -29,7 +29,7 @@ export const ASSET_PRICE_API_PARAMS = {
 export const CONTRACTS_CONFIG = {
   [chain.goerli.id]: {
     CRUIZE: {
-      address: '0xe322c9313ef7885B0e5b7c2eBAe2166220534ae8',
+      address: '0xE3aA7826348EE5559bcF70FE626a3ca6962ffBdC',
       cruizeAddress: '',
       decimals: 0,
     },
@@ -40,12 +40,12 @@ export const CONTRACTS_CONFIG = {
     },
     [AssetDropdownOptions.WETH]: {
       address: '0xCCa7d1416518D095E729904aAeA087dBA749A4dC',
-      cruizeAddress: '0xD0758C324c14EE52831E5590e3f1d174b548AD59',
+      cruizeAddress: '0x0716e8f8F5D85a112aeA660b9D4a4fa17a159f1f',
       decimals: 18,
     },
     [AssetDropdownOptions.WBTC]: {
       address: '0xf4423F4152966eBb106261740da907662A3569C5',
-      cruizeAddress: '0xde577Ee7D34d0F4056394A87243EC51E955668C7',
+      cruizeAddress: '0x208Da915D297d74625888Ff22b3704782b41Dd30',
       decimals: 8,
     },
   },
