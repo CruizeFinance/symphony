@@ -117,7 +117,7 @@ const ProtectCard = () => {
   const { config: writeConfig } = usePrepareContractWrite({
     addressOrName: contractsConfig?.CRUIZE?.address || '',
     contractInterface: testnet_abi,
-    functionName: state.tab === 'protect' ? 'deposit' : 'withdrawTest',
+    functionName: state.tab === 'protect' ? 'deposit' : 'withdraw',
     args: [
       ethers.utils.parseUnits(
         inputValue || '0',
@@ -307,7 +307,7 @@ const ProtectCard = () => {
           },
         },
       })
-    } catch (error: any) {
+  } catch (error: any) {
       if (error.code !== 4001) {
         setOpenErrorModal(true)
       }
