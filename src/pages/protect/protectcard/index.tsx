@@ -8,12 +8,7 @@ import {
   PRICE_FLOORS_RESPONSE_MAPPING,
   rem,
 } from '../../../utils'
-import {
-  chain,
-  useAccount,
-  useBalance,
-  useFeeData,
-} from 'wagmi'
+import { chain, useAccount, useBalance, useFeeData } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 import { depositToDyDx, storeTransaction } from '../../../apis'
 import { AppContext } from '../../../context'
@@ -107,11 +102,7 @@ const ProtectCard = () => {
   const setError = () => {
     return inputValue && parseFloat(inputValue) === 0
       ? 'Amount should be greater than 0.'
-      : inputValue &&
-        parseFloat(inputValue) >
-          parseFloat(
-              state.assetBalance
-          )
+      : inputValue && parseFloat(inputValue) > parseFloat(state.assetBalance)
       ? 'Amount exceeds balance.'
       : state.tab === 'protect' && state.assetPrice < priceFloor
       ? 'Cannot protect. Asset price lower than the price floor.'
@@ -125,31 +116,35 @@ const ProtectCard = () => {
     functionName: string,
     args: Array<BigNumber | string>,
   ) => {
-    const tx = await state.cruizeContract![functionName](...args)
-    setModalType('transaction')
-    setOpenTransactionModal(true)
-    setTransactionLoading(true)
-    setTransactionDetails({
-      ...transactionDetails,
-      hash: tx!.hash,
-    })
-    // waiting on the transaction to retrieve the data
-    const data = await tx!.wait()
-    setTransactionDetails({
-      hash: data.transactionHash,
-      status: data.status || 0,
-    })
-    setTransactionLoading(false)
-    setOpenConfirmSection(false)
-    await storeTransaction(
-      address ?? '',
-      data.transactionHash,
-      state.selectedAsset.label,
-      inputValue || '0',
-      state.tab === 'withdraw' ? 'Withdraw' : 'Protect',
-    )
-    // deposit assets to dydx in case of protect
-    if (state.tab === 'protect') await depositToDyDx()
+    try {
+      const tx = await state.cruizeContract![functionName](...args)
+      setModalType('transaction')
+      setOpenTransactionModal(true)
+      setTransactionLoading(true)
+      setTransactionDetails({
+        ...transactionDetails,
+        hash: tx!.hash,
+      })
+      // waiting on the transaction to retrieve the data
+      const data = await tx!.wait()
+      setTransactionDetails({
+        hash: data.transactionHash,
+        status: data.status || 0,
+      })
+      setTransactionLoading(false)
+      setOpenConfirmSection(false)
+      await storeTransaction(
+        address ?? '',
+        data.transactionHash,
+        state.selectedAsset.label,
+        inputValue || '0',
+        state.tab === 'withdraw' ? 'Withdraw' : 'Protect',
+      )
+      // deposit assets to dydx in case of protect
+      if (state.tab === 'protect') await depositToDyDx()
+    } catch (e) {
+      resetTransactionDetails()
+    }
   }
 
   /*
@@ -321,7 +316,13 @@ const ProtectCard = () => {
 
   useEffect(() => {
     if (state.assetContract && state.cruizeAssetContract) getBalance()
-  }, [state.tab, state.selectedAsset, transactionDetails.status, state.assetContract, state.cruizeAssetContract])
+  }, [
+    state.tab,
+    state.selectedAsset,
+    transactionDetails.status,
+    state.assetContract,
+    state.cruizeAssetContract,
+  ])
 
   return (
     <>
