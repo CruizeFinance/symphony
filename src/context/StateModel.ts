@@ -1,3 +1,4 @@
+import { Contract } from 'ethers'
 import { Option } from '../components/assetdropdown/SelectInterfaces'
 
 // state interface
@@ -14,5 +15,10 @@ export default interface State {
   tab: 'protect' | 'withdraw'
   supportedChains: number[]
   loadingInitialAPIs: boolean
-  isHolder: 'loading' | 'error' | 'holder'
+  isHolder: boolean
+  cruizeContract: Contract | null
+  assetContract: Contract | null
+  mintContract: Contract | null
+  cruizeAssetContract: Contract | null
+  tokenApproved: boolean
 }

@@ -68,7 +68,6 @@ interface InputFieldProps
   inputValue?: string
   showBalance?: boolean
   onMaxClick?: (val: string) => void
-  cruizeBalanceData?: string
   prependSymbol?: string
 }
 
@@ -92,7 +91,6 @@ const Input = ({
   onInputChange,
   onAssetChange,
   onMaxClick,
-  cruizeBalanceData,
   prependSymbol,
   ...props
 }: InputFieldProps) => {
@@ -216,34 +214,19 @@ const Input = ({
             >
               <>
                 {state.tab === 'withdraw' ? 'Limit' : 'Balance'}:{' '}
-                {state.tab === 'withdraw'
-                  ? cruizeBalanceData?.slice(0, 10)
-                  : state.assetBalance?.slice(0, 10) || '-'}
+                {state.assetBalance?.slice(0, 10) || '-'}
               </>
               <MaxButton
                 onClick={() => {
                   onMaxClick &&
                     onMaxClick(
-                      (
-                        Number(
-                          state.tab === 'withdraw'
-                            ? cruizeBalanceData
-                            : state.assetBalance || 0,
-                        ) * 1
-                      )
+                      (Number(state.assetBalance || 0) * 1)
                         .toString()
                         ?.slice(0, 10) ?? '0.0',
                     )
                   setInputValue(
-                    (
-                      Number(
-                        state.tab === 'withdraw'
-                          ? cruizeBalanceData
-                          : state.assetBalance || 0,
-                      ) * 1
-                    )
-                      .toString()
-                      ?.slice(0, 10) ?? '0.0',
+                    (Number(state.assetBalance) * 1).toString()?.slice(0, 10) ??
+                      '0.0',
                   )
                 }}
               >

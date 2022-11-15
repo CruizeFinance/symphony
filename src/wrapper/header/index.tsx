@@ -142,7 +142,7 @@ const Header = () => {
           {isConnected ? (
             <>
               {state.supportedChains.includes(state.chainId) &&
-              state.isHolder === 'holder' ? (
+              state.isHolder ? (
                 <>
                   <RecentOrdersDropdown />
                 </>
@@ -164,7 +164,7 @@ const Header = () => {
             {isConnected ? (
               <>
                 {state.supportedChains.includes(state.chainId) &&
-                state.isHolder === 'holder' ? (
+                state.isHolder ? (
                   <>
                     <RecentOrdersDropdown />
                   </>

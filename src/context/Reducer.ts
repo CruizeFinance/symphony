@@ -51,6 +51,31 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         isHolder: action.payload,
       }
+    case Actions.STORE_CRUIZE_CONTRACT:
+      return {
+        ...state,
+        cruizeContract: action.payload,
+      }
+    case Actions.STORE_ASSET_CONTRACT:
+      return {
+        ...state,
+        assetContract: action.payload,
+      }
+    case Actions.STORE_MINT_CONTRACT:
+      return {
+        ...state,
+        mintContract: action.payload,
+      }
+    case Actions.STORE_CRUIZE_ASSET_CONTRACT:
+      return {
+        ...state,
+        cruizeAssetContract: action.payload,
+      }
+    case Actions.STORE_TOKEN_APPROVED:
+      return {
+        ...state,
+        tokenApproved: action.payload,
+      }
     default:
       return state
   }

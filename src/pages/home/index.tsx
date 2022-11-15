@@ -43,22 +43,18 @@ const Home = () => {
   //state hook
   const [openErrorModal, setOpenErrorModal] = useState(false)
 
-  /* 
+  /*
    * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
    */
   useEffect(() => {
     if (isConnected) {
-      switch (state.isHolder) {
-        case 'loading':
-          break
-        case 'holder':
-          navigate('/protect')
-          break
-        default:
-          setOpenErrorModal(true)
+      if (state.isHolder) {
+        navigate('/protect')
+      } else {
+        setOpenErrorModal(true)
       }
     }
-  }, [state.isHolder, isConnected])
+  }, [state.isHolder])
 
   return (
     <>

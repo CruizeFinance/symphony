@@ -7,20 +7,9 @@ import {
   CONTRACTS_CONFIG,
   PRICE_FLOORS_RESPONSE_MAPPING,
   rem,
-  GAS_LIMIT,
 } from '../../../utils'
-import {
-  chain,
-  erc20ABI,
-  useAccount,
-  useBalance,
-  useContractRead,
-  useDeprecatedContractWrite,
-  useFeeData,
-  usePrepareContractWrite,
-} from 'wagmi'
-import testnet_abi from '../../../abis/testnet_cruize_abi.json'
-import { BigNumber, constants, ethers } from 'ethers'
+import { chain, useAccount, useFeeData } from 'wagmi'
+import { BigNumber, ethers } from 'ethers'
 import { depositToDyDx, storeTransaction } from '../../../apis'
 import { AppContext } from '../../../context'
 import ProtectCardModals from './ProtectCardModals'
@@ -32,7 +21,7 @@ import {
   SwitchNetworkButton,
 } from '../../../common'
 import AddTokensToWallet from './AddTokensToWallet'
-import wethMintAbi from '../../../abis/weth_minting_abi.json'
+import { TransactionReceipt, TransactionResponse } from '../../../interfaces'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -75,7 +64,6 @@ const ProtectCard = () => {
   const { data: gasData } = useFeeData({
     chainId: state.chainId,
     formatUnits: 'ether',
-    watch: true,
   })
 
   /*
@@ -96,7 +84,6 @@ const ProtectCard = () => {
 
   // state hooks
   const [openConfirmSection, setOpenConfirmSection] = useState(false)
-  const [tokenApproved, setTokenApproved] = useState(false)
   const [openTutorialVideo, setOpenTutorialVideo] = useState(false)
   const [inputValue, setInputValue] = useState<string | undefined>('')
   const [openTransactionModal, setOpenTransactionModal] = useState(false)
@@ -110,116 +97,13 @@ const ProtectCard = () => {
     'tutorial' | 'transaction' | 'error'
   >('tutorial')
 
-  // web3 hooks to interact with the contract
-  /*
-   * hook to prepare contract config for protecting or withdrawing
-   */
-  const { config: writeConfig } = usePrepareContractWrite({
-    addressOrName: contractsConfig?.CRUIZE?.address || '',
-    contractInterface: testnet_abi,
-    functionName: state.tab === 'protect' ? 'deposit' : 'withdraw',
-    args: [
-      ethers.utils.parseUnits(
-        inputValue || '0',
-        contractsConfig[
-          state.selectedAsset.label as keyof typeof contractsConfig
-        ]?.decimals || '',
-      ),
-      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.address || '',
-    ],
-    overrides: {
-      gasPrice: gasData?.gasPrice || '',
-      gasLimit: GAS_LIMIT,
-    },
-  })
-
-  /*
-   * hook that returns a function to execute while writing the contract... either protect or withdraw
-   */
-  const { writeAsync } = useDeprecatedContractWrite(writeConfig)
-
-  /*
-   * hook to prepare config for taking token approval to deposit in the contract
-   */
-  const { config: approveConfig } = usePrepareContractWrite({
-    addressOrName:
-      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.address || '',
-    contractInterface: erc20ABI,
-    functionName: 'approve',
-    args: [contractsConfig?.CRUIZE?.address || '', constants.MaxUint256],
-  })
-
-  /*
-   * hook that returns a function to execute for token approval
-   */
-  const { writeAsync: approveAsync } = useDeprecatedContractWrite(approveConfig)
-
-  /*
-   * hook to return token allowance data
-   */
-  const { data: allowanceData, status: allowanceStatus } = useContractRead({
-    addressOrName:
-      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.address || '',
-    contractInterface: erc20ABI,
-    functionName: 'allowance',
-    args: [address, contractsConfig?.CRUIZE?.address || ''],
-  })
-
-  /*
-   * hook to prepare config for minting contract accepted WETH
-   */
-  const { config: mintConfig } = usePrepareContractWrite({
-    addressOrName:
-      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.address || '',
-    contractInterface: wethMintAbi,
-    functionName: 'mint',
-    args: ethers.utils.parseUnits(
-      '1',
-      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.decimals || '',
-    ),
-  })
-
-  /*
-   * a hook that returns a function to mint contract accepted WETH
-   */
-  const { writeAsync: mintAsync } = useDeprecatedContractWrite(mintConfig)
-
-  // balance hook for cruize wrapped assets
-  const { data: cruizeBalanceData } = useBalance({
-    addressOrName: address,
-    token:
-      contractsConfig[state.selectedAsset.label as keyof typeof contractsConfig]
-        ?.cruizeAddress || '',
-    watch: true,
-  })
-
-  /*
-   * memoised data to check whether the token is approved or not
-   */
-  const allowed = useMemo(() => {
-    if (allowanceData) {
-      return BigNumber.from(allowanceData).gt(BigNumber.from('0'))
-    }
-  }, [allowanceData, state.selectedAsset])
-
   /*
    * a function to display error in case of a mistype during protection or withdrawal
    */
   const setError = () => {
     return inputValue && parseFloat(inputValue) === 0
       ? 'Amount should be greater than 0.'
-      : inputValue &&
-        parseFloat(inputValue) >
-          parseFloat(
-            state.tab === 'protect'
-              ? state.assetBalance
-              : cruizeBalanceData?.formatted!,
-          )
+      : inputValue && parseFloat(inputValue) > parseFloat(state.assetBalance)
       ? 'Amount exceeds balance.'
       : state.tab === 'protect' && state.assetPrice < priceFloor
       ? 'Cannot protect. Asset price lower than the price floor.'
@@ -227,51 +111,107 @@ const ProtectCard = () => {
   }
 
   /*
-   * function to protect or withdraw the asset based on the user's choice
-   * also enables token approval in case the asset is not approved for depositing in contract
+   * function to write to contract
    */
-  const onButtonClick = async (type = 'interact') => {
+  const writeContract = async (
+    functionName: string,
+    args: Array<BigNumber | string>,
+  ) => {
     try {
-      if (type === 'mint') await addToken('weth')
-      setModalType('transaction')
-      // interacting with the contract
-      const tx =
-        type === 'interact'
-          ? await writeAsync?.()
-          : type === 'mint'
-          ? await mintAsync?.()
-          : await approveAsync?.()
-      if (type === 'approve') setTokenApproved(true)
-      setOpenTransactionModal(true)
-      setTransactionLoading(true)
-      setTransactionDetails({
-        ...transactionDetails,
-        hash: tx.hash,
-      })
-      // waiting on the transaction to retrieve the data
-      const data = await tx.wait()
-      setTransactionDetails({
-        hash: data.transactionHash,
-        status: data.status || 0,
-      })
-      setTransactionLoading(false)
-      setOpenConfirmSection(false)
-      // functions to execute after the transaction has been executed
-      // store the record for type of transaction in the DB
-      if (type === 'interact')
-        await storeTransaction(
-          address ?? '',
-          data.transactionHash,
-          state.selectedAsset.label,
-          inputValue || '0',
-          state.tab === 'withdraw' ? 'Withdraw' : 'Protect',
-        )
+      const tx = await state.cruizeContract![functionName](...args)
+      const data: TransactionReceipt = await transactionExecution(tx)
+      await storeTransaction(
+        address ?? '',
+        data.transactionHash,
+        state.selectedAsset.label,
+        inputValue || '0',
+        state.tab === 'withdraw' ? 'Withdraw' : 'Protect',
+      )
       // deposit assets to dydx in case of protect
-      if (type === 'interact' && state.tab === 'protect') await depositToDyDx()
+      if (state.tab === 'protect') await depositToDyDx()
     } catch (e) {
-      console.log(e)
       resetTransactionDetails()
-      setTokenApproved(false)
+    }
+  }
+
+  /*
+   * a function to approve erc20 token to spend
+   */
+  const approveToken = async () => {
+    try {
+      const tx = await state.assetContract!.approve(
+        contractsConfig['CRUIZE'].address,
+        ethers.constants.MaxUint256,
+      )
+      const data: TransactionReceipt = await transactionExecution(tx)
+      dispatch({
+        type: Actions.STORE_TOKEN_APPROVED,
+        payload: data.status === 1,
+      })
+    } catch (e) {
+      resetTransactionDetails()
+    }
+  }
+
+  /*
+   * a function to execute transaction
+   */
+  const transactionExecution = async (tx: TransactionResponse) => {
+    setModalType('transaction')
+    setOpenTransactionModal(true)
+    setTransactionLoading(true)
+    setTransactionDetails({
+      ...transactionDetails,
+      hash: tx!.hash,
+    })
+    const data: TransactionReceipt = await tx.wait()
+    setTransactionDetails({
+      hash: data.transactionHash,
+      status: data.status || 0,
+    })
+    setTransactionLoading(false)
+    setOpenConfirmSection(false)
+    return data
+  }
+
+  /*
+   * function to protect or withdraw the asset based on the user's choice
+   */
+  const onConfirm = async () => {
+    try {
+      writeContract(state.tab === 'protect' ? 'deposit' : 'withdraw', [
+        ethers.utils.parseUnits(
+          inputValue || '0',
+          contractsConfig[
+            state.selectedAsset.label as keyof typeof contractsConfig
+          ]?.decimals || '',
+        ),
+        contractsConfig[
+          state.selectedAsset.label as keyof typeof contractsConfig
+        ]?.address || '',
+      ])
+    } catch (e) {
+      resetTransactionDetails()
+    }
+  }
+
+  /*
+   * a function to mint token
+   */
+  const mintToken = async () => {
+    try {
+      addToken('weth')
+      const tx = await state.mintContract!.mint(
+        ethers.utils.parseUnits(
+          '1',
+          contractsConfig[
+            state.selectedAsset.label as keyof typeof contractsConfig
+          ]?.decimals || '',
+        ),
+      )
+      await transactionExecution(tx)
+    } catch (e) {
+      resetTransactionDetails()
     }
   }
 
@@ -307,7 +247,7 @@ const ProtectCard = () => {
           },
         },
       })
-  } catch (error: any) {
+    } catch (error: any) {
       if (error.code !== 4001) {
         setOpenErrorModal(true)
       }
@@ -337,6 +277,24 @@ const ProtectCard = () => {
   }, [openTransactionModal])
 
   /*
+   * a function to get user balance of the asset
+   */
+  const getBalance = async () => {
+    const balance: BigNumber = await state[
+      state.tab === 'protect' ? 'assetContract' : 'cruizeAssetContract'
+    ]!.balanceOf(address)
+    dispatch({
+      type: Actions.STORE_ASSET_BALANCE,
+      payload: ethers.utils.formatUnits(
+        balance,
+        contractsConfig[
+          state.selectedAsset.label as keyof typeof contractsConfig
+        ]?.decimals,
+      ),
+    })
+  }
+
+  /*
    * an effect to call the set default values function
    */
   useEffect(() => {
@@ -344,11 +302,17 @@ const ProtectCard = () => {
   }, [state.tab, state.selectedAsset])
 
   /*
-   * an effect to set token approval based on memoised data
+   * an effect to get asset balance
    */
   useEffect(() => {
-    setTokenApproved(!!allowed)
-  }, [allowed])
+    if (state.assetContract && state.cruizeAssetContract) getBalance()
+  }, [
+    state.tab,
+    state.selectedAsset,
+    transactionDetails.status,
+    state.assetContract,
+    state.cruizeAssetContract,
+  ])
 
   return (
     <>
@@ -367,7 +331,6 @@ const ProtectCard = () => {
           onMaxClick={(val) => setInputValue(val)}
           // error shown if the input value is 0 or the input value exceeds the user asset's balance
           error={setError()}
-          cruizeBalanceData={cruizeBalanceData?.formatted}
         />
         <DetailComponent
           label="You will receive"
@@ -410,13 +373,17 @@ const ProtectCard = () => {
                 gap: rem(4),
               }}
             >
-              <Sprite id="gas-icon" width={16} height={16} />
-              <Typography tag="span" color={STYLES.palette.colors.white60}>
-                $
-                {(
-                  Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
-                ).toFixed(10) || '-'}
-              </Typography>
+              {state.supportedChains.includes(state.chainId) ? (
+                <>
+                  <Sprite id="gas-icon" width={16} height={16} />
+                  <Typography tag="span" color={STYLES.palette.colors.white60}>
+                    $
+                    {(
+                      Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
+                    ).toFixed(10) || '-'}
+                  </Typography>
+                </>
+              ) : null}
             </Typography>
           }
         />
@@ -439,21 +406,18 @@ const ProtectCard = () => {
                     setModalType('error')
                     setOpenErrorModal(true)
                   }
-                : !(allowed || tokenApproved)
-                ? () => onButtonClick('approve')
+                : !state.tokenApproved
+                ? () => approveToken()
                 : () => setOpenConfirmSection(true)
             }
             disabled={
               setError() !== '' ||
               !inputValue ||
-              allowanceStatus === 'loading' ||
               !state.supportedChains.includes(state.chainId)
             }
             borderRadius={32}
           >
-            {allowanceStatus === 'loading'
-              ? 'Please wait...'
-              : !(allowed || tokenApproved)
+            {!state.tokenApproved
               ? 'Approve'
               : state.tab === 'protect'
               ? 'Protect'
@@ -468,7 +432,7 @@ const ProtectCard = () => {
           <Typography
             tag="label"
             color={STYLES.palette.colors.linkBlue}
-            onClick={() => onButtonClick('mint')}
+            onClick={() => mintToken()}
             style={{
               fontSize: rem(14),
               lineHeight: '16.48px',
@@ -502,7 +466,7 @@ const ProtectCard = () => {
         <ProtectCardConfirm
           open={openConfirmSection}
           hide={() => setOpenConfirmSection(false)}
-          onConfirm={() => onButtonClick('interact')}
+          onConfirm={() => onConfirm()}
           inputValue={inputValue || '-'}
           totalCost={
             Number(gasData?.formatted.gasPrice || 0).toFixed(10) + ' ETH'

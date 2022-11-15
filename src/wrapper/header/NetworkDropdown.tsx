@@ -30,7 +30,6 @@ const NetworkDropdown = () => {
   const { data: gasData } = useFeeData({
     chainId: chain.goerli.id,
     formatUnits: 'gwei',
-    watch: true,
   })
 
   // state hook
