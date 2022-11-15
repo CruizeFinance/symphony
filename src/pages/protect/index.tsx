@@ -44,24 +44,15 @@ const Protect = () => {
 
   //web3 hook
   const { isConnected } = useAccount()
-  
-  /* 
-  * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
-  */
- useEffect(() => {
-   if (isConnected) {
-     switch (state.isHolder) {
-       case 'loading':
-         break
-       case 'holder':
-         break
-       default:
-         navigate('/')
-     }
-   } else {
+
+  /*
+   * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
+   */
+  useEffect(() => {
+    if (!state.isHolder) {
       navigate('/')
-   }
- }, [state.isHolder, isConnected])
+    }
+  }, [state.isHolder])
 
   return (
     <Container id="protect-container">
