@@ -1,6 +1,7 @@
 [
   { "inputs": [], "name": "AssetAlreadyExists", "type": "error" },
   { "inputs": [], "name": "AssetNotAllowed", "type": "error" },
+  { "inputs": [], "name": "InvalidDeposit", "type": "error" },
   { "inputs": [], "name": "NotEnoughBalance", "type": "error" },
   { "inputs": [], "name": "SameBorrowRatio", "type": "error" },
   { "inputs": [], "name": "TransferFailed", "type": "error" },
@@ -53,7 +54,7 @@
         "type": "uint8"
       }
     ],
-    "name": "CreateToken",
+    "name": "CreateTokenEvent",
     "type": "event"
   },
   {
@@ -245,9 +246,9 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_token0", "type": "address" },
-      { "internalType": "address", "name": "_token1", "type": "address" },
-      { "internalType": "uint24", "name": "_fee", "type": "uint24" }
+      { "internalType": "address", "name": "token0", "type": "address" },
+      { "internalType": "address", "name": "token1", "type": "address" },
+      { "internalType": "uint24", "name": "fee", "type": "uint24" }
     ],
     "name": "addUniPool",
     "outputs": [],
@@ -272,7 +273,7 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_wallet", "type": "address" }
+      { "internalType": "address", "name": "wallet", "type": "address" }
     ],
     "name": "changeDyDxWallet",
     "outputs": [],
@@ -295,12 +296,12 @@
   },
   {
     "inputs": [
-      { "internalType": "string", "name": "_name", "type": "string" },
-      { "internalType": "string", "name": "_symbol", "type": "string" },
-      { "internalType": "address", "name": "_reserve", "type": "address" },
-      { "internalType": "address", "name": "_tokenOracle", "type": "address" },
-      { "internalType": "uint8", "name": "_decimal", "type": "uint8" },
-      { "internalType": "uint24", "name": "_fee", "type": "uint24" }
+      { "internalType": "string", "name": "name", "type": "string" },
+      { "internalType": "string", "name": "symbol", "type": "string" },
+      { "internalType": "address", "name": "reserve", "type": "address" },
+      { "internalType": "address", "name": "tokenOracle", "type": "address" },
+      { "internalType": "uint8", "name": "decimal", "type": "uint8" },
+      { "internalType": "uint24", "name": "fee", "type": "uint24" }
     ],
     "name": "createToken",
     "outputs": [],
@@ -309,8 +310,8 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_reserve", "type": "address" }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "address", "name": "reserve", "type": "address" }
     ],
     "name": "deposit",
     "outputs": [],
@@ -336,8 +337,12 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "_dydxWallet", "type": "address" },
-      { "internalType": "address", "name": "_crContract", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "dydxWalletAddr",
+        "type": "address"
+      },
+      { "internalType": "address", "name": "crImplentation", "type": "address" }
     ],
     "name": "initialize",
     "outputs": [],
@@ -356,16 +361,6 @@
     "name": "owner",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "_asset", "type": "address" },
-      { "internalType": "uint256", "name": "_fee", "type": "uint256" }
-    ],
-    "name": "payFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -401,15 +396,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" }
-    ],
-    "name": "repay",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "toTreasury",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -427,20 +413,10 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_token", "type": "address" }
+      { "internalType": "uint256", "name": "amount", "type": "uint256" },
+      { "internalType": "address", "name": "token", "type": "address" }
     ],
     "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_token", "type": "address" }
-    ],
-    "name": "withdrawTest",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
