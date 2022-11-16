@@ -47,10 +47,12 @@ const Home = () => {
    * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
    */
   useEffect(() => {
-    if (state.isHolder) {
-      navigate('/protect')
-    } else {
-      setOpenErrorModal(true)
+    if (isConnected) {
+      if (state.isHolder) {
+        navigate('/protect')
+      } else {
+        setOpenErrorModal(true)
+      }
     }
   }, [state.isHolder])
 
