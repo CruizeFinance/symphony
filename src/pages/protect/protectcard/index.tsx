@@ -312,6 +312,7 @@ const ProtectCard = () => {
     transactionDetails.status,
     state.assetContract,
     state.cruizeAssetContract,
+    address
   ])
 
   return (
