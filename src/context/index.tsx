@@ -1,10 +1,8 @@
 import { createContext, useEffect, useReducer } from 'react'
 import {
   useAccount,
-  useBalance,
   useNetwork,
   chain as allChains,
-  useContractRead,
   useSigner,
   erc20ABI,
 } from 'wagmi'
@@ -89,10 +87,17 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
     if (isConnected && address && signer) {
       checkHolder()
     }
-  }, [isConnected, address, signer])
+  }, [isConnected, address, signer, state.chainId])
 
+  /*
+   * an effect to load all contract if the user is on the right chain and is a holder of the beta pass
+   */
   useEffect(() => {
-    if (state.isHolder && signer) {
+    if (
+      state.isHolder &&
+      signer &&
+      state.supportedChains.includes(state.chainId)
+    ) {
       const cruizeContract: Contract = new ethers.Contract(
         contractsConfig['CRUIZE'].address,
         testnet_abi,
@@ -128,7 +133,7 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
       })
       checkAllowance(assetContract)
     }
-  }, [state.isHolder, signer, state.selectedAsset])
+  }, [state.isHolder, signer, state.selectedAsset, address, state.chainId])
 
   /*
    * function to check token allowance
@@ -148,6 +153,9 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
     }
   }
 
+  /*
+   * a function to check if the user is holder of the beta pass
+   */
   const checkHolder = async () => {
     const nftContract = new ethers.Contract(
       BETA_ACCESS_NFT_CONTRACT,

@@ -49,6 +49,8 @@ const Home = () => {
   useEffect(() => {
     if (state.isHolder) {
       navigate('/protect')
+    } else {
+      setOpenErrorModal(true)
     }
   }, [state.isHolder])
 

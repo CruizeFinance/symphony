@@ -6,7 +6,6 @@ import HowItWorks from './HowItWorks'
 import { useContext, useEffect } from 'react'
 import { AppContext } from '../../context'
 import { useNavigate } from 'react-router-dom'
-import { useAccount } from 'wagmi'
 
 const Container = styled.div`
   display: flex;
@@ -41,9 +40,6 @@ const Protect = () => {
 
   // react router dom hook
   const navigate = useNavigate()
-
-  //web3 hook
-  const { isConnected } = useAccount()
 
   /*
    * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
