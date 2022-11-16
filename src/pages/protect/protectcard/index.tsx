@@ -8,7 +8,7 @@ import {
   PRICE_FLOORS_RESPONSE_MAPPING,
   rem,
 } from '../../../utils'
-import { chain, useAccount, useBalance, useFeeData } from 'wagmi'
+import { chain, useAccount, useFeeData } from 'wagmi'
 import { BigNumber, ethers } from 'ethers'
 import { depositToDyDx, storeTransaction } from '../../../apis'
 import { AppContext } from '../../../context'
@@ -21,6 +21,7 @@ import {
   SwitchNetworkButton,
 } from '../../../common'
 import AddTokensToWallet from './AddTokensToWallet'
+import { TransactionReceipt, TransactionResponse } from '../../../interfaces'
 
 const ProtectArea = styled.div`
   background: ${STYLES.palette.colors.cardBackground};
@@ -118,21 +119,7 @@ const ProtectCard = () => {
   ) => {
     try {
       const tx = await state.cruizeContract![functionName](...args)
-      setModalType('transaction')
-      setOpenTransactionModal(true)
-      setTransactionLoading(true)
-      setTransactionDetails({
-        ...transactionDetails,
-        hash: tx!.hash,
-      })
-      // waiting on the transaction to retrieve the data
-      const data = await tx!.wait()
-      setTransactionDetails({
-        hash: data.transactionHash,
-        status: data.status || 0,
-      })
-      setTransactionLoading(false)
-      setOpenConfirmSection(false)
+      const data: TransactionReceipt = await transactionExecution(tx)
       await storeTransaction(
         address ?? '',
         data.transactionHash,
@@ -156,27 +143,35 @@ const ProtectCard = () => {
         contractsConfig['CRUIZE'].address,
         ethers.constants.MaxUint256,
       )
-      setModalType('transaction')
-      setOpenTransactionModal(true)
-      setTransactionLoading(true)
-      setTransactionDetails({
-        ...transactionDetails,
-        hash: tx!.hash,
-      })
-      const data = await tx.wait()
-      setTransactionDetails({
-        hash: data.transactionHash,
-        status: data.status || 0,
-      })
+      const data: TransactionReceipt = await transactionExecution(tx)
       dispatch({
         type: Actions.STORE_TOKEN_APPROVED,
         payload: data.status === 1,
       })
-      setTransactionLoading(false)
-      setOpenConfirmSection(false)
     } catch (e) {
       resetTransactionDetails()
     }
+  }
+
+  /*
+   * a function to execute transaction
+   */
+  const transactionExecution = async (tx: TransactionResponse) => {
+    setModalType('transaction')
+    setOpenTransactionModal(true)
+    setTransactionLoading(true)
+    setTransactionDetails({
+      ...transactionDetails,
+      hash: tx!.hash,
+    })
+    const data: TransactionReceipt = await tx.wait()
+    setTransactionDetails({
+      hash: data.transactionHash,
+      status: data.status || 0,
+    })
+    setTransactionLoading(false)
+    setOpenConfirmSection(false)
+    return data
   }
 
   /*
@@ -196,11 +191,13 @@ const ProtectCard = () => {
         ]?.address || '',
       ])
     } catch (e) {
-      console.log(e)
       resetTransactionDetails()
     }
   }
 
+  /*
+   * a function to mint token
+   */
   const mintToken = async () => {
     try {
       addToken('weth')
@@ -212,20 +209,7 @@ const ProtectCard = () => {
           ]?.decimals || '',
         ),
       )
-      setModalType('transaction')
-      setOpenTransactionModal(true)
-      setTransactionLoading(true)
-      setTransactionDetails({
-        ...transactionDetails,
-        hash: tx!.hash,
-      })
-      const data = await tx.wait()
-      setTransactionDetails({
-        hash: data.transactionHash,
-        status: data.status || 0,
-      })
-      setTransactionLoading(false)
-      setOpenConfirmSection(false)
+      await transactionExecution(tx)
     } catch (e) {
       resetTransactionDetails()
     }
@@ -292,6 +276,9 @@ const ProtectCard = () => {
     }
   }, [openTransactionModal])
 
+  /*
+   * a function to get user balance of the asset
+   */
   const getBalance = async () => {
     const balance: BigNumber = await state[
       state.tab === 'protect' ? 'assetContract' : 'cruizeAssetContract'
@@ -314,6 +301,9 @@ const ProtectCard = () => {
     setInputValue('')
   }, [state.tab, state.selectedAsset])
 
+  /*
+   * an effect to get asset balance
+   */
   useEffect(() => {
     if (state.assetContract && state.cruizeAssetContract) getBalance()
   }, [
@@ -383,13 +373,17 @@ const ProtectCard = () => {
                 gap: rem(4),
               }}
             >
-              <Sprite id="gas-icon" width={16} height={16} />
-              <Typography tag="span" color={STYLES.palette.colors.white60}>
-                $
-                {(
-                  Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
-                ).toFixed(10) || '-'}
-              </Typography>
+              {state.supportedChains.includes(state.chainId) ? (
+                <>
+                  <Sprite id="gas-icon" width={16} height={16} />
+                  <Typography tag="span" color={STYLES.palette.colors.white60}>
+                    $
+                    {(
+                      Number(gasData?.formatted.gasPrice || 0) * state.ethPrice
+                    ).toFixed(10) || '-'}
+                  </Typography>
+                </>
+              ) : null}
             </Typography>
           }
         />
