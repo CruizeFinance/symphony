@@ -28,6 +28,7 @@ const ConnectButtonDropdown = () => {
 
   // state hook
   const [showButtonDropdown, setShowButtonDropdown] = useState(false)
+  const [copySuccess, setCopySuccess] = useState(false)
 
   // hooks written to close the dropdown when clicked outside
   const connectButtonRef = useRef(null)
@@ -48,10 +49,10 @@ const ConnectButtonDropdown = () => {
           id="chevron-down"
           width={12}
           height={12}
-          style={{ 
+          style={{
             color: STYLES.palette.colors.white,
-            transform: showButtonDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
-           }}
+            transform: showButtonDropdown ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
         />
       </MobileHeaderTab>
       <DesktopHeaderTab>
@@ -65,10 +66,10 @@ const ConnectButtonDropdown = () => {
             id="chevron-down"
             width={12}
             height={12}
-            style={{ 
+            style={{
               color: STYLES.palette.colors.white,
-              transform: showButtonDropdown ? 'rotate(180deg)' : 'rotate(0deg)'
-             }}
+              transform: showButtonDropdown ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
           />
         </ConnectedButton>
       </DesktopHeaderTab>
@@ -102,13 +103,26 @@ const ConnectButtonDropdown = () => {
             <DropdownContent>
               <DropdownLabel>
                 <Typography fontFamily="medium">Copy Address</Typography>
-                <Sprite
-                  id="copy-icon"
-                  width={16}
-                  height={16}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => navigator.clipboard.writeText(address || '')}
-                />
+                {!copySuccess ? (
+                  <Sprite
+                    id="copy-icon"
+                    width={16}
+                    height={16}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(address || '')
+                      setCopySuccess(true)
+                      setTimeout(() => setCopySuccess(false), 1000)
+                    }}
+                  />
+                ) : (
+                  <img
+                    src="assets/copy-success.svg"
+                    alt="copy-success"
+                    width={16}
+                    height={16}
+                  />
+                )}
               </DropdownLabel>
               <DropdownLabel>
                 <Typography
@@ -141,7 +155,7 @@ const ConnectButtonDropdown = () => {
       ) : null}
     </DropdownArea>
   ) : (
-    <ConnectWalletButton buttonLabel='Connect' showIcon={true} />
+    <ConnectWalletButton buttonLabel="Connect" showIcon={true} />
   )
 }
 

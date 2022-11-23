@@ -54,7 +54,7 @@ const Home = () => {
         setOpenErrorModal(true)
       }
     }
-  }, [state.isHolder])
+  }, [state.isHolder, isConnected])
 
   return (
     <>
