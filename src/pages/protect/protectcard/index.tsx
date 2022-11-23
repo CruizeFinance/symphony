@@ -60,7 +60,7 @@ const ProtectCard = () => {
   const contractsConfig = CONTRACTS_CONFIG[state.chainId || chain.goerli.id]
 
   // web3 hooks
-  const { isConnected, address } = useAccount()
+  const { isConnected, address, connector } = useAccount()
   const { data: gasData } = useFeeData({
     chainId: state.chainId,
     formatUnits: 'ether',
@@ -200,7 +200,7 @@ const ProtectCard = () => {
    */
   const mintToken = async () => {
     try {
-      addToken('weth')
+      if (connector?.id.toLowerCase() === 'metamask') addToken('weth')
       const tx = await state.mintContract!.mint(
         ethers.utils.parseUnits(
           '1',
@@ -312,7 +312,7 @@ const ProtectCard = () => {
     transactionDetails.status,
     state.assetContract,
     state.cruizeAssetContract,
-    address
+    address,
   ])
 
   return (
