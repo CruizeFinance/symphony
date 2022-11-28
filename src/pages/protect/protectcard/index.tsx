@@ -324,6 +324,7 @@ const ProtectCard = () => {
             dispatch({ type: Actions.STORE_TAB, payload: val.toLowerCase() })
           }
           tabs={[{ label: 'Protect' }, { label: 'Withdraw' }]}
+          tabStyle={{ paddingTop: '0', fontSize: '22' }}
         />
         <Input
           label="AMOUNT"

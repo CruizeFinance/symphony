@@ -150,12 +150,19 @@ const Tabs = ({
               key={`${tab} - ${index}`}
               selected={selectedTab === tab.label}
               onClick={() => onTabClicked(tab.label)}
-              style={{ fontSize: rem(tabStyle?.fontSize || 16) }}
+              style={{ ...tabStyle }}
             >
               <Typography
                 tag="label"
                 fontFamily={fontFamily || 'bold'}
-                style={{ fontSize: rem(22), lineHeight: '24px' }}
+                style={{
+                  fontSize: `${
+                    tabStyle?.fontSize
+                      ? rem(tabStyle?.fontSize || '16px')
+                      : 'inherit'
+                  }`,
+                  lineHeight: '24px'
+                }}
               >
                 {tab.label}
                 {tab.icon}
