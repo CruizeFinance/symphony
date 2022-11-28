@@ -18,7 +18,7 @@ interface MobileProps {
 
 const Container = styled.div`
   position: fixed;
-  padding: ${rem(20)} ${rem(66)};
+  padding: ${rem(16)} ${rem(66)};
   display: flex;
   align-items: center;
   justify-content: space-between;

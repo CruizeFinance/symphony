@@ -14,7 +14,7 @@ const Container = styled.div`
   justify-content: center;
   gap: ${rem(64)};
   color: ${STYLES.palette.colors.white};
-  padding: ${rem(30)} ${rem(60)};
+  padding: ${rem(30)} ${rem(66)};
   width: 100%;
 
   @media only screen and (max-width: 1024px) {

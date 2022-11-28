@@ -61,17 +61,19 @@ const Home = () => {
       <Container>
         <Sprite id="homepage-image-icon" width={280} height={280} />
         <InfoArea>
-          <Typography tag="h1" fontFamily="bold">
+          <Typography tag="h1" fontFamily="bold" style={{ lineHeight: '32px' }}>
             We are currently in private beta.
           </Typography>
           <Typography
             tag="p"
-            fontFamily="regular"
+            fontFamily="medium"
             color={STYLES.palette.colors.white60}
             style={{
               textAlign: 'center',
               maxWidth: rem(800),
               marginBottom: rem(16),
+              fontSize: rem(22),
+              lineHeight: '32px',
             }}
           >
             Currently, only holders of our Cruize Entry Pass NFT holders can
@@ -80,7 +82,7 @@ const Home = () => {
             <Typography
               tag="span"
               fontFamily="regular"
-              style={{ fontSize: 'inherit' }}
+              style={{ fontSize: 'inherit', lineHeight: '32px' }}
               color={STYLES.palette.colors.white60}
             >
               {!isConnected
@@ -90,7 +92,12 @@ const Home = () => {
           </Typography>
           {!isConnected ? (
             <ConnectWalletButton
-              style={{ padding: `${rem(16)} ${rem(32)}` }}
+              style={{
+                padding: `${rem(16)} ${rem(32)}`,
+                fontSize: rem(20),
+                fontFamily: STYLES.typography.fonts.bold,
+                lineHeight: '24.18px',
+              }}
               buttonLabel="Connect Wallet"
             />
           ) : (
