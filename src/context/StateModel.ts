@@ -15,7 +15,6 @@ export default interface State {
   tab: 'protect' | 'withdraw'
   supportedChains: number[]
   loadingInitialAPIs: boolean
-  isHolder: boolean
   cruizeContract: Contract | null
   assetContract: Contract | null
   mintContract: Contract | null

@@ -3,10 +3,6 @@ import styled from 'styled-components'
 import ProtectCard from './protectcard'
 import { rem } from '../../utils'
 import HowItWorks from './HowItWorks'
-import { useContext, useEffect } from 'react'
-import { AppContext } from '../../context'
-import { useNavigate } from 'react-router-dom'
-import { useAccount } from 'wagmi'
 
 const Container = styled.div`
   display: flex;
@@ -14,7 +10,7 @@ const Container = styled.div`
   justify-content: center;
   gap: ${rem(64)};
   color: ${STYLES.palette.colors.white};
-  padding: ${rem(30)} ${rem(60)};
+  padding: ${rem(30)} ${rem(66)};
   width: 100%;
 
   @media only screen and (max-width: 1024px) {
@@ -36,23 +32,6 @@ const ProtectArea = styled.div`
  * This is where the protection and withdrawals happen
  */
 const Protect = () => {
-  //context hook
-  const [state] = useContext(AppContext)
-
-  //web3 hook
-  const { isConnected } = useAccount()
-
-  // react router dom hook
-  const navigate = useNavigate()
-
-  /*
-   * an effect to perform action after confirming whether the user is holder of the CRUIZE PRIVATE BETA PASS
-   */
-  useEffect(() => {
-    if (!isConnected || !state.isHolder) {
-      navigate('/')
-    }
-  }, [isConnected, state.isHolder])
 
   return (
     <Container id="protect-container">

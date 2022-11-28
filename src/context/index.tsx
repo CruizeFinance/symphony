@@ -8,12 +8,11 @@ import {
 } from 'wagmi'
 import { fetchPriceFloors, getAssetPrice } from '../apis'
 import { useOnceCall } from '../hooks'
-import { BETA_ACCESS_NFT_CONTRACT, CONTRACTS_CONFIG } from '../utils'
+import { CONTRACTS_CONFIG } from '../utils'
 import { Action, Actions } from './Action'
 import reducer from './Reducer'
 import initialState from './State'
 import State from './StateModel'
-import BETAACESSABI from '../abis/beta_access_nft.json'
 import { BigNumber, Contract, ethers, Signer } from 'ethers'
 import testnet_abi from '../abis/testnet_cruize_abi.json'
 import weth_mint_abi from '../abis/weth_minting_abi.json'
@@ -81,21 +80,10 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
   }, [chain])
 
   /*
-   * an effect to set the value for isHolder boolean
-   */
-  useEffect(() => {
-    if (isConnected && address && signer) {
-      checkHolder()
-    }
-  }, [isConnected, address, signer, state.chainId])
-
-  /*
    * an effect to load all contract if the user is on the right chain and is a holder of the beta pass
    */
   useEffect(() => {
-    if (
-      state.isHolder &&
-      signer &&
+    if (signer &&
       state.supportedChains.includes(state.chainId)
     ) {
       const cruizeContract: Contract = new ethers.Contract(
@@ -133,7 +121,7 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
       })
       checkAllowance(assetContract)
     }
-  }, [state.isHolder, signer, state.selectedAsset, address, state.chainId])
+  }, [signer, state.selectedAsset, address, state.chainId])
 
   /*
    * function to check token allowance
@@ -151,22 +139,6 @@ export const AppContextProvider = ({ children }: ProviderProps) => {
     } catch (e) {
       console.log(e)
     }
-  }
-
-  /*
-   * a function to check if the user is holder of the beta pass
-   */
-  const checkHolder = async () => {
-    const nftContract = new ethers.Contract(
-      BETA_ACCESS_NFT_CONTRACT,
-      BETAACESSABI,
-      signer as Signer,
-    )
-    const holder = await nftContract.balanceOf(address)
-    dispatch({
-      type: Actions.STORE_HOLDER_BOOLEAN,
-      payload: BigNumber.from(holder).gt(BigNumber.from('0')),
-    })
   }
 
   return (
