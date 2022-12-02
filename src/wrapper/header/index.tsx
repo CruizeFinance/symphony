@@ -141,8 +141,7 @@ const Header = () => {
         <DesktopArea>
           {isConnected ? (
             <>
-              {state.supportedChains.includes(state.chainId) &&
-              state.isHolder ? (
+              {state.supportedChains.includes(state.chainId)? (
                 <>
                   <RecentOrdersDropdown />
                 </>
@@ -163,8 +162,7 @@ const Header = () => {
           <MobileHeaderContent>
             {isConnected ? (
               <>
-                {state.supportedChains.includes(state.chainId) &&
-                state.isHolder ? (
+                {state.supportedChains.includes(state.chainId) ? (
                   <>
                     <RecentOrdersDropdown />
                   </>

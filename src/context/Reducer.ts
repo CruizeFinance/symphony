@@ -46,11 +46,6 @@ const reducer = (state: State, action: Action): State => {
         ...state,
         tab: action.payload,
       }
-    case Actions.STORE_HOLDER_BOOLEAN:
-      return {
-        ...state,
-        isHolder: action.payload,
-      }
     case Actions.STORE_CRUIZE_CONTRACT:
       return {
         ...state,
