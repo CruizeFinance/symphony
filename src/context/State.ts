@@ -15,7 +15,6 @@ const initialState: State = {
   tab: 'protect',
   supportedChains: [5],
   loadingInitialAPIs: true,
-  isHolder: false,
   cruizeContract: null,
   assetContract: null,
   mintContract: null,

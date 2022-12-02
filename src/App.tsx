@@ -10,6 +10,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
+import { InjectedConnector } from 'wagmi/connectors/injected'
 
 const AppContainer = styled.div`
   height: 100%;
