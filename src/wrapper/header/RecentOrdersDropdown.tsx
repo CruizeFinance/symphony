@@ -43,11 +43,10 @@ const RecentOrdersDropdown = () => {
   useOutsideAlerter(recentOrdersRef, () => setShowRecentOrders(false))
 
   /*
-   * function written to open or close the dropdown and make an api call
+   * function written to open or close the dropdown
    */
   const onNotificationClick = async () => {
     setShowRecentOrders(!showRecentOrders)
-    getTransactions()
   }
 
   /*
@@ -65,7 +64,7 @@ const RecentOrdersDropdown = () => {
    */
   useEffect(() => {
     if (showRecentOrders) getTransactions()
-  }, [address])
+  }, [address, showRecentOrders])
 
   return (
     <DropdownArea ref={recentOrdersRef}>

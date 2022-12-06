@@ -37,6 +37,7 @@ const ProtectArea = styled.div`
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(20)} ${rem(16)};
+    width: 100%;
   }
 `
 const DetailArea = styled.div`
