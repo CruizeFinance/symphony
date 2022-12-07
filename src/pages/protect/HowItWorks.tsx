@@ -194,7 +194,7 @@ const HowItWorks = () => {
       <Typography
         tag="p"
         color={STYLES.palette.colors.white60}
-        style={{ marginBottom: rem(60), fontSize: rem(18), lineHeight: '24px' }}
+        style={{ marginBottom: rem(60), fontSize: rem(20), lineHeight: '24px' }}
       >
         Stake your {state.selectedAsset.label.toUpperCase()} to receive cr
         {state.selectedAsset.label.toUpperCase()} that never falls below the
@@ -204,7 +204,8 @@ const HowItWorks = () => {
         current cr{state.selectedAsset.label.toUpperCase()} price floor is&nbsp;
         <Typography
           tag="span"
-          color={STYLES.palette.colors.white}
+          color={STYLES.palette.colors.white60}
+          fontFamily={'bold'}
           style={{ fontSize: rem(20), lineHeight: '24px' }}
         >
           $
@@ -245,7 +246,7 @@ const HowItWorks = () => {
                   </Typography>
                   <Typography
                     style={{
-                      fontSize: rem(16),
+                      fontSize: rem(18),
                       lineHeight: '20px',
                     }}
                     color={STYLES.palette.colors.white60}

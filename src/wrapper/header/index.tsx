@@ -18,7 +18,7 @@ interface MobileProps {
 
 const Container = styled.div`
   position: fixed;
-  padding: ${rem(20)} ${rem(66)};
+  padding: ${rem(16)} ${rem(66)};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -141,8 +141,7 @@ const Header = () => {
         <DesktopArea>
           {isConnected ? (
             <>
-              {state.supportedChains.includes(state.chainId) &&
-              state.isHolder ? (
+              {state.supportedChains.includes(state.chainId)? (
                 <>
                   <RecentOrdersDropdown />
                 </>
@@ -163,8 +162,7 @@ const Header = () => {
           <MobileHeaderContent>
             {isConnected ? (
               <>
-                {state.supportedChains.includes(state.chainId) &&
-                state.isHolder ? (
+                {state.supportedChains.includes(state.chainId) ? (
                   <>
                     <RecentOrdersDropdown />
                   </>
