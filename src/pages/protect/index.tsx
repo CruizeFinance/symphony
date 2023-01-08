@@ -21,7 +21,7 @@ const ProtectArea = styled.div`
   display: block;
   max-width: ${rem(456)};
   position: sticky;
-  top: ${rem(120)};
+  top: ${rem(180)};
   @media only screen and (max-width: 1024px) {
     display: none;
   }

@@ -25,7 +25,26 @@ const Container = styled.div`
   width: -webkit-fill-available;
   backdrop-filter: blur(${rem(8)});
   z-index: 9999;
+  top: 68px;
   border-bottom: 1px solid ${STYLES.palette.colors.dividerStroke};
+
+  @media only screen and (max-width: 1024px) {
+    padding: ${rem(16)};
+    top: 106px;
+  }
+`
+const Warning = styled.div`
+  position: fixed;
+  padding: ${rem(16)} ${rem(66)};
+  width: -webkit-fill-available;
+  background: ${STYLES.palette.colors.warningBackground};
+  top: 0;
+  z-index: 999999;
+  text-align: center;
+
+  span {
+    font-size: 13px;
+  }
 
   @media only screen and (max-width: 1024px) {
     padding: ${rem(16)};
@@ -126,6 +145,11 @@ const Header = () => {
 
   return (
     <>
+      <Warning>
+        Testnet is Closed! After a successful Testnet Launch, we are all heads
+        down on building the Alpha Mainnet.<br/>
+        <span>See you soon!</span>
+      </Warning>
       <Container>
         <LogoArea>
           <Sprite id="cruize-beta-logo-icon" width={132} height={32} />
@@ -141,7 +165,7 @@ const Header = () => {
         <DesktopArea>
           {isConnected ? (
             <>
-              {state.supportedChains.includes(state.chainId)? (
+              {state.supportedChains.includes(state.chainId) ? (
                 <>
                   <RecentOrdersDropdown />
                 </>
