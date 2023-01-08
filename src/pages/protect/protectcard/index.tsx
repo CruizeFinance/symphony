@@ -413,11 +413,7 @@ const ProtectCard = () => {
                 ? () => approveToken()
                 : () => setOpenConfirmSection(true)
             }
-            disabled={
-              setError() !== '' ||
-              !inputValue ||
-              !state.supportedChains.includes(state.chainId)
-            }
+            disabled={isConnected}
             borderRadius={32}
           >
             {!state.tokenApproved
