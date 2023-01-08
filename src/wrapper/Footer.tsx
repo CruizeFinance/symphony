@@ -278,7 +278,10 @@ const Footer = () => {
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          width: '100%'
+          width: '100%',
+        }}
+        modalStyle={{
+          zIndex: '999999',
         }}
       >
         <ProtectCard />
